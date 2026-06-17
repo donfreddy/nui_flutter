@@ -1,0 +1,17 @@
+name: nui_flutter_example
+description: Example app showcasing all nui_flutter components.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  nui_flutter:
+    path: ../
+  lucide_icons_flutter: ^3.1.9
+
+flutter:
+  uses-material-design: true

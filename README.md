@@ -37,6 +37,8 @@ flutter pub get
 
 ---
 
+See the [`example/`](example) directory for a complete showcase app demonstrating all components.
+
 ## Quick start
 
 ### 1. Initialize ScreenUtil and wrap with NTheme
@@ -172,10 +174,19 @@ Padding(
 
 ### Text scale
 
-Adjust the global text scale at startup or in response to user preferences:
+Adjust the global text scale at startup or in response to user preferences by passing `textScale` to `NTheme`:
 
 ```dart
-NTextScale.setScale(NTextScale.large);  // 115%
+NTheme.lightTheme(
+  palette: myPalette,
+  textScale: 1.15,  // 115%
+)
+```
+
+For dynamic runtime changes, use `NTextScale` (deprecated — kept for migration only):
+
+```dart
+NTextScale.setScale(NTextScale.large);  // 115% (deprecated)
 ```
 
 ### Custom component themes
@@ -398,5 +409,4 @@ NIconButton(icon: LucideIcons.trash2, color: NIconButtonColor.error, variant: NI
 
 ## License
 
-This project is private and not yet published to pub.dev.
-A license file will be added before public release.
+Licensed under the [MIT License](LICENSE).
