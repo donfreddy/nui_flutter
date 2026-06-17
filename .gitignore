@@ -1,0 +1,38 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+.metadata
+
+# IntelliJ
+*.iml
+.idea/
+
+# VSCode
+.vscode/
+
+# Flutter/Dart
+.dart_tool/
+.packages
+.pub/
+build/
+
+# Android
+local.properties
+.key.jks
+
+# iOS
+Pods/
+Runner.xcworkspace/
+
+# macOS
+*.dSYM
+
+nui_flutter_audit.md
+plan.md

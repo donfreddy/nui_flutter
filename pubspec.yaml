@@ -1,0 +1,35 @@
+name: nui_flutter
+description: >-
+  A Nuxt UI-inspired design system for Flutter. Provides 15+ production-ready
+  components with full dark mode, ThemeExtension-based theming, semantic color
+  tokens, and a Lucide icon set.
+version: 0.1.0
+homepage: https://github.com/lehmora/nui_flutter
+repository: https://github.com/lehmora/nui_flutter
+issue_tracker: https://github.com/lehmora/nui_flutter/issues
+
+topics:
+  - ui
+  - design-system
+  - theme
+  - widgets
+  - components
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+platforms:
+  android:
+  ios:
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_screenutil: ^5.9.3
+  lucide_icons_flutter: ^3.1.9
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
