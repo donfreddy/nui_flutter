@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
 
@@ -163,33 +162,33 @@ class NIconButton extends StatelessWidget {
   double _getIconSize() {
     switch (size) {
       case NIconButtonSize.sm:
-        return 16.sp;
+        return 16;
       case NIconButtonSize.md:
-        return 20.sp;
+        return 20;
       case NIconButtonSize.lg:
-        return 24.sp;
+        return 24;
     }
   }
 
   EdgeInsetsGeometry _getPadding() {
     switch (size) {
       case NIconButtonSize.sm:
-        return EdgeInsets.all(8.w);
+        return EdgeInsets.all(8);
       case NIconButtonSize.md:
-        return EdgeInsets.all(10.w);
+        return EdgeInsets.all(10);
       case NIconButtonSize.lg:
-        return EdgeInsets.all(12.w);
+        return EdgeInsets.all(12);
     }
   }
 
   double _getBorderRadius() {
     switch (size) {
       case NIconButtonSize.sm:
-        return 8.r;
+        return 8;
       case NIconButtonSize.md:
-        return 10.r;
+        return 10;
       case NIconButtonSize.lg:
-        return 12.r;
+        return 12;
     }
   }
 }

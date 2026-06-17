@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../theme/n_color_palette.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
@@ -86,7 +85,7 @@ class NAvatar extends StatelessWidget {
           color: colors['background'],
           shape: BoxShape.circle,
           border: hasRing
-              ? Border.all(color: NTokens.primary(context), width: 2.w)
+              ? Border.all(color: NTokens.primary(context), width: 2)
               : null,
         ),
         child: Center(child: avatarContent),
@@ -105,17 +104,17 @@ class NAvatar extends StatelessWidget {
             child: chipText != null
                 ? Container(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+                        EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                     decoration: BoxDecoration(
                       color: chipColor ?? NTokens.success(context),
-                      borderRadius: BorderRadius.circular(6.r),
+                      borderRadius: BorderRadius.circular(6),
                       border: Border.all(
                           color: NTokens.bgDefault(context), width: 2),
                     ),
                     child: Text(
                       chipText!,
                       style: TextStyle(
-                        fontSize: 8.sp,
+                        fontSize: 8,
                         fontWeight: FontWeight.w700,
                         color: NTokens.textInverted(context),
                       ),
@@ -204,51 +203,51 @@ class NAvatar extends StatelessWidget {
   double _getSize() {
     switch (size) {
       case NAvatarSize.xs:
-        return 24.w;
+        return 24;
       case NAvatarSize.sm:
-        return 32.w;
+        return 32;
       case NAvatarSize.md:
-        return 40.w;
+        return 40;
       case NAvatarSize.lg:
-        return 48.w;
+        return 48;
       case NAvatarSize.xl:
-        return 64.w;
+        return 64;
       case NAvatarSize.xxl:
-        return 96.w;
+        return 96;
     }
   }
 
   double _getFontSize() {
     switch (size) {
       case NAvatarSize.xs:
-        return 10.sp;
+        return 10;
       case NAvatarSize.sm:
-        return 12.sp;
+        return 12;
       case NAvatarSize.md:
-        return 14.sp;
+        return 14;
       case NAvatarSize.lg:
-        return 16.sp;
+        return 16;
       case NAvatarSize.xl:
-        return 20.sp;
+        return 20;
       case NAvatarSize.xxl:
-        return 28.sp;
+        return 28;
     }
   }
 
   double _getBadgeSize() {
     switch (size) {
       case NAvatarSize.xs:
-        return 8.w;
+        return 8;
       case NAvatarSize.sm:
-        return 10.w;
+        return 10;
       case NAvatarSize.md:
-        return 12.w;
+        return 12;
       case NAvatarSize.lg:
-        return 14.w;
+        return 14;
       case NAvatarSize.xl:
-        return 16.w;
+        return 16;
       case NAvatarSize.xxl:
-        return 20.w;
+        return 20;
     }
   }
 }
@@ -333,34 +332,34 @@ class NAvatarGroup extends StatelessWidget {
   double _getAvatarSize() {
     switch (size) {
       case NAvatarSize.xs:
-        return 24.w;
+        return 24;
       case NAvatarSize.sm:
-        return 32.w;
+        return 32;
       case NAvatarSize.md:
-        return 40.w;
+        return 40;
       case NAvatarSize.lg:
-        return 48.w;
+        return 48;
       case NAvatarSize.xl:
-        return 64.w;
+        return 64;
       case NAvatarSize.xxl:
-        return 96.w;
+        return 96;
     }
   }
 
   double _getFontSize() {
     switch (size) {
       case NAvatarSize.xs:
-        return 10.sp;
+        return 10;
       case NAvatarSize.sm:
-        return 11.sp;
+        return 11;
       case NAvatarSize.md:
-        return 12.sp;
+        return 12;
       case NAvatarSize.lg:
-        return 13.sp;
+        return 13;
       case NAvatarSize.xl:
-        return 16.sp;
+        return 16;
       case NAvatarSize.xxl:
-        return 20.sp;
+        return 20;
     }
   }
 }

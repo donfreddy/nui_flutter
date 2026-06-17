@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'n_color_palette.dart';
 import 'n_typography.dart';
 
@@ -52,89 +51,89 @@ TextTheme buildTextTheme(NColorPalette palette, Brightness brightness,
       .copyWith(
         displayLarge: base.displayLarge?.copyWith(
           fontWeight: FontWeight.w800,
-          fontSize: (72 * textScale).sp,
-          letterSpacing: -0.02.sp,
+          fontSize: (72 * textScale),
+          letterSpacing: -0.02,
           height: 1,
         ),
         displayMedium: base.displayMedium?.copyWith(
           fontWeight: FontWeight.w800,
-          fontSize: (60 * textScale).sp,
-          letterSpacing: -0.02.sp,
+          fontSize: (60 * textScale),
+          letterSpacing: -0.02,
           height: 1,
         ),
         displaySmall: base.displaySmall?.copyWith(
           fontWeight: FontWeight.w800,
-          fontSize: (48 * textScale).sp,
-          letterSpacing: -0.02.sp,
+          fontSize: (48 * textScale),
+          letterSpacing: -0.02,
           height: 1,
         ),
         headlineLarge: base.headlineLarge?.copyWith(
           fontWeight: FontWeight.w700,
-          fontSize: (36 * textScale).sp,
-          letterSpacing: -0.02.sp,
+          fontSize: (36 * textScale),
+          letterSpacing: -0.02,
           height: 1.1,
         ),
         headlineMedium: base.headlineMedium?.copyWith(
           fontWeight: FontWeight.w700,
-          fontSize: (30 * textScale).sp,
-          letterSpacing: -0.01.sp,
+          fontSize: (30 * textScale),
+          letterSpacing: -0.01,
           height: 1.2,
         ),
         headlineSmall: base.headlineSmall?.copyWith(
           fontWeight: FontWeight.w700,
-          fontSize: (24 * textScale).sp,
-          letterSpacing: -0.01.sp,
+          fontSize: (24 * textScale),
+          letterSpacing: -0.01,
           height: 1.25,
         ),
         titleLarge: base.titleLarge?.copyWith(
           fontWeight: FontWeight.w600,
-          fontSize: (20 * textScale).sp,
-          letterSpacing: -0.01.sp,
+          fontSize: (20 * textScale),
+          letterSpacing: -0.01,
           height: 1.3,
         ),
         titleMedium: base.titleMedium?.copyWith(
           fontWeight: FontWeight.w600,
-          fontSize: (18 * textScale).sp,
-          letterSpacing: -0.01.sp,
+          fontSize: (18 * textScale),
+          letterSpacing: -0.01,
           height: 1.35,
         ),
         titleSmall: base.titleSmall?.copyWith(
           fontWeight: FontWeight.w600,
-          fontSize: (16 * textScale).sp,
+          fontSize: (16 * textScale),
           height: 1.4,
         ),
         bodyLarge: base.bodyLarge?.copyWith(
           fontWeight: FontWeight.w400,
-          fontSize: (16 * textScale).sp,
+          fontSize: (16 * textScale),
           height: 1.5,
         ),
         bodyMedium: base.bodyMedium?.copyWith(
           fontWeight: FontWeight.w400,
-          fontSize: (14 * textScale).sp,
+          fontSize: (14 * textScale),
           height: 1.5,
         ),
         bodySmall: base.bodySmall?.copyWith(
           fontWeight: FontWeight.w400,
-          fontSize: (12 * textScale).sp,
+          fontSize: (12 * textScale),
           height: 1.5,
         ),
         labelLarge: base.labelLarge?.copyWith(
           fontWeight: FontWeight.w600,
-          fontSize: (14 * textScale).sp,
+          fontSize: (14 * textScale),
           height: 1.25,
-          letterSpacing: 0.01.sp,
+          letterSpacing: 0.01,
         ),
         labelMedium: base.labelMedium?.copyWith(
           fontWeight: FontWeight.w600,
-          fontSize: (12 * textScale).sp,
+          fontSize: (12 * textScale),
           height: 1.25,
-          letterSpacing: 0.01.sp,
+          letterSpacing: 0.01,
         ),
         labelSmall: base.labelSmall?.copyWith(
           fontWeight: FontWeight.w600,
-          fontSize: (11 * textScale).sp,
+          fontSize: (11 * textScale),
           height: 1.25,
-          letterSpacing: 0.02.sp,
+          letterSpacing: 0.02,
         ),
       )
       .apply(

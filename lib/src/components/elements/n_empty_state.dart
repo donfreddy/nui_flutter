@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../theme/n_tokens.dart';
 
 class NEmptyState extends StatelessWidget {
@@ -20,34 +19,34 @@ class NEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(32.w),
+        padding: EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 48.sp, color: NTokens.textMuted(context)),
-            SizedBox(height: 16.h),
+            Icon(icon, size: 48, color: NTokens.textMuted(context)),
+            SizedBox(height: 16),
             Text(
               title,
               style: TextStyle(
-                fontSize: 18.sp,
+                fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: NTokens.textDefault(context),
               ),
               textAlign: TextAlign.center,
             ),
             if (description != null) ...[
-              SizedBox(height: 8.h),
+              SizedBox(height: 8),
               Text(
                 description!,
                 style: TextStyle(
-                  fontSize: 14.sp,
+                  fontSize: 14,
                   color: NTokens.textMuted(context),
                 ),
                 textAlign: TextAlign.center,
               ),
             ],
             if (action != null) ...[
-              SizedBox(height: 24.h),
+              SizedBox(height: 24),
               action!,
             ],
           ],

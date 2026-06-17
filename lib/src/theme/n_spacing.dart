@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// A set of static spacing constants following a Tailwind-inspired 4 dp base scale.
 ///
@@ -84,13 +83,13 @@ abstract class NSpacing {
 
   /// Returns a [SizedBox] with height equal to [value] scaled by
   /// [flutter_screenutil]'s height factor.
-  static Widget vertical(double value) => SizedBox(height: value.h);
+  static Widget vertical(double value) => SizedBox(height: value);
 
   /// Returns a [SizedBox] with width equal to [value] scaled by
   /// [flutter_screenutil]'s width factor.
-  static Widget horizontal(double value) => SizedBox(width: value.w);
+  static Widget horizontal(double value) => SizedBox(width: value);
 
   /// Returns a square [SizedBox] with both dimensions equal to [value] scaled
   /// by [flutter_screenutil]'s diagonal factor.
-  static Widget square(double value) => SizedBox.square(dimension: value.dg);
+  static Widget square(double value) => SizedBox.square(dimension: value);
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
 
@@ -47,7 +46,7 @@ class NChip extends StatelessWidget {
           decoration: BoxDecoration(
             color: colors['background'],
             borderRadius:
-                BorderRadius.circular(size == NChipSize.sm ? 16.r : 20.r),
+                BorderRadius.circular(size == NChipSize.sm ? 16 : 20),
             border: Border.all(color: colors['border']!, width: 1),
           ),
           child: Row(
@@ -58,7 +57,7 @@ class NChip extends StatelessWidget {
                     width: _getIconSize(),
                     height: _getIconSize(),
                     child: leading),
-                SizedBox(width: 6.w),
+                SizedBox(width: 6),
               ],
               Text(
                 label,
@@ -69,7 +68,7 @@ class NChip extends StatelessWidget {
                 ),
               ),
               if (trailing != null) ...[
-                SizedBox(width: 6.w),
+                SizedBox(width: 6),
                 SizedBox(
                     width: _getIconSize(),
                     height: _getIconSize(),
@@ -85,33 +84,33 @@ class NChip extends StatelessWidget {
   EdgeInsetsGeometry _getPadding() {
     switch (size) {
       case NChipSize.sm:
-        return EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h);
+        return EdgeInsets.symmetric(horizontal: 12, vertical: 6);
       case NChipSize.md:
-        return EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h);
+        return EdgeInsets.symmetric(horizontal: 16, vertical: 8);
       case NChipSize.lg:
-        return EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h);
+        return EdgeInsets.symmetric(horizontal: 20, vertical: 10);
     }
   }
 
   double _getFontSize() {
     switch (size) {
       case NChipSize.sm:
-        return 12.sp;
+        return 12;
       case NChipSize.md:
-        return 13.sp;
+        return 13;
       case NChipSize.lg:
-        return 14.sp;
+        return 14;
     }
   }
 
   double _getIconSize() {
     switch (size) {
       case NChipSize.sm:
-        return 14.sp;
+        return 14;
       case NChipSize.md:
-        return 16.sp;
+        return 16;
       case NChipSize.lg:
-        return 18.sp;
+        return 18;
     }
   }
 
@@ -212,7 +211,7 @@ class NChipGroup extends StatelessWidget {
       return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        padding: EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           mainAxisAlignment: mainAxisAlignment,
           children: _buildChipsWithSpacing(chips, spacing),
@@ -221,7 +220,7 @@ class NChipGroup extends StatelessWidget {
     } else if (scrollable && direction == Axis.vertical) {
       return SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.symmetric(vertical: 16.h),
+        padding: EdgeInsets.symmetric(vertical: 16),
         child: Column(
           children: _buildChipsWithSpacing(chips, spacing),
         ),

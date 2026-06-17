@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
 
@@ -178,7 +177,7 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
               child: CompositedTransformFollower(
                 link: _layerLink,
                 showWhenUnlinked: false,
-                offset: Offset(0, size.height + 4.h),
+                offset: Offset(0, size.height + 4),
                 child: Material(
                   elevation: 0,
                   color: Colors.transparent,
@@ -216,33 +215,33 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
   double _getVerticalPadding() {
     switch (widget.size) {
       case NDropdownSize.sm:
-        return 8.h;
+        return 8;
       case NDropdownSize.md:
-        return 10.h;
+        return 10;
       case NDropdownSize.lg:
-        return 12.h;
+        return 12;
     }
   }
 
   double _getHorizontalPadding() {
     switch (widget.size) {
       case NDropdownSize.sm:
-        return 12.w;
+        return 12;
       case NDropdownSize.md:
-        return 14.w;
+        return 14;
       case NDropdownSize.lg:
-        return 16.w;
+        return 16;
     }
   }
 
   double _getFontSize() {
     switch (widget.size) {
       case NDropdownSize.sm:
-        return 13.sp;
+        return 13;
       case NDropdownSize.md:
-        return 14.sp;
+        return 14;
       case NDropdownSize.lg:
-        return 15.sp;
+        return 15;
     }
   }
 
@@ -296,8 +295,8 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
   Widget? _getLeadingWidget() {
     if (widget.loading) {
       return SizedBox(
-        width: 16.w,
-        height: 16.w,
+        width: 16,
+        height: 16,
         child: CircularProgressIndicator(
             strokeWidth: 2,
             valueColor:
@@ -306,7 +305,7 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
     }
     if (widget.leadingIcon != null) {
       return Icon(widget.leadingIcon,
-          size: 18.sp, color: NTokens.textMuted(context));
+          size: 18, color: NTokens.textMuted(context));
     }
     if (!widget.multiple && widget.value != null) {
       final selectedItem = widget.items.firstWhere(
@@ -315,7 +314,7 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
       if (selectedItem.avatar != null) return selectedItem.avatar;
       if (selectedItem.icon != null) {
         return Icon(selectedItem.icon,
-            size: 18.sp, color: NTokens.textMuted(context));
+            size: 18, color: NTokens.textMuted(context));
       }
     }
     return null;
@@ -340,16 +339,16 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
             children: [
               Text(widget.label!,
                   style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: NTokens.textDefault(context))),
               if (widget.required)
                 Text(' *',
                     style: TextStyle(
-                        fontSize: 14.sp, color: NTokens.error(context))),
+                        fontSize: 14, color: NTokens.error(context))),
             ],
           ),
-          SizedBox(height: 6.h),
+          SizedBox(height: 6),
         ],
         CompositedTransformTarget(
           link: _layerLink,
@@ -372,7 +371,7 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
                 children: [
                   if (leadingWidget != null) ...[
                     leadingWidget,
-                    SizedBox(width: 8.w)
+                    SizedBox(width: 8)
                   ],
                   Expanded(
                     child: Text(
@@ -386,18 +385,18 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
                     ),
                   ),
                   if (showClear) ...[
-                    SizedBox(width: 8.w),
+                    SizedBox(width: 8),
                     GestureDetector(
                         onTap: _handleClear,
                         child: Icon(Icons.close,
-                            size: 16.sp, color: NTokens.textMuted(context))),
+                            size: 16, color: NTokens.textMuted(context))),
                   ],
-                  SizedBox(width: 8.w),
+                  SizedBox(width: 8),
                   Icon(
                       _isOpen
                           ? Icons.keyboard_arrow_up
                           : Icons.keyboard_arrow_down,
-                      size: 20.sp,
+                      size: 20,
                       color: NTokens.textMuted(context)),
                 ],
               ),
@@ -405,11 +404,11 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
           ),
         ),
         if (widget.helperText != null || hasError) ...[
-          SizedBox(height: 6.h),
+          SizedBox(height: 6),
           Text(
             hasError ? widget.errorText! : widget.helperText!,
             style: TextStyle(
-                fontSize: 12.sp,
+                fontSize: 12,
                 color: hasError
                     ? NTokens.error(context)
                     : NTokens.textMuted(context)),
@@ -484,7 +483,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints(maxHeight: 300.h),
+      constraints: BoxConstraints(maxHeight: 300),
       decoration: BoxDecoration(
         color: NTokens.bgElevated(context),
         borderRadius: BorderRadius.circular(NTokens.radiusDefault),
@@ -501,16 +500,16 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
         children: [
           if (widget.searchable) ...[
             Padding(
-              padding: EdgeInsets.all(8.w),
+              padding: EdgeInsets.all(8),
               child: TextField(
                 controller: _searchController,
                 autofocus: true,
                 decoration: InputDecoration(
                   hintText: widget.searchPlaceholder,
                   hintStyle: TextStyle(
-                      color: NTokens.textMuted(context), fontSize: 14.sp),
+                      color: NTokens.textMuted(context), fontSize: 14),
                   prefixIcon: Icon(Icons.search,
-                      size: 20.sp, color: NTokens.textMuted(context)),
+                      size: 20, color: NTokens.textMuted(context)),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(NTokens.radiusSm),
                     borderSide:
@@ -527,11 +526,11 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                         BorderSide(color: NTokens.primary(context), width: 2),
                   ),
                   contentPadding:
-                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                      EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   isDense: true,
                 ),
                 style: TextStyle(
-                    fontSize: 14.sp, color: NTokens.textDefault(context)),
+                    fontSize: 14, color: NTokens.textDefault(context)),
               ),
             ),
             Divider(
@@ -540,13 +539,13 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
           Flexible(
             child: ListView.builder(
               shrinkWrap: true,
-              padding: EdgeInsets.symmetric(vertical: 4.h),
+              padding: EdgeInsets.symmetric(vertical: 4),
               itemCount: _filteredItems.length,
               itemBuilder: (context, index) {
                 final item = _filteredItems[index];
                 if (item.type == NDropdownItemType.separator) {
                   return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4.h),
+                    padding: EdgeInsets.symmetric(vertical: 4),
                     child: Divider(
                         height: 1,
                         thickness: 1,
@@ -556,11 +555,11 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                 if (item.type == NDropdownItemType.label) {
                   return Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     child: Text(
                       item.label,
                       style: TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: NTokens.textMuted(context),
                           letterSpacing: 0.5),
@@ -576,7 +575,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                         : () => widget.onSelected(item.value),
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 12.w, vertical: 10.h),
+                          horizontal: 12, vertical: 10),
                       color: isSelected
                           ? NTokens.bgMuted(context)
                           : Colors.transparent,
@@ -584,15 +583,15 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                         children: [
                           if (item.avatar != null) ...[
                             SizedBox(
-                                width: 24.w, height: 24.w, child: item.avatar),
-                            SizedBox(width: 8.w),
+                                width: 24, height: 24, child: item.avatar),
+                            SizedBox(width: 8),
                           ] else if (item.icon != null) ...[
                             Icon(item.icon,
-                                size: 18.sp,
+                                size: 18,
                                 color: item.disabled
                                     ? NTokens.textDisabled(context)
                                     : NTokens.textMuted(context)),
-                            SizedBox(width: 8.w),
+                            SizedBox(width: 8),
                           ],
                           Expanded(
                             child: Column(
@@ -602,7 +601,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                                 Text(
                                   item.label,
                                   style: TextStyle(
-                                    fontSize: 14.sp,
+                                    fontSize: 14,
                                     color: item.disabled
                                         ? NTokens.textDisabled(context)
                                         : NTokens.textDefault(context),
@@ -614,19 +613,19 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                                 if (item.description != null)
                                   Text(item.description!,
                                       style: TextStyle(
-                                          fontSize: 12.sp,
+                                          fontSize: 12,
                                           color: NTokens.textMuted(context))),
                               ],
                             ),
                           ),
                           if (item.trailing != null) ...[
-                            SizedBox(width: 8.w),
+                            SizedBox(width: 8),
                             item.trailing!
                           ],
                           if (isSelected) ...[
-                            SizedBox(width: 8.w),
+                            SizedBox(width: 8),
                             Icon(Icons.check,
-                                size: 18.sp, color: NTokens.primary(context)),
+                                size: 18, color: NTokens.primary(context)),
                           ],
                         ],
                       ),

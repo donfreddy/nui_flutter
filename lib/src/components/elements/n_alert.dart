@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
 
@@ -45,10 +44,10 @@ class NAlert extends StatelessWidget {
     final defaultIcon = _getDefaultIcon();
 
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: colors['background'],
-        borderRadius: BorderRadius.circular(8.r),
+        borderRadius: BorderRadius.circular(8),
         border:
             variant == NAlertVariant.outline || variant == NAlertVariant.subtle
                 ? Border.all(
@@ -61,8 +60,8 @@ class NAlert extends StatelessWidget {
         children: [
           if (showIcon) ...[
             Icon(icon ?? defaultIcon,
-                color: colors['icon'], size: 20.sp),
-            SizedBox(width: 12.w),
+                color: colors['icon'], size: 20),
+            SizedBox(width: 12),
           ],
           Expanded(
             child: Column(
@@ -73,43 +72,43 @@ class NAlert extends StatelessWidget {
                   Text(
                     title!,
                     style: TextStyle(
-                        fontSize: 14.sp,
+                        fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: colors['text']),
                   ),
                 if (description != null) ...[
-                  if (title != null) SizedBox(height: 4.h),
+                  if (title != null) SizedBox(height: 4),
                   Text(
                     description!,
                     style: TextStyle(
-                        fontSize: 13.sp,
+                        fontSize: 13,
                         color: colors['text']!.withValues(alpha: 0.9)),
                     textAlign: centerDesc ? TextAlign.center : null,
                   ),
                 ],
                 if (child != null) ...[
                   if (title != null || description != null)
-                    SizedBox(height: 8.h),
+                    SizedBox(height: 8),
                   DefaultTextStyle(
                     style: TextStyle(
-                        fontSize: 13.sp,
+                        fontSize: 13,
                         color: colors['text']!.withValues(alpha: 0.9)),
                     child: child!,
                   ),
                 ],
                 if (actions != null && actions!.isNotEmpty) ...[
-                  SizedBox(height: 12.h),
-                  Wrap(spacing: 8.w, runSpacing: 8.h, children: actions!),
+                  SizedBox(height: 12),
+                  Wrap(spacing: 8, runSpacing: 8, children: actions!),
                 ],
               ],
             ),
           ),
           if (closable) ...[
-            SizedBox(width: 12.w),
+            SizedBox(width: 12),
             GestureDetector(
               onTap: onClose,
               child: Icon(Icons.close,
-                  size: 18.sp, color: colors['text']!.withValues(alpha: 0.6)),
+                  size: 18, color: colors['text']!.withValues(alpha: 0.6)),
             ),
           ],
         ],

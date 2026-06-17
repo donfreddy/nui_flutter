@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
 
@@ -147,7 +146,7 @@ class NCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final defaultBorderRadius =
-        borderRadius ?? BorderRadius.circular(NTokens.radiusDefault.r);
+        borderRadius ?? BorderRadius.circular(NTokens.radiusDefault);
     final styles = _getStyles(context);
 
     Widget cardContent = Column(
@@ -156,7 +155,7 @@ class NCard extends StatelessWidget {
       children: [
         if (header != null) ...[
           Padding(
-            padding: padding ?? EdgeInsets.all(NTokens.paddingDefault.w),
+            padding: padding ?? EdgeInsets.all(NTokens.paddingDefault),
             child: DefaultTextStyle(
               style: TextStyle(color: styles.textColor),
               child: IconTheme(
@@ -167,7 +166,7 @@ class NCard extends StatelessWidget {
         ],
         if (child != null)
           Padding(
-            padding: padding ?? EdgeInsets.all(NTokens.paddingDefault.w),
+            padding: padding ?? EdgeInsets.all(NTokens.paddingDefault),
             child: DefaultTextStyle(
               style: TextStyle(color: styles.textColor),
               child: IconTheme(
@@ -177,7 +176,7 @@ class NCard extends StatelessWidget {
         if (footer != null) ...[
           if (styles.showDivider) _buildDivider(context),
           Padding(
-            padding: padding ?? EdgeInsets.all(NTokens.paddingDefault.w),
+            padding: padding ?? EdgeInsets.all(NTokens.paddingDefault),
             child: DefaultTextStyle(
               style: TextStyle(color: styles.textColor),
               child: IconTheme(
@@ -359,7 +358,7 @@ class NCardHeader extends StatelessWidget {
       children: [
         if (leading != null) ...[
           leading!,
-          SizedBox(width: 12.w),
+          SizedBox(width: 12),
         ],
         Expanded(
           child: Column(
@@ -373,7 +372,7 @@ class NCardHeader extends StatelessWidget {
                         .titleMedium
                         ?.copyWith(fontWeight: FontWeight.w600)),
               if (subtitle != null) ...[
-                SizedBox(height: 4.h),
+                SizedBox(height: 4),
                 Text(subtitle!,
                     style: Theme.of(context)
                         .textTheme
@@ -384,7 +383,7 @@ class NCardHeader extends StatelessWidget {
           ),
         ),
         if (trailing != null) ...[
-          SizedBox(width: 12.w),
+          SizedBox(width: 12),
           trailing!,
         ],
       ],
@@ -415,7 +414,7 @@ class NCardFooter extends StatelessWidget {
       mainAxisAlignment: alignment,
       children: actions
           .map((action) =>
-              Padding(padding: EdgeInsets.only(left: 8.w), child: action))
+              Padding(padding: EdgeInsets.only(left: 8), child: action))
           .toList(),
     );
   }

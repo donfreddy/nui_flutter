@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
 
@@ -68,7 +67,7 @@ class NBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = _getColors(context);
-    final borderRadius = square ? 0.r : 6.r;
+    final borderRadius = square ? 0.0 : 6.0;
 
     return Container(
       padding: _getPadding(),
@@ -83,15 +82,15 @@ class NBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (emoji != null) ...[
-            Text(emoji!, style: TextStyle(fontSize: _getFontSize() + 2.sp)),
-            SizedBox(width: 4.w),
+            Text(emoji!, style: TextStyle(fontSize: _getFontSize() + 2)),
+            SizedBox(width: 4),
           ],
           if (dot) _buildDot(context, colors),
-          if (dot) SizedBox(width: 4.w),
+          if (dot) SizedBox(width: 4),
           if (leading != null) ...[
             SizedBox(
                 width: _getIconSize(), height: _getIconSize(), child: leading),
-            SizedBox(width: 4.w),
+            SizedBox(width: 4),
           ],
           Text(
             label,
@@ -103,7 +102,7 @@ class NBadge extends StatelessWidget {
             ),
           ),
           if (trailing != null || onRemove != null) ...[
-            SizedBox(width: 4.w),
+            SizedBox(width: 4),
             if (onRemove != null)
               GestureDetector(
                 onTap: onRemove,
@@ -123,8 +122,8 @@ class NBadge extends StatelessWidget {
 
   Widget _buildDot(BuildContext context, Map<String, Color> colors) {
     return Container(
-      width: 6.w,
-      height: 6.w,
+      width: 6,
+      height: 6,
       decoration:
           BoxDecoration(color: colors['foreground'], shape: BoxShape.circle),
     );
@@ -168,45 +167,45 @@ class NBadge extends StatelessWidget {
   double _getFontSize() {
     switch (size) {
       case NBadgeSize.xs:
-        return 10.sp;
+        return 10;
       case NBadgeSize.sm:
-        return 11.sp;
+        return 11;
       case NBadgeSize.md:
-        return 12.sp;
+        return 12;
       case NBadgeSize.lg:
-        return 13.sp;
+        return 13;
       case NBadgeSize.xl:
-        return 14.sp;
+        return 14;
     }
   }
 
   double _getIconSize() {
     switch (size) {
       case NBadgeSize.xs:
-        return 10.sp;
+        return 10;
       case NBadgeSize.sm:
-        return 12.sp;
+        return 12;
       case NBadgeSize.md:
-        return 14.sp;
+        return 14;
       case NBadgeSize.lg:
-        return 16.sp;
+        return 16;
       case NBadgeSize.xl:
-        return 18.sp;
+        return 18;
     }
   }
 
   EdgeInsetsGeometry _getPadding() {
     switch (size) {
       case NBadgeSize.xs:
-        return EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h);
+        return EdgeInsets.symmetric(horizontal: 6, vertical: 2);
       case NBadgeSize.sm:
-        return EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h);
+        return EdgeInsets.symmetric(horizontal: 8, vertical: 3);
       case NBadgeSize.md:
-        return EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h);
+        return EdgeInsets.symmetric(horizontal: 10, vertical: 4);
       case NBadgeSize.lg:
-        return EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h);
+        return EdgeInsets.symmetric(horizontal: 12, vertical: 5);
       case NBadgeSize.xl:
-        return EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h);
+        return EdgeInsets.symmetric(horizontal: 14, vertical: 6);
     }
   }
 }

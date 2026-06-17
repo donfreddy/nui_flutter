@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
 
@@ -44,7 +43,7 @@ class NToggle extends StatelessWidget {
           Row(
             children: [
               toggle,
-              SizedBox(width: 12.w),
+              SizedBox(width: 12),
               Expanded(
                 child: GestureDetector(
                   onTap: (disabled || loading)
@@ -53,7 +52,7 @@ class NToggle extends StatelessWidget {
                   child: Text(
                     label!,
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: disabled
                           ? NTokens.textDisabled(context)
@@ -65,13 +64,13 @@ class NToggle extends StatelessWidget {
             ],
           ),
           if (helperText != null) ...[
-            SizedBox(height: 6.h),
+            SizedBox(height: 6),
             Padding(
-              padding: EdgeInsets.only(left: _getWidth() + 12.w),
+              padding: EdgeInsets.only(left: _getWidth() + 12),
               child: Text(
                 helperText!,
                 style: TextStyle(
-                    fontSize: 12.sp, color: NTokens.textMuted(context)),
+                    fontSize: 12, color: NTokens.textMuted(context)),
               ),
             ),
           ],
@@ -113,7 +112,7 @@ class NToggle extends StatelessWidget {
             duration: const Duration(milliseconds: 200),
             alignment: value ? Alignment.centerRight : Alignment.centerLeft,
             child: Container(
-              margin: EdgeInsets.all(2.w),
+              margin: EdgeInsets.all(2),
               width: thumbSize,
               height: thumbSize,
               decoration: BoxDecoration(
@@ -156,45 +155,45 @@ class NToggle extends StatelessWidget {
   double _getWidth() {
     switch (size) {
       case NToggleSize.xs:
-        return 28.w;
+        return 28;
       case NToggleSize.sm:
-        return 36.w;
+        return 36;
       case NToggleSize.md:
-        return 44.w;
+        return 44;
       case NToggleSize.lg:
-        return 52.w;
+        return 52;
       case NToggleSize.xl:
-        return 60.w;
+        return 60;
     }
   }
 
   double _getHeight() {
     switch (size) {
       case NToggleSize.xs:
-        return 16.h;
+        return 16;
       case NToggleSize.sm:
-        return 20.h;
+        return 20;
       case NToggleSize.md:
-        return 24.h;
+        return 24;
       case NToggleSize.lg:
-        return 28.h;
+        return 28;
       case NToggleSize.xl:
-        return 32.h;
+        return 32;
     }
   }
 
   double _getThumbSize() {
     switch (size) {
       case NToggleSize.xs:
-        return 12.w;
+        return 12;
       case NToggleSize.sm:
-        return 16.w;
+        return 16;
       case NToggleSize.md:
-        return 20.w;
+        return 20;
       case NToggleSize.lg:
-        return 24.w;
+        return 24;
       case NToggleSize.xl:
-        return 28.w;
+        return 28;
     }
   }
 }

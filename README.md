@@ -15,7 +15,6 @@ Built on top of Flutter's `ThemeExtension` API for clean multi-brand support, fu
 - **Nuxt UI variant system** ported to Flutter: `solid`, `outline`, `soft`, `subtle`, `ghost`, `link`
 - **Lucide icons** built-in via `lucide_icons_flutter`
 - **Accessibility-first** with `Semantics` wrappers on all interactive components
-- **Responsive sizing** via `flutter_screenutil`
 
 ---
 
@@ -41,11 +40,10 @@ See the [`example/`](example) directory for a complete showcase app demonstratin
 
 ## Quick start
 
-### 1. Initialize ScreenUtil and wrap with NTheme
+### 1. Wrap your app with NTheme
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:nui_flutter/nui_flutter.dart';
 
 void main() {
@@ -57,15 +55,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(390, 844),
-      child: MaterialApp(
-        title: 'My App',
-        theme: NTheme.lightTheme(palette: _lightPalette),
-        darkTheme: NTheme.darkTheme(palette: _darkPalette),
-        themeMode: ThemeMode.system,
-        home: const HomeScreen(),
-      ),
+    return MaterialApp(
+      title: 'My App',
+      theme: NTheme.lightTheme(palette: _lightPalette),
+      darkTheme: NTheme.darkTheme(palette: _darkPalette),
+      themeMode: ThemeMode.system,
+      home: const HomeScreen(),
     );
   }
 }
@@ -402,7 +397,6 @@ NIconButton(icon: LucideIcons.trash2, color: NIconButtonColor.error, variant: NI
 
 | Package | Role |
 |---------|------|
-| [`flutter_screenutil`](https://pub.dev/packages/flutter_screenutil) | Responsive sizing (`.w`, `.h`, `.sp`) |
 | [`lucide_icons_flutter`](https://pub.dev/packages/lucide_icons_flutter) | Icon set (Lucide icon library) |
 
 ---

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_spacing.dart';
@@ -103,27 +102,27 @@ class NBottomSheet extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: NTokens.bgElevated(context),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showHandle)
             Padding(
-              padding: EdgeInsets.only(top: 8.h, bottom: 4.h),
+              padding: EdgeInsets.only(top: 8, bottom: 4),
               child: Container(
-                width: 36.w,
-                height: 4.h,
+                width: 36,
+                height: 4,
                 decoration: BoxDecoration(
                   color: NTokens.borderDefault(context),
-                  borderRadius: BorderRadius.circular(2.r),
+                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
           if (title != null || showCloseButton)
             Padding(
               padding: EdgeInsets.symmetric(
-                  horizontal: NSpacing.s4.w, vertical: NSpacing.s2.h),
+                  horizontal: NSpacing.s4, vertical: NSpacing.s2),
               child: Row(
                 children: [
                   Expanded(
@@ -135,17 +134,17 @@ class NBottomSheet extends StatelessWidget {
                           Text(
                             title!,
                             style: TextStyle(
-                              fontSize: 18.sp,
+                              fontSize: 18,
                               fontWeight: FontWeight.w600,
                               color: NTokens.textDefault(context),
                             ),
                           ),
                         if (subtitle != null) ...[
-                          SizedBox(height: 4.h),
+                          SizedBox(height: 4),
                           Text(
                             subtitle!,
                             style: TextStyle(
-                              fontSize: 13.sp,
+                              fontSize: 13,
                               color: NTokens.textMuted(context),
                             ),
                           ),
@@ -157,7 +156,7 @@ class NBottomSheet extends StatelessWidget {
                     GestureDetector(
                       onTap: () => Navigator.of(context).pop(),
                       child: Icon(LucideIcons.x,
-                          size: 20.sp, color: NTokens.textMuted(context)),
+                          size: 20, color: NTokens.textMuted(context)),
                     ),
                 ],
               ),
@@ -166,10 +165,10 @@ class NBottomSheet extends StatelessWidget {
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               padding: EdgeInsets.fromLTRB(
-                NSpacing.s4.w,
+                NSpacing.s4,
                 0,
-                NSpacing.s4.w,
-                NSpacing.s4.h,
+                NSpacing.s4,
+                NSpacing.s4,
               ),
               child: child!,
             ),
@@ -177,16 +176,16 @@ class NBottomSheet extends StatelessWidget {
           if (footer != null)
             Padding(
               padding: EdgeInsets.fromLTRB(
-                NSpacing.s4.w,
-                NSpacing.s2.h,
-                NSpacing.s4.w,
-                MediaQuery.of(context).padding.bottom + NSpacing.s4.h,
+                NSpacing.s4,
+                NSpacing.s2,
+                NSpacing.s4,
+                MediaQuery.of(context).padding.bottom + NSpacing.s4,
               ),
               child: footer,
             ),
           if (footer == null)
             SizedBox(
-                height: MediaQuery.of(context).padding.bottom + NSpacing.s2.h),
+                height: MediaQuery.of(context).padding.bottom + NSpacing.s2),
         ],
       ),
     );

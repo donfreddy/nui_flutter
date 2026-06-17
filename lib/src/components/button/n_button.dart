@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_spacing.dart';
@@ -297,8 +296,8 @@ class _NButtonState extends State<NButton> with SingleTickerProviderStateMixin {
     final fontSize = _getFontSize();
     final iconSize = _getIconSize();
     final defaultBorderRadius = widget.roundedFull
-        ? BorderRadius.circular(999.r)
-        : (widget.borderRadius ?? BorderRadius.circular(theme.radius.r));
+        ? BorderRadius.circular(999)
+        : (widget.borderRadius ?? BorderRadius.circular(theme.radius));
     final colors = _getColors(context);
     final loadingIcon = theme.loadingIcon;
 
@@ -319,7 +318,7 @@ class _NButtonState extends State<NButton> with SingleTickerProviderStateMixin {
           ),
         if ((widget.loading || widget.leading != null) &&
             (widget.label != null || widget.child != null))
-          SizedBox(width: NSpacing.s2.w),
+          SizedBox(width: NSpacing.s2),
         if (widget.label != null)
           Text(
             widget.label!,
@@ -342,7 +341,7 @@ class _NButtonState extends State<NButton> with SingleTickerProviderStateMixin {
             ),
           ),
         if (widget.trailing != null && !widget.loading) ...[
-          SizedBox(width: NSpacing.s2.w),
+          SizedBox(width: NSpacing.s2),
           IconTheme(
             data: IconThemeData(color: colors['foreground'], size: iconSize),
             child: widget.trailing!,
@@ -402,30 +401,30 @@ class _NButtonState extends State<NButton> with SingleTickerProviderStateMixin {
   EdgeInsetsGeometry _getPadding() {
     switch (widget.size) {
       case NButtonSize.xs:
-        return EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h);
+        return EdgeInsets.symmetric(horizontal: 12, vertical: 8);
       case NButtonSize.sm:
-        return EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h);
+        return EdgeInsets.symmetric(horizontal: 16, vertical: 10);
       case NButtonSize.md:
-        return EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h);
+        return EdgeInsets.symmetric(horizontal: 20, vertical: 12);
       case NButtonSize.lg:
-        return EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.h);
+        return EdgeInsets.symmetric(horizontal: 24, vertical: 14);
       case NButtonSize.xl:
-        return EdgeInsets.symmetric(horizontal: 28.w, vertical: 16.h);
+        return EdgeInsets.symmetric(horizontal: 28, vertical: 16);
     }
   }
 
   double _getFontSize() {
     switch (widget.size) {
       case NButtonSize.xs:
-        return 12.sp;
+        return 12;
       case NButtonSize.sm:
-        return 14.sp;
+        return 14;
       case NButtonSize.md:
-        return 16.sp;
+        return 16;
       case NButtonSize.lg:
-        return 18.sp;
+        return 18;
       case NButtonSize.xl:
-        return 20.sp;
+        return 20;
     }
   }
 
@@ -433,12 +432,12 @@ class _NButtonState extends State<NButton> with SingleTickerProviderStateMixin {
     switch (widget.size) {
       case NButtonSize.xs:
       case NButtonSize.sm:
-        return 16.sp;
+        return 16;
       case NButtonSize.md:
       case NButtonSize.lg:
-        return 20.sp;
+        return 20;
       case NButtonSize.xl:
-        return 24.sp;
+        return 24;
     }
   }
 

@@ -1,20 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nui_flutter/src/components/forms/n_input.dart';
 import 'package:nui_flutter/src/theme/n_color_palette.dart';
 import 'package:nui_flutter/src/theme/n_theme.dart';
-
-Future<void> _initScreenUtil(WidgetTester tester) async {
-  await tester.pumpWidget(
-    Builder(
-      builder: (context) {
-        ScreenUtil.init(context, designSize: const Size(390, 844), minTextAdapt: true);
-        return const SizedBox.shrink();
-      },
-    ),
-  );
-}
 
 void main() {
   final palette = NColorPalette.light(
@@ -26,7 +14,6 @@ void main() {
 
   testWidgets('NInput renders without NInputTheme registered',
       (tester) async {
-    await _initScreenUtil(tester);
     final theme = NTheme.lightTheme(palette: palette);
     await tester.pumpWidget(
       MaterialApp(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../theme/n_tokens.dart';
 
@@ -73,7 +72,7 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   /// The preferred height of the app bar (56 dp).
   @override
-  Size get preferredSize => Size.fromHeight(56.h);
+  Size get preferredSize => Size.fromHeight(56);
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +82,7 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: titleWidget ?? (title != null ? Text(title!) : null),
       titleTextStyle: TextStyle(
-        fontSize: 18.sp,
+        fontSize: 18,
         fontWeight: FontWeight.w600,
         color: fg,
       ),

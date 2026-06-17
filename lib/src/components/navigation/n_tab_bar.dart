@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../theme/n_tokens.dart';
 
 /// The visual style of an [NTabBar].
@@ -109,17 +108,17 @@ class NTabItem extends StatelessWidget {
         if (icon != null) ...[
           Icon(
             icon,
-            size: 16.sp,
+            size: 16,
             color: selected
                 ? NTokens.primary(context)
                 : NTokens.textMuted(context),
           ),
-          SizedBox(width: 6.w),
+          SizedBox(width: 6),
         ],
         Text(
           label,
           style: TextStyle(
-            fontSize: 14.sp,
+            fontSize: 14,
             fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
             color: selected
                 ? NTokens.primary(context)
@@ -127,19 +126,19 @@ class NTabItem extends StatelessWidget {
           ),
         ),
         if (count > 0) ...[
-          SizedBox(width: 6.w),
+          SizedBox(width: 6),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
               color: selected
                   ? NTokens.primary(context).withValues(alpha: 0.1)
                   : NTokens.bgMuted(context),
-              borderRadius: BorderRadius.circular(10.r),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
               '$count',
               style: TextStyle(
-                fontSize: 11.sp,
+                fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: selected
                     ? NTokens.primary(context)
@@ -204,13 +203,13 @@ class NTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tabHeight = switch (size) {
-      NTabBarSize.sm => 32.h,
-      NTabBarSize.md => 40.h,
-      NTabBarSize.lg => 48.h,
+      NTabBarSize.sm => 32.0,
+      NTabBarSize.md => 40.0,
+      NTabBarSize.lg => 48.0,
     };
 
     return Container(
-      height: tabHeight + 8.h,
+      height: tabHeight + 8,
       decoration: BoxDecoration(
         border: variant == NTabBarVariant.underline
             ? Border(
@@ -222,7 +221,7 @@ class NTabBar extends StatelessWidget {
           ? SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.symmetric(horizontal: 4.w),
+              padding: EdgeInsets.symmetric(horizontal: 4.0),
               child: _buildTabs(context, tabHeight),
             )
           : _buildTabs(context, tabHeight),
@@ -242,7 +241,7 @@ class NTabBar extends StatelessWidget {
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeInOut,
             height: tabHeight,
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            padding: EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
               border: variant == NTabBarVariant.underline
                   ? Border(

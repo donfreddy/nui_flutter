@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
@@ -416,30 +415,30 @@ class _NInputState extends State<NInput> {
   double _getFontSize() {
     switch (widget.size) {
       case NInputSize.xs:
-        return 12.sp;
+        return 12;
       case NInputSize.sm:
-        return 13.sp;
+        return 13;
       case NInputSize.md:
-        return 14.sp;
+        return 14;
       case NInputSize.lg:
-        return 15.sp;
+        return 15;
       case NInputSize.xl:
-        return 16.sp;
+        return 16;
     }
   }
 
   EdgeInsetsGeometry _getContentPadding() {
     switch (widget.size) {
       case NInputSize.xs:
-        return EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h);
+        return EdgeInsets.symmetric(horizontal: 10, vertical: 6);
       case NInputSize.sm:
-        return EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h);
+        return EdgeInsets.symmetric(horizontal: 12, vertical: 8);
       case NInputSize.md:
-        return EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h);
+        return EdgeInsets.symmetric(horizontal: 14, vertical: 10);
       case NInputSize.lg:
-        return EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h);
+        return EdgeInsets.symmetric(horizontal: 16, vertical: 12);
       case NInputSize.xl:
-        return EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h);
+        return EdgeInsets.symmetric(horizontal: 18, vertical: 14);
     }
   }
 
@@ -491,7 +490,7 @@ class _NInputState extends State<NInput> {
           Theme.of(context).extension<NInputTheme>() ?? const NInputTheme();
       return Icon(
         theme.loadingIcon ?? LucideIcons.loader,
-        size: 16.sp,
+        size: 16,
         color: NTokens.textMuted(context),
       );
     }
@@ -504,7 +503,7 @@ class _NInputState extends State<NInput> {
       children.add(
         Text(
           '${_controller.text.length}/${widget.maxLength}',
-          style: TextStyle(fontSize: 12.sp, color: NTokens.textMuted(context)),
+          style: TextStyle(fontSize: 12, color: NTokens.textMuted(context)),
         ),
       );
     }
@@ -513,7 +512,7 @@ class _NInputState extends State<NInput> {
         GestureDetector(
           onTap: _handleClear,
           child: Icon(LucideIcons.x,
-              size: 16.sp, color: NTokens.textMuted(context)),
+              size: 16, color: NTokens.textMuted(context)),
         ),
       );
     }
@@ -523,7 +522,7 @@ class _NInputState extends State<NInput> {
           onTap: () => setState(() => _obscureText = !_obscureText),
           child: Icon(
             _obscureText ? LucideIcons.eye : LucideIcons.eyeOff,
-            size: 18.sp,
+            size: 18,
             color: NTokens.textMuted(context),
           ),
         ),
@@ -534,7 +533,7 @@ class _NInputState extends State<NInput> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: children
-          .map((w) => Padding(padding: EdgeInsets.only(left: 8.w), child: w))
+          .map((w) => Padding(padding: EdgeInsets.only(left: 8), child: w))
           .toList(),
     );
   }
@@ -563,17 +562,17 @@ class _NInputState extends State<NInput> {
               Text(
                 widget.label!,
                 style: TextStyle(
-                    fontSize: 14.sp,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: NTokens.textDefault(context)),
               ),
               if (widget.required)
                 Text(' *',
                     style: TextStyle(
-                        fontSize: 14.sp, color: NTokens.error(context))),
+                        fontSize: 14, color: NTokens.error(context))),
             ],
           ),
-          SizedBox(height: 6.h),
+          SizedBox(height: 6),
         ],
         Semantics(
           textField: true,
@@ -607,11 +606,11 @@ class _NInputState extends State<NInput> {
                   fontSize: fontSize, color: NTokens.textMuted(context)),
               prefixIcon: leadingWidget != null
                   ? Padding(
-                      padding: EdgeInsets.only(left: 12.w, right: 8.w),
+                      padding: EdgeInsets.only(left: 12, right: 8),
                       child: leadingWidget)
                   : (widget.leadingText != null
                       ? Padding(
-                          padding: EdgeInsets.only(left: 14.w),
+                          padding: EdgeInsets.only(left: 14),
                           child: Text(
                             widget.leadingText!,
                             style: TextStyle(
@@ -624,11 +623,11 @@ class _NInputState extends State<NInput> {
                   const BoxConstraints(minWidth: 0, minHeight: 0),
               suffixIcon: trailingWidget != null
                   ? Padding(
-                      padding: EdgeInsets.only(right: 12.w, left: 8.w),
+                      padding: EdgeInsets.only(right: 12, left: 8),
                       child: trailingWidget)
                   : (widget.trailingText != null
                       ? Padding(
-                          padding: EdgeInsets.only(right: 14.w),
+                          padding: EdgeInsets.only(right: 14),
                           child: Text(
                             widget.trailingText!,
                             style: TextStyle(
@@ -675,11 +674,11 @@ class _NInputState extends State<NInput> {
           ),
         ),
         if (widget.helperText != null || hasError) ...[
-          SizedBox(height: 6.h),
+          SizedBox(height: 6),
           Text(
             hasError ? widget.errorText! : widget.helperText!,
             style: TextStyle(
-              fontSize: 12.sp,
+              fontSize: 12,
               color: hasError
                   ? NTokens.error(context)
                   : NTokens.textMuted(context),
