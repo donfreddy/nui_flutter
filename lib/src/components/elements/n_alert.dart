@@ -143,8 +143,7 @@ class NAlert extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (showIcon) ...[
-            Icon(icon ?? defaultIcon,
-                color: colors['icon'], size: 20),
+            Icon(icon ?? defaultIcon, color: colors['icon'], size: 20),
             const SizedBox(width: 12),
           ],
           Expanded(
@@ -200,8 +199,7 @@ class NAlert extends StatelessWidget {
     );
   }
 
-  NComponentColor get _componentColor =>
-      NComponentColor.values[color.index];
+  NComponentColor get _componentColor => NComponentColor.values[color.index];
 
   Map<String, Color> _getColors(BuildContext context) {
     final c = NComponentColors.resolve(context, _componentColor);

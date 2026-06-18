@@ -12,8 +12,7 @@ void main() {
     error: Colors.red,
   );
 
-  testWidgets('NInput renders without NInputTheme registered',
-      (tester) async {
+  testWidgets('NInput renders without NInputTheme registered', (tester) async {
     final theme = NTheme.lightTheme(palette: palette);
     await tester.pumpWidget(
       MaterialApp(

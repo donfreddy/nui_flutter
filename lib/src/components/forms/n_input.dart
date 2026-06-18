@@ -511,8 +511,8 @@ class _NInputState extends State<NInput> {
       children.add(
         GestureDetector(
           onTap: _handleClear,
-          child: Icon(LucideIcons.x,
-              size: 16, color: NTokens.textMuted(context)),
+          child:
+              Icon(LucideIcons.x, size: 16, color: NTokens.textMuted(context)),
         ),
       );
     }
@@ -533,7 +533,8 @@ class _NInputState extends State<NInput> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: children
-          .map((w) => Padding(padding: const EdgeInsets.only(left: 8), child: w))
+          .map(
+              (w) => Padding(padding: const EdgeInsets.only(left: 8), child: w))
           .toList(),
     );
   }
@@ -568,8 +569,8 @@ class _NInputState extends State<NInput> {
               ),
               if (widget.required)
                 Text(' *',
-                    style: TextStyle(
-                        fontSize: 14, color: NTokens.error(context))),
+                    style:
+                        TextStyle(fontSize: 14, color: NTokens.error(context))),
             ],
           ),
           const SizedBox(height: 6),

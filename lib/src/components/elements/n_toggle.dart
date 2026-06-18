@@ -144,8 +144,8 @@ class NToggle extends StatelessWidget {
               padding: EdgeInsets.only(left: _getWidth() + 12),
               child: Text(
                 helperText!,
-                style: TextStyle(
-                    fontSize: 12, color: NTokens.textMuted(context)),
+                style:
+                    TextStyle(fontSize: 12, color: NTokens.textMuted(context)),
               ),
             ),
           ],

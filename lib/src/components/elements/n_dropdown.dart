@@ -139,8 +139,7 @@ class NDropdownItem<T> {
 
   /// Creates a non-selectable group label row.
   factory NDropdownItem.label(String label) {
-    return NDropdownItem._internal(
-        label: label, type: NDropdownItemType.label);
+    return NDropdownItem._internal(label: label, type: NDropdownItemType.label);
   }
 }
 
@@ -480,8 +479,8 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
                       color: NTokens.textDefault(context))),
               if (widget.required)
                 Text(' *',
-                    style: TextStyle(
-                        fontSize: 14, color: NTokens.error(context))),
+                    style:
+                        TextStyle(fontSize: 14, color: NTokens.error(context))),
             ],
           ),
           const SizedBox(height: 6),
@@ -718,8 +717,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                       child: Row(
                         children: [
                           if (item.avatar != null) ...[
-                            SizedBox(
-                                width: 24, height: 24, child: item.avatar),
+                            SizedBox(width: 24, height: 24, child: item.avatar),
                             const SizedBox(width: 8),
                           ] else if (item.icon != null) ...[
                             Icon(item.icon,

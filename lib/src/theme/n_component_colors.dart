@@ -131,9 +131,11 @@ class NComponentColors {
       case NComponentColor.neutral:
         return NComponentColors(
           main: neutralMain?.call(context) ?? NTokens.textDefault(context),
-          foreground: neutralForeground?.call(context) ?? NTokens.bgDefault(context),
+          foreground:
+              neutralForeground?.call(context) ?? NTokens.bgDefault(context),
           softBg: neutralSoftBg?.call(context) ?? NTokens.bgMuted(context),
-          border: neutralBorder?.call(context) ?? NTokens.borderDefault(context),
+          border:
+              neutralBorder?.call(context) ?? NTokens.borderDefault(context),
           text: neutralText?.call(context) ?? NTokens.textDefault(context),
         );
     }

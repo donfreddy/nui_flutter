@@ -16,7 +16,8 @@ void main() {
   group('NTheme extension merge by type', () {
     testWidgets('app-supplied NButtonTheme overrides default', (tester) async {
       const custom = NButtonTheme(radius: 99.0);
-      final theme = NTheme.lightTheme(palette: testPalette, extensions: [custom]);
+      final theme =
+          NTheme.lightTheme(palette: testPalette, extensions: [custom]);
       final result = theme.extension<NButtonTheme>();
       expect(result, isNotNull);
       expect(result!.radius, equals(99.0));
@@ -24,7 +25,8 @@ void main() {
 
     testWidgets('app-supplied NInputTheme overrides default', (tester) async {
       const custom = NInputTheme(radius: 42.0);
-      final theme = NTheme.lightTheme(palette: testPalette, extensions: [custom]);
+      final theme =
+          NTheme.lightTheme(palette: testPalette, extensions: [custom]);
       final result = theme.extension<NInputTheme>();
       expect(result, isNotNull);
       expect(result!.radius, equals(42.0));

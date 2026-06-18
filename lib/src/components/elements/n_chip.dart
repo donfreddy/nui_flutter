@@ -119,8 +119,7 @@ class NChip extends StatelessWidget {
           padding: _getPadding(),
           decoration: BoxDecoration(
             color: colors['background'],
-            borderRadius:
-                BorderRadius.circular(size == NChipSize.sm ? 16 : 20),
+            borderRadius: BorderRadius.circular(size == NChipSize.sm ? 16 : 20),
             border: Border.all(color: colors['border']!, width: 1),
           ),
           child: Row(
@@ -188,8 +187,7 @@ class NChip extends StatelessWidget {
     }
   }
 
-  NComponentColor get _componentColor =>
-      NComponentColor.values[color.index];
+  NComponentColor get _componentColor => NComponentColor.values[color.index];
 
   Map<String, Color> _getColors(BuildContext context) {
     final c = NComponentColors.resolve(context, _componentColor);

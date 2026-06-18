@@ -204,8 +204,7 @@ class NIconButton extends StatelessWidget {
     return button;
   }
 
-  NComponentColor get _componentColor =>
-      NComponentColor.values[color.index];
+  NComponentColor get _componentColor => NComponentColor.values[color.index];
 
   Map<String, Color?> _getColors(BuildContext context) {
     final c = NComponentColors.resolve(context, _componentColor,

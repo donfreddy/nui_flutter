@@ -17,7 +17,9 @@ double _linearize(double channel) {
 }
 
 Color _readableOn(Color bg) {
-  return _relativeLuminance(bg) > 0.179 ? const Color(0xFF18181B) : Colors.white;
+  return _relativeLuminance(bg) > 0.179
+      ? const Color(0xFF18181B)
+      : Colors.white;
 }
 
 /// Builds a Material 3 [ColorScheme] derived from the provided [NColorPalette].
@@ -34,9 +36,8 @@ ColorScheme buildColorScheme(NColorPalette palette, Brightness brightness) {
     secondary: palette.secondary,
     onSecondary: _readableOn(palette.secondary),
     tertiary: palette.info,
-    surface: brightness == Brightness.light
-        ? palette.bgDefault
-        : palette.bgElevated,
+    surface:
+        brightness == Brightness.light ? palette.bgDefault : palette.bgElevated,
     onSurface: palette.textDefault,
     error: palette.error,
     onError: _readableOn(palette.error),

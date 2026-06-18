@@ -30,7 +30,8 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: theme,
-        home: Scaffold(body: NButton(label: 'Press', onPressed: () => pressed = true)),
+        home: Scaffold(
+            body: NButton(label: 'Press', onPressed: () => pressed = true)),
       ),
     );
     await tester.tap(find.text('Press'));

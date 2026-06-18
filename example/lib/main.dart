@@ -238,8 +238,7 @@ class _InputsDemo extends StatelessWidget {
       children: [
         NInput(label: 'Email', placeholder: 'you@example.com'),
         SizedBox(height: 12),
-        NInput(label: 'Password',
-            obscureText: true, passwordToggle: true),
+        NInput(label: 'Password', obscureText: true, passwordToggle: true),
         SizedBox(height: 12),
         NInput.amount(label: 'Amount', trailingText: 'FCFA'),
         SizedBox(height: 12),
@@ -263,7 +262,8 @@ class _InputsDemo extends StatelessWidget {
           loading: true,
         ),
         SizedBox(height: 12),
-        _variantLabelForInput('variants (outline · soft · subtle · ghost · none)'),
+        _variantLabelForInput(
+            'variants (outline · soft · subtle · ghost · none)'),
         NInput(label: 'Outline', variant: NInputVariant.outline),
         SizedBox(height: 8),
         NInput(label: 'Soft', variant: NInputVariant.soft),
@@ -295,7 +295,8 @@ class _CardsDemo extends StatelessWidget {
     return Column(
       children: [
         NCard(
-          header: NCardHeader(title: 'Default Card', subtitle: 'Outline variant'),
+          header:
+              NCardHeader(title: 'Default Card', subtitle: 'Outline variant'),
           child: Text('This is the default card with header and body.'),
         ),
         SizedBox(height: 12),
@@ -306,7 +307,9 @@ class _CardsDemo extends StatelessWidget {
         SizedBox(height: 12),
         NCard.subtle(
           color: NCardColor.success,
-          header: NCardHeader(title: 'Success', leading: Icon(Icons.check_circle, color: Colors.green)),
+          header: NCardHeader(
+              title: 'Success',
+              leading: Icon(Icons.check_circle, color: Colors.green)),
           child: Text('Everything looks good!'),
         ),
         SizedBox(height: 12),
@@ -332,21 +335,37 @@ class _AlertsDemo extends StatelessWidget {
       children: [
         NAlert(title: 'Info', description: 'This is an informational message.'),
         SizedBox(height: 8),
-        NAlert(title: 'Success', description: 'Operation completed successfully.',
+        NAlert(
+            title: 'Success',
+            description: 'Operation completed successfully.',
             color: NAlertColor.success),
         SizedBox(height: 8),
-        NAlert(title: 'Warning', description: 'Please check your input.',
+        NAlert(
+            title: 'Warning',
+            description: 'Please check your input.',
             color: NAlertColor.warning),
         SizedBox(height: 8),
-        NAlert(title: 'Error', description: 'Something went wrong.',
-            color: NAlertColor.error, closable: true),
+        NAlert(
+            title: 'Error',
+            description: 'Something went wrong.',
+            color: NAlertColor.error,
+            closable: true),
         SizedBox(height: 8),
         _variantLabelForAlert('variants'),
-        NAlert(title: 'Outline', color: NAlertColor.primary, variant: NAlertVariant.outline),
+        NAlert(
+            title: 'Outline',
+            color: NAlertColor.primary,
+            variant: NAlertVariant.outline),
         SizedBox(height: 8),
-        NAlert(title: 'Soft', color: NAlertColor.secondary, variant: NAlertVariant.soft),
+        NAlert(
+            title: 'Soft',
+            color: NAlertColor.secondary,
+            variant: NAlertVariant.soft),
         SizedBox(height: 8),
-        NAlert(title: 'Subtle', color: NAlertColor.info, variant: NAlertVariant.subtle),
+        NAlert(
+            title: 'Subtle',
+            color: NAlertColor.info,
+            variant: NAlertVariant.subtle),
       ],
     );
   }
@@ -422,9 +441,12 @@ class _ChipsDemoState extends State<_ChipsDemo> {
   Widget build(BuildContext context) {
     return Wrap(spacing: 8, runSpacing: 8, children: [
       NChip(label: 'Chip', onTap: () {}),
-      NChip(label: 'Selected', selected: _selected, onTap: () {
-        setState(() => _selected = !_selected);
-      }),
+      NChip(
+          label: 'Selected',
+          selected: _selected,
+          onTap: () {
+            setState(() => _selected = !_selected);
+          }),
       NChip(label: 'Leading', leading: Icon(LucideIcons.filter, size: 14)),
       NChip(label: 'Soft', variant: NChipVariant.soft),
       NChip(label: 'Outline', variant: NChipVariant.outline),
@@ -447,7 +469,9 @@ class _TogglesDemoState extends State<_TogglesDemo> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        NToggle(value: _value, onChanged: (v) => setState(() => _value = v),
+        NToggle(
+            value: _value,
+            onChanged: (v) => setState(() => _value = v),
             label: 'Enable notifications'),
         SizedBox(height: 8),
         NToggle(value: true, disabled: true, label: 'Disabled'),
@@ -473,9 +497,12 @@ class _DropdownsDemoState extends State<_DropdownsDemo> {
   @override
   Widget build(BuildContext context) {
     final List<NDropdownItem<String>> items = [
-      const NDropdownItem(value: 'cm', label: 'Cameroon', icon: LucideIcons.mapPin),
-      const NDropdownItem(value: 'ng', label: 'Nigeria', icon: LucideIcons.mapPin),
-      const NDropdownItem(value: 'fr', label: 'France', icon: LucideIcons.mapPin),
+      const NDropdownItem(
+          value: 'cm', label: 'Cameroon', icon: LucideIcons.mapPin),
+      const NDropdownItem(
+          value: 'ng', label: 'Nigeria', icon: LucideIcons.mapPin),
+      const NDropdownItem(
+          value: 'fr', label: 'France', icon: LucideIcons.mapPin),
       NDropdownItem<String>.separator(),
       const NDropdownItem(value: 'other', label: 'Other'),
     ];
@@ -565,23 +592,47 @@ class _IconButtonsDemo extends StatelessWidget {
         _variantLabelForIconBtn('variants'),
         Wrap(spacing: 8, runSpacing: 8, children: [
           NIconButton(icon: LucideIcons.bell, onPressed: () {}),
-          NIconButton(icon: LucideIcons.bell, variant: NIconButtonVariant.solid, onPressed: () {}),
-          NIconButton(icon: LucideIcons.bell, variant: NIconButtonVariant.outline, onPressed: () {}),
-          NIconButton(icon: LucideIcons.bell, variant: NIconButtonVariant.ghost, onPressed: () {}),
+          NIconButton(
+              icon: LucideIcons.bell,
+              variant: NIconButtonVariant.solid,
+              onPressed: () {}),
+          NIconButton(
+              icon: LucideIcons.bell,
+              variant: NIconButtonVariant.outline,
+              onPressed: () {}),
+          NIconButton(
+              icon: LucideIcons.bell,
+              variant: NIconButtonVariant.ghost,
+              onPressed: () {}),
         ]),
         SizedBox(height: 12),
         _variantLabelForIconBtn('colors'),
         Wrap(spacing: 8, runSpacing: 8, children: [
-          NIconButton(icon: LucideIcons.heart, color: NIconButtonColor.primary, onPressed: () {}),
-          NIconButton(icon: LucideIcons.heart, color: NIconButtonColor.success, onPressed: () {}),
-          NIconButton(icon: LucideIcons.heart, color: NIconButtonColor.warning, onPressed: () {}),
-          NIconButton(icon: LucideIcons.heart, color: NIconButtonColor.error, onPressed: () {}),
+          NIconButton(
+              icon: LucideIcons.heart,
+              color: NIconButtonColor.primary,
+              onPressed: () {}),
+          NIconButton(
+              icon: LucideIcons.heart,
+              color: NIconButtonColor.success,
+              onPressed: () {}),
+          NIconButton(
+              icon: LucideIcons.heart,
+              color: NIconButtonColor.warning,
+              onPressed: () {}),
+          NIconButton(
+              icon: LucideIcons.heart,
+              color: NIconButtonColor.error,
+              onPressed: () {}),
         ]),
         SizedBox(height: 12),
         _variantLabelForIconBtn('sizes'),
         Wrap(spacing: 8, runSpacing: 8, children: [
           NIconButton.sm(icon: LucideIcons.settings, onPressed: () {}),
-          NIconButton(icon: LucideIcons.settings, size: NIconButtonSize.md, onPressed: () {}),
+          NIconButton(
+              icon: LucideIcons.settings,
+              size: NIconButtonSize.md,
+              onPressed: () {}),
           NIconButton.lg(icon: LucideIcons.settings, onPressed: () {}),
         ]),
       ],
@@ -627,9 +678,18 @@ class _BottomSheetDemo extends StatelessWidget {
             title: 'Choose an action',
             child: Column(
               children: [
-                ListTile(leading: Icon(LucideIcons.camera), title: Text('Camera'), onTap: () => Navigator.pop(context)),
-                ListTile(leading: Icon(LucideIcons.image), title: Text('Gallery'), onTap: () => Navigator.pop(context)),
-                ListTile(leading: Icon(LucideIcons.file), title: Text('Document'), onTap: () => Navigator.pop(context)),
+                ListTile(
+                    leading: Icon(LucideIcons.camera),
+                    title: Text('Camera'),
+                    onTap: () => Navigator.pop(context)),
+                ListTile(
+                    leading: Icon(LucideIcons.image),
+                    title: Text('Gallery'),
+                    onTap: () => Navigator.pop(context)),
+                ListTile(
+                    leading: Icon(LucideIcons.file),
+                    title: Text('Document'),
+                    onTap: () => Navigator.pop(context)),
               ],
             ),
           );

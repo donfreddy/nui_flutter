@@ -29,7 +29,8 @@ class NCardTheme extends ThemeExtension<NCardTheme> {
   const NCardTheme({this.borderRadius, this.padding});
 
   @override
-  NCardTheme copyWith({BorderRadius? borderRadius, EdgeInsetsGeometry? padding}) {
+  NCardTheme copyWith(
+      {BorderRadius? borderRadius, EdgeInsetsGeometry? padding}) {
     return NCardTheme(
       borderRadius: borderRadius ?? this.borderRadius,
       padding: padding ?? this.padding,

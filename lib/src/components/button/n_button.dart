@@ -401,15 +401,15 @@ class _NButtonState extends State<NButton> with SingleTickerProviderStateMixin {
   EdgeInsetsGeometry _getPadding() {
     switch (widget.size) {
       case NButtonSize.xs:
-        return EdgeInsets.symmetric(horizontal: 12, vertical: 8);
+        return const EdgeInsets.symmetric(horizontal: 12, vertical: 8);
       case NButtonSize.sm:
-        return EdgeInsets.symmetric(horizontal: 16, vertical: 10);
+        return const EdgeInsets.symmetric(horizontal: 16, vertical: 10);
       case NButtonSize.md:
-        return EdgeInsets.symmetric(horizontal: 20, vertical: 12);
+        return const EdgeInsets.symmetric(horizontal: 20, vertical: 12);
       case NButtonSize.lg:
-        return EdgeInsets.symmetric(horizontal: 24, vertical: 14);
+        return const EdgeInsets.symmetric(horizontal: 24, vertical: 14);
       case NButtonSize.xl:
-        return EdgeInsets.symmetric(horizontal: 28, vertical: 16);
+        return const EdgeInsets.symmetric(horizontal: 28, vertical: 16);
     }
   }
 
@@ -452,11 +452,7 @@ class _NButtonState extends State<NButton> with SingleTickerProviderStateMixin {
 
     switch (widget.variant) {
       case NButtonVariant.solid:
-        return {
-          'background': c.main,
-          'foreground': neutralFg,
-          'border': null
-        };
+        return {'background': c.main, 'foreground': neutralFg, 'border': null};
       case NButtonVariant.outline:
         return {
           'background': Colors.transparent,
@@ -464,11 +460,7 @@ class _NButtonState extends State<NButton> with SingleTickerProviderStateMixin {
           'border': NTokens.borderDefault(context)
         };
       case NButtonVariant.soft:
-        return {
-          'background': c.softBg,
-          'foreground': c.main,
-          'border': null
-        };
+        return {'background': c.softBg, 'foreground': c.main, 'border': null};
       case NButtonVariant.subtle:
         return {
           'background': c.softBg,
