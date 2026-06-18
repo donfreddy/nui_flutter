@@ -416,15 +416,18 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
         return widget.placeholder ?? '';
       }
       return widget.items
-          .where((i) => widget.values!.contains(i.value))
+          .where((i) =>
+              i.type == NDropdownItemType.item &&
+              widget.values!.contains(i.value))
           .map((i) => i.label)
           .join(', ');
     }
     if (widget.value == null) return widget.placeholder ?? '';
-    return widget.items
-        .firstWhere((i) => i.value == widget.value,
-            orElse: () => NDropdownItem(value: '' as T, label: ''))
-        .label;
+    final match = widget.items.cast<NDropdownItem<T>?>().firstWhere(
+          (i) => i!.type == NDropdownItemType.item && i.value == widget.value,
+          orElse: () => null,
+        );
+    return match?.label ?? widget.placeholder ?? '';
   }
 
   Widget? _getLeadingWidget() {
@@ -443,12 +446,13 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
           size: 18, color: NTokens.textMuted(context));
     }
     if (!widget.multiple && widget.value != null) {
-      final selectedItem = widget.items.firstWhere(
-          (i) => i.value == widget.value,
-          orElse: () => NDropdownItem(value: '' as T, label: ''));
-      if (selectedItem.avatar != null) return selectedItem.avatar;
-      if (selectedItem.icon != null) {
-        return Icon(selectedItem.icon,
+      final selectedItem = widget.items.cast<NDropdownItem<T>?>().firstWhere(
+            (i) => i!.type == NDropdownItemType.item && i.value == widget.value,
+            orElse: () => null,
+          );
+      if (selectedItem?.avatar != null) return selectedItem!.avatar;
+      if (selectedItem?.icon != null) {
+        return Icon(selectedItem!.icon,
             size: 18, color: NTokens.textMuted(context));
       }
     }

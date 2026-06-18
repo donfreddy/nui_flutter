@@ -81,15 +81,12 @@ abstract class NSpacing {
   // SizedBox helpers
   // ---------------------------------------------------------------------------
 
-  /// Returns a [SizedBox] with height equal to [value] scaled by
-  /// [flutter_screenutil]'s height factor.
+  /// Returns a [SizedBox] with the given [value] as its height.
   static Widget vertical(double value) => SizedBox(height: value);
 
-  /// Returns a [SizedBox] with width equal to [value] scaled by
-  /// [flutter_screenutil]'s width factor.
+  /// Returns a [SizedBox] with the given [value] as its width.
   static Widget horizontal(double value) => SizedBox(width: value);
 
-  /// Returns a square [SizedBox] with both dimensions equal to [value] scaled
-  /// by [flutter_screenutil]'s diagonal factor.
+  /// Returns a square [SizedBox] with both dimensions equal to [value].
   static Widget square(double value) => SizedBox.square(dimension: value);
 }

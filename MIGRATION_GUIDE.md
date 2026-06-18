@@ -346,7 +346,7 @@ NInput.otp(...)
 
 ### Removed parameters
 
-- `leadingText` / `trailingText` — only available on NInput's named constructors. The base NInput does not support raw text as leading/trailing; use `leading`/`trailing` widgets instead.
+- `leadingText` / `trailingText` — available on the base `NInput` constructor as well as the named constructors (`.amount`, `.phone`, `.otp`). Use `leading`/`trailing` widget parameters if you need a fully custom leading/trailing element.
 
 ### Find-and-replace
 
@@ -411,9 +411,9 @@ dart run build_runner build --delete-conflicting-outputs
 
 1. **Missing context parameter**: `FamsubTokens.primary()` took a `context` argument and `NTokens.primary()` does too — same API, should be fine.
 
-2. **`FamsubTextScale` vs `NTextScale`**: Both exist and have the same API. Keep the app's version for now; `nui_flutter`'s `NTextScale` is available but not required.
+2. **`FamsubTextScale` vs `NTextScale`**: `NTextScale` is `@Deprecated` — use `NTheme.lightTheme(textScale: 1.15)` / `NTheme.darkTheme(textScale: 1.15)` instead. The class is kept only for backward compatibility during migration.
 
-3. **`width8`, `height8` constants**: `famsub_button.dart` used shorthand constants like `width8`. `NButton` uses `NSpacing.s2.w` instead. If you used `FamsubButton` directly, the replacement is seamless. If you copied the pattern elsewhere, switch to `NSpacing`.
+3. **`width8`, `height8` constants**: `famsub_button.dart` used shorthand constants like `width8`. `NButton` uses `NSpacing.s2` instead. If you used `FamsubButton` directly, the replacement is seamless. If you copied the pattern elsewhere, switch to `NSpacing`.
 
 4. **Import path changes**: After deleting obsolete files, remove their import statements. The `nui_flutter` barrel (`package:nui_flutter/nui_flutter.dart`) exports everything needed.
 
