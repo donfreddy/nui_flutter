@@ -7,26 +7,51 @@ import 'n_tokens.dart';
 /// foreground). Components that need a custom neutral mapping can override
 /// via [NComponentColors.resolve] optional parameters.
 enum NComponentColor {
+  /// Maps to [NTokens.primary] and the related primary tint tokens.
   primary,
+
+  /// Maps to [NTokens.secondary] and the related secondary tint tokens.
   secondary,
+
+  /// Maps to [NTokens.success] and the related success tint tokens.
   success,
+
+  /// Maps to [NTokens.info] and the related info tint tokens.
   info,
+
+  /// Maps to [NTokens.warning] and the related warning tint tokens.
   warning,
+
+  /// Maps to [NTokens.error] and the related error tint tokens.
   error,
+
+  /// Maps to neutral surface tokens. Defaults can be overridden via the
+  /// optional parameters on [NComponentColors.resolve].
   neutral,
 }
 
 /// Resolved color values for a given [NComponentColor] role.
 ///
-/// Returned by [resolveComponentColors] and consumed by each component's
+/// Returned by [NComponentColors.resolve] and consumed by each component's
 /// variant switch inside its `_getColors` method.
 class NComponentColors {
+  /// The main (saturated) color for the role, used for backgrounds and borders
+  /// in solid/filled variants.
   final Color main;
+
+  /// The foreground color to render on top of [main] (typically white or dark).
   final Color foreground;
+
+  /// A lightly tinted surface color derived from [main] for soft/subtle variants.
   final Color softBg;
+
+  /// A tinted border color derived from [main].
   final Color border;
+
+  /// Text color suitable for use on [softBg] surfaces.
   final Color text;
 
+  /// Creates a fully resolved [NComponentColors] bundle.
   const NComponentColors({
     required this.main,
     required this.foreground,
@@ -35,6 +60,16 @@ class NComponentColors {
     required this.text,
   });
 
+  /// Resolves the full set of colors for [color] from the nearest [BuildContext].
+  ///
+  /// Optional parameters let the caller override the neutral role's individual
+  /// tokens without affecting any of the semantic roles:
+  ///
+  /// * [neutralMain] overrides the color used for the neutral `main` slot.
+  /// * [neutralForeground] overrides the color for the neutral foreground.
+  /// * [neutralSoftBg] overrides the color for the neutral soft background.
+  /// * [neutralBorder] overrides the color for the neutral border.
+  /// * [neutralText] overrides the color for the neutral text.
   factory NComponentColors.resolve(
     BuildContext context,
     NComponentColor color, {
@@ -104,7 +139,7 @@ class NComponentColors {
     }
   }
 
-  /// Shorthand for non-neutral resolve without optional params.
+  /// Shorthand for [NComponentColors.resolve] when no neutral overrides are needed.
   factory NComponentColors.resolveSimple(
     BuildContext context,
     NComponentColor color,

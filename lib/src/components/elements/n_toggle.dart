@@ -2,22 +2,97 @@ import 'package:flutter/material.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
 
-enum NToggleColor { primary, secondary, success, info, warning, error, neutral }
+/// The semantic color role applied to an [NToggle] in the on state.
+enum NToggleColor {
+  /// Uses the primary brand color.
+  primary,
 
-enum NToggleSize { xs, sm, md, lg, xl }
+  /// Uses the secondary accent color.
+  secondary,
 
+  /// Uses the success color.
+  success,
+
+  /// Uses the informational color.
+  info,
+
+  /// Uses the warning color.
+  warning,
+
+  /// Uses the error color.
+  error,
+
+  /// Uses a neutral color.
+  neutral,
+}
+
+/// The size of an [NToggle], controlling its width, height, and thumb diameter.
+enum NToggleSize {
+  /// Extra small (28 x 16 dp).
+  xs,
+
+  /// Small (36 x 20 dp).
+  sm,
+
+  /// Medium (44 x 24 dp). The default size.
+  md,
+
+  /// Large (52 x 28 dp).
+  lg,
+
+  /// Extra large (60 x 32 dp).
+  xl,
+}
+
+/// An animated on/off toggle switch.
+///
+/// Supports five [NToggleSize] options and seven [NToggleColor] semantic roles.
+/// An optional [label] and [helperText] can be displayed beside the switch.
+/// While [loading] is `true`, a spinner replaces the thumb icon.
+///
+/// ```dart
+/// NToggle(
+///   value: _isEnabled,
+///   onChanged: (v) => setState(() => _isEnabled = v),
+///   label: 'Enable notifications',
+///   color: NToggleColor.primary,
+/// )
+/// ```
 class NToggle extends StatelessWidget {
+  /// The current state of the toggle. `true` means on.
   final bool value;
+
+  /// Called with the new value when the user taps the toggle.
+  /// Set to `null` to make the toggle non-interactive.
   final ValueChanged<bool>? onChanged;
+
+  /// The semantic color role used for the active (on) background.
+  /// Defaults to [NToggleColor.primary].
   final NToggleColor color;
+
+  /// The size of the toggle. Defaults to [NToggleSize.md].
   final NToggleSize size;
+
+  /// When `true`, reduces opacity and blocks interaction.
   final bool disabled;
+
+  /// When `true`, shows a circular progress indicator inside the thumb
+  /// and blocks interaction.
   final bool loading;
+
+  /// A custom icon displayed inside the thumb when the toggle is on.
   final Widget? checkedIcon;
+
+  /// A custom icon displayed inside the thumb when the toggle is off.
   final Widget? uncheckedIcon;
+
+  /// An optional label rendered to the right of the toggle.
   final String? label;
+
+  /// Helper text shown below the [label].
   final String? helperText;
 
+  /// Creates an [NToggle].
   const NToggle({
     super.key,
     required this.value,
@@ -43,7 +118,7 @@ class NToggle extends StatelessWidget {
           Row(
             children: [
               toggle,
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: GestureDetector(
                   onTap: (disabled || loading)
@@ -64,7 +139,7 @@ class NToggle extends StatelessWidget {
             ],
           ),
           if (helperText != null) ...[
-            SizedBox(height: 6),
+            const SizedBox(height: 6),
             Padding(
               padding: EdgeInsets.only(left: _getWidth() + 12),
               child: Text(
@@ -112,7 +187,7 @@ class NToggle extends StatelessWidget {
             duration: const Duration(milliseconds: 200),
             alignment: value ? Alignment.centerRight : Alignment.centerLeft,
             child: Container(
-              margin: EdgeInsets.all(2),
+              margin: const EdgeInsets.all(2),
               width: thumbSize,
               height: thumbSize,
               decoration: BoxDecoration(

@@ -102,14 +102,14 @@ class NBottomSheet extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: NTokens.bgElevated(context),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showHandle)
             Padding(
-              padding: EdgeInsets.only(top: 8, bottom: 4),
+              padding: const EdgeInsets.only(top: 8, bottom: 4),
               child: Container(
                 width: 36,
                 height: 4,
@@ -140,7 +140,7 @@ class NBottomSheet extends StatelessWidget {
                             ),
                           ),
                         if (subtitle != null) ...[
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             subtitle!,
                             style: TextStyle(

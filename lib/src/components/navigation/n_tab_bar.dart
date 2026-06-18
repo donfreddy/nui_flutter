@@ -113,7 +113,7 @@ class NTabItem extends StatelessWidget {
                 ? NTokens.primary(context)
                 : NTokens.textMuted(context),
           ),
-          SizedBox(width: 6),
+          const SizedBox(width: 6),
         ],
         Text(
           label,
@@ -126,9 +126,9 @@ class NTabItem extends StatelessWidget {
           ),
         ),
         if (count > 0) ...[
-          SizedBox(width: 6),
+          const SizedBox(width: 6),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
               color: selected
                   ? NTokens.primary(context).withValues(alpha: 0.1)
@@ -221,7 +221,7 @@ class NTabBar extends StatelessWidget {
           ? SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.symmetric(horizontal: 4.0),
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: _buildTabs(context, tabHeight),
             )
           : _buildTabs(context, tabHeight),
@@ -241,7 +241,7 @@ class NTabBar extends StatelessWidget {
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeInOut,
             height: tabHeight,
-            padding: EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
               border: variant == NTabBarVariant.underline
                   ? Border(

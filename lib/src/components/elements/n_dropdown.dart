@@ -2,22 +2,80 @@ import 'package:flutter/material.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
 
-enum NDropdownSize { sm, md, lg }
+/// The size of an [NDropdown], affecting padding and font size.
+enum NDropdownSize {
+  /// Small.
+  sm,
 
-enum NDropdownVariant { outline, soft, subtle, ghost, none }
+  /// Medium. The default size.
+  md,
 
-enum NDropdownItemType { item, label, separator }
-
-enum NDropdownColor {
-  primary,
-  secondary,
-  success,
-  info,
-  warning,
-  error,
-  neutral
+  /// Large.
+  lg,
 }
 
+/// The visual style of an [NDropdown].
+enum NDropdownVariant {
+  /// White background with a full border.
+  outline,
+
+  /// Lightly filled background without a border.
+  soft,
+
+  /// White background with a muted border.
+  subtle,
+
+  /// Transparent background with no border.
+  ghost,
+
+  /// No background, no border, and no decoration.
+  none,
+}
+
+/// The row type of an entry in an [NDropdown]'s item list.
+enum NDropdownItemType {
+  /// A selectable value row.
+  item,
+
+  /// A non-selectable section header label.
+  label,
+
+  /// A horizontal rule separating item groups.
+  separator,
+}
+
+/// The semantic color role applied to the focused border of an [NDropdown].
+enum NDropdownColor {
+  /// Uses the primary brand color.
+  primary,
+
+  /// Uses the secondary accent color.
+  secondary,
+
+  /// Uses the success color.
+  success,
+
+  /// Uses the informational color.
+  info,
+
+  /// Uses the warning color.
+  warning,
+
+  /// Uses the error color.
+  error,
+
+  /// Uses a neutral color.
+  neutral,
+}
+
+/// A single entry in the list rendered by an [NDropdown].
+///
+/// Three special factory constructors simplify creating separators and labels:
+/// ```dart
+/// NDropdownItem.separator()
+/// NDropdownItem.label('Group A')
+/// NDropdownItem(value: 'usd', label: 'US Dollar')
+/// ```
 class NDropdownItem<T> {
   final T? _value;
 
@@ -30,14 +88,28 @@ class NDropdownItem<T> {
     throw StateError('Separator or label items do not have a value.');
   }
 
+  /// The text displayed in the menu row.
   final String label;
+
+  /// The type of this entry. Defaults to [NDropdownItemType.item].
   final NDropdownItemType type;
+
+  /// An optional icon shown to the left of [label].
   final IconData? icon;
+
+  /// An optional avatar widget shown to the left of [label].
   final Widget? avatar;
+
+  /// An optional widget shown at the trailing edge of the row.
   final Widget? trailing;
+
+  /// When `true`, this item cannot be selected.
   final bool disabled;
+
+  /// An optional secondary description shown below [label].
   final String? description;
 
+  /// Creates a selectable [NDropdownItem] with the given [value] and [label].
   const NDropdownItem({
     required T value,
     required this.label,
@@ -59,39 +131,103 @@ class NDropdownItem<T> {
     this.description,
   }) : _value = null;
 
+  /// Creates a horizontal separator row.
   factory NDropdownItem.separator() {
     return const NDropdownItem._internal(
         label: '', type: NDropdownItemType.separator);
   }
 
+  /// Creates a non-selectable group label row.
   factory NDropdownItem.label(String label) {
     return NDropdownItem._internal(
         label: label, type: NDropdownItemType.label);
   }
 }
 
+/// A styled select / dropdown form field.
+///
+/// Wraps a tap-triggered overlay menu that shows a list of [NDropdownItem]
+/// values. Supports single and multiple selection, optional search, clearable
+/// values, loading state, and validation error display.
+///
+/// ```dart
+/// NDropdown<String>(
+///   label: 'Currency',
+///   placeholder: 'Select a currency',
+///   items: [
+///     NDropdownItem(value: 'xaf', label: 'FCFA'),
+///     NDropdownItem(value: 'usd', label: 'USD'),
+///   ],
+///   value: _currency,
+///   onChanged: (v) => setState(() => _currency = v),
+/// )
+/// ```
 class NDropdown<T> extends StatefulWidget {
+  /// An optional label displayed above the field.
   final String? label;
+
+  /// Placeholder text shown when no value is selected.
   final String? placeholder;
+
+  /// Helper text shown below the field in a muted style.
   final String? helperText;
+
+  /// Error message shown below the field in red.
+  ///
+  /// When non-null and non-empty, it overrides [helperText] and changes the
+  /// focus border color to the error token.
   final String? errorText;
+
+  /// The list of selectable items.
   final List<NDropdownItem<T>> items;
+
+  /// The currently selected value (single-select mode).
   final T? value;
+
+  /// The currently selected values (multi-select mode). Use alongside [onChangedMultiple].
   final List<T>? values;
+
+  /// Called when the selected value changes in single-select mode.
   final ValueChanged<T?>? onChanged;
+
+  /// Called when the selected values change in multi-select mode.
   final ValueChanged<List<T>>? onChangedMultiple;
+
+  /// When `true`, adds a red asterisk after [label] to mark the field as required.
   final bool required;
+
+  /// When `true`, the field is non-interactive.
   final bool disabled;
+
+  /// When `true`, shows a loading spinner as the leading widget.
   final bool loading;
+
+  /// An optional icon shown as a static prefix inside the field.
   final IconData? leadingIcon;
+
+  /// When `true`, an inline search input is shown at the top of the menu.
   final bool searchable;
+
+  /// Placeholder text inside the search field. Defaults to `'Search...'`.
   final String searchPlaceholder;
+
+  /// When `true`, a clear (X) button appears when the field has a value.
   final bool clearable;
+
+  /// The size of the dropdown trigger field. Defaults to [NDropdownSize.md].
   final NDropdownSize size;
+
+  /// The visual style of the trigger field. Defaults to [NDropdownVariant.outline].
   final NDropdownVariant variant;
+
+  /// The semantic color role applied to the focused border. Defaults to [NDropdownColor.neutral].
   final NDropdownColor color;
+
+  /// When `true`, multiple items can be selected simultaneously.
+  /// Use [values] and [onChangedMultiple] in multi-select mode.
   final bool multiple;
 
+  /// Creates an [NDropdown].
   const NDropdown({
     super.key,
     this.label,
@@ -348,7 +484,7 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
                         fontSize: 14, color: NTokens.error(context))),
             ],
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
         ],
         CompositedTransformTarget(
           link: _layerLink,
@@ -371,7 +507,7 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
                 children: [
                   if (leadingWidget != null) ...[
                     leadingWidget,
-                    SizedBox(width: 8)
+                    const SizedBox(width: 8)
                   ],
                   Expanded(
                     child: Text(
@@ -385,13 +521,13 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
                     ),
                   ),
                   if (showClear) ...[
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     GestureDetector(
                         onTap: _handleClear,
                         child: Icon(Icons.close,
                             size: 16, color: NTokens.textMuted(context))),
                   ],
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Icon(
                       _isOpen
                           ? Icons.keyboard_arrow_up
@@ -404,7 +540,7 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
           ),
         ),
         if (widget.helperText != null || hasError) ...[
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           Text(
             hasError ? widget.errorText! : widget.helperText!,
             style: TextStyle(
@@ -483,7 +619,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints(maxHeight: 300),
+      constraints: const BoxConstraints(maxHeight: 300),
       decoration: BoxDecoration(
         color: NTokens.bgElevated(context),
         borderRadius: BorderRadius.circular(NTokens.radiusDefault),
@@ -500,7 +636,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
         children: [
           if (widget.searchable) ...[
             Padding(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               child: TextField(
                 controller: _searchController,
                 autofocus: true,
@@ -526,7 +662,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                         BorderSide(color: NTokens.primary(context), width: 2),
                   ),
                   contentPadding:
-                      EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   isDense: true,
                 ),
                 style: TextStyle(
@@ -539,13 +675,13 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
           Flexible(
             child: ListView.builder(
               shrinkWrap: true,
-              padding: EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: 4),
               itemCount: _filteredItems.length,
               itemBuilder: (context, index) {
                 final item = _filteredItems[index];
                 if (item.type == NDropdownItemType.separator) {
                   return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4),
+                    padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Divider(
                         height: 1,
                         thickness: 1,
@@ -555,7 +691,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                 if (item.type == NDropdownItemType.label) {
                   return Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     child: Text(
                       item.label,
                       style: TextStyle(
@@ -574,7 +710,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                         ? null
                         : () => widget.onSelected(item.value),
                     child: Container(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 10),
                       color: isSelected
                           ? NTokens.bgMuted(context)
@@ -584,14 +720,14 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                           if (item.avatar != null) ...[
                             SizedBox(
                                 width: 24, height: 24, child: item.avatar),
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                           ] else if (item.icon != null) ...[
                             Icon(item.icon,
                                 size: 18,
                                 color: item.disabled
                                     ? NTokens.textDisabled(context)
                                     : NTokens.textMuted(context)),
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                           ],
                           Expanded(
                             child: Column(
@@ -619,11 +755,11 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                             ),
                           ),
                           if (item.trailing != null) ...[
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                             item.trailing!
                           ],
                           if (isSelected) ...[
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                             Icon(Icons.check,
                                 size: 18, color: NTokens.primary(context)),
                           ],

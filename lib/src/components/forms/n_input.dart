@@ -430,15 +430,15 @@ class _NInputState extends State<NInput> {
   EdgeInsetsGeometry _getContentPadding() {
     switch (widget.size) {
       case NInputSize.xs:
-        return EdgeInsets.symmetric(horizontal: 10, vertical: 6);
+        return const EdgeInsets.symmetric(horizontal: 10, vertical: 6);
       case NInputSize.sm:
-        return EdgeInsets.symmetric(horizontal: 12, vertical: 8);
+        return const EdgeInsets.symmetric(horizontal: 12, vertical: 8);
       case NInputSize.md:
-        return EdgeInsets.symmetric(horizontal: 14, vertical: 10);
+        return const EdgeInsets.symmetric(horizontal: 14, vertical: 10);
       case NInputSize.lg:
-        return EdgeInsets.symmetric(horizontal: 16, vertical: 12);
+        return const EdgeInsets.symmetric(horizontal: 16, vertical: 12);
       case NInputSize.xl:
-        return EdgeInsets.symmetric(horizontal: 18, vertical: 14);
+        return const EdgeInsets.symmetric(horizontal: 18, vertical: 14);
     }
   }
 
@@ -533,7 +533,7 @@ class _NInputState extends State<NInput> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: children
-          .map((w) => Padding(padding: EdgeInsets.only(left: 8), child: w))
+          .map((w) => Padding(padding: const EdgeInsets.only(left: 8), child: w))
           .toList(),
     );
   }
@@ -572,7 +572,7 @@ class _NInputState extends State<NInput> {
                         fontSize: 14, color: NTokens.error(context))),
             ],
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
         ],
         Semantics(
           textField: true,
@@ -606,11 +606,11 @@ class _NInputState extends State<NInput> {
                   fontSize: fontSize, color: NTokens.textMuted(context)),
               prefixIcon: leadingWidget != null
                   ? Padding(
-                      padding: EdgeInsets.only(left: 12, right: 8),
+                      padding: const EdgeInsets.only(left: 12, right: 8),
                       child: leadingWidget)
                   : (widget.leadingText != null
                       ? Padding(
-                          padding: EdgeInsets.only(left: 14),
+                          padding: const EdgeInsets.only(left: 14),
                           child: Text(
                             widget.leadingText!,
                             style: TextStyle(
@@ -623,11 +623,11 @@ class _NInputState extends State<NInput> {
                   const BoxConstraints(minWidth: 0, minHeight: 0),
               suffixIcon: trailingWidget != null
                   ? Padding(
-                      padding: EdgeInsets.only(right: 12, left: 8),
+                      padding: const EdgeInsets.only(right: 12, left: 8),
                       child: trailingWidget)
                   : (widget.trailingText != null
                       ? Padding(
-                          padding: EdgeInsets.only(right: 14),
+                          padding: const EdgeInsets.only(right: 14),
                           child: Text(
                             widget.trailingText!,
                             style: TextStyle(
@@ -674,7 +674,7 @@ class _NInputState extends State<NInput> {
           ),
         ),
         if (widget.helperText != null || hasError) ...[
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           Text(
             hasError ? widget.errorText! : widget.helperText!,
             style: TextStyle(

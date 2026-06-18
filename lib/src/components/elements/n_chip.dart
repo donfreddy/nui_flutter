@@ -2,22 +2,96 @@ import 'package:flutter/material.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
 
-enum NChipColor { primary, secondary, success, info, warning, error, neutral }
+/// The semantic color role applied to an [NChip] in the selected state.
+enum NChipColor {
+  /// Uses the primary brand color.
+  primary,
 
-enum NChipVariant { solid, soft, outline }
+  /// Uses the secondary accent color.
+  secondary,
 
-enum NChipSize { sm, md, lg }
+  /// Uses the success color.
+  success,
 
+  /// Uses the informational color.
+  info,
+
+  /// Uses the warning color.
+  warning,
+
+  /// Uses the error color.
+  error,
+
+  /// Uses a neutral muted color.
+  neutral,
+}
+
+/// The visual style of an [NChip].
+enum NChipVariant {
+  /// Selected chip gets a fully filled background using the chip color.
+  solid,
+
+  /// Selected chip gets a lightly tinted background.
+  soft,
+
+  /// Selected chip uses a transparent background with a colored border.
+  outline,
+}
+
+/// The size of an [NChip], controlling padding and font size.
+enum NChipSize {
+  /// Small.
+  sm,
+
+  /// Medium. The default size.
+  md,
+
+  /// Large.
+  lg,
+}
+
+/// A selectable filter chip that toggles between a selected and unselected state.
+///
+/// Supports three [NChipVariant] styles, seven [NChipColor] semantic roles,
+/// and three [NChipSize] options. Optional [leading] and [trailing] widgets
+/// can be added to the chip row.
+///
+/// Group multiple chips together using [NChipGroup].
+///
+/// ```dart
+/// NChip(
+///   label: 'Mobile Money',
+///   selected: _filter == 'momo',
+///   onTap: () => setState(() => _filter = 'momo'),
+/// )
+/// ```
 class NChip extends StatelessWidget {
+  /// The text label displayed inside the chip.
   final String label;
+
+  /// Whether this chip is currently in the selected (active) state.
   final bool selected;
+
+  /// Called when the user taps the chip.
   final VoidCallback? onTap;
+
+  /// The semantic color role used for the selected state.
+  /// Defaults to [NChipColor.primary].
   final NChipColor color;
+
+  /// The visual style. Defaults to [NChipVariant.soft].
   final NChipVariant variant;
+
+  /// The size of the chip. Defaults to [NChipSize.md].
   final NChipSize size;
+
+  /// An optional widget placed before the label (e.g., an icon).
   final Widget? leading;
+
+  /// An optional widget placed after the label.
   final Widget? trailing;
 
+  /// Creates an [NChip].
   const NChip({
     super.key,
     required this.label,
@@ -57,7 +131,7 @@ class NChip extends StatelessWidget {
                     width: _getIconSize(),
                     height: _getIconSize(),
                     child: leading),
-                SizedBox(width: 6),
+                const SizedBox(width: 6),
               ],
               Text(
                 label,
@@ -68,7 +142,7 @@ class NChip extends StatelessWidget {
                 ),
               ),
               if (trailing != null) ...[
-                SizedBox(width: 6),
+                const SizedBox(width: 6),
                 SizedBox(
                     width: _getIconSize(),
                     height: _getIconSize(),
@@ -84,11 +158,11 @@ class NChip extends StatelessWidget {
   EdgeInsetsGeometry _getPadding() {
     switch (size) {
       case NChipSize.sm:
-        return EdgeInsets.symmetric(horizontal: 12, vertical: 6);
+        return const EdgeInsets.symmetric(horizontal: 12, vertical: 6);
       case NChipSize.md:
-        return EdgeInsets.symmetric(horizontal: 16, vertical: 8);
+        return const EdgeInsets.symmetric(horizontal: 16, vertical: 8);
       case NChipSize.lg:
-        return EdgeInsets.symmetric(horizontal: 20, vertical: 10);
+        return const EdgeInsets.symmetric(horizontal: 20, vertical: 10);
     }
   }
 
@@ -165,19 +239,58 @@ class NChip extends StatelessWidget {
   }
 }
 
+/// A managed group of [NChip] widgets that enforces a single selection.
+///
+/// Supply [items], the current [selectedValue], and an [onChanged] callback.
+/// The group can be scrollable or wrap depending on [scrollable] and [direction].
+///
+/// ```dart
+/// NChipGroup(
+///   items: [
+///     NChipItem(label: 'All', value: 'all'),
+///     NChipItem(label: 'Sent', value: 'sent'),
+///     NChipItem(label: 'Received', value: 'received'),
+///   ],
+///   selectedValue: _filter,
+///   onChanged: (v) => setState(() => _filter = v),
+/// )
+/// ```
 class NChipGroup extends StatelessWidget {
+  /// The list of chip descriptors to display.
   final List<NChipItem> items;
+
+  /// The value of the currently selected chip.
   final String selectedValue;
+
+  /// Called when the user selects a different chip, passing the new value.
   final ValueChanged<String> onChanged;
+
+  /// The visual style applied to every chip. Defaults to [NChipVariant.solid].
   final NChipVariant variant;
+
+  /// The size applied to every chip. Defaults to [NChipSize.sm].
   final NChipSize size;
+
+  /// When `true` (the default), chips overflow into a scroll view along [direction].
+  /// When `false`, chips wrap using a [Wrap] widget.
   final bool scrollable;
+
+  /// The scroll or layout direction. Defaults to [Axis.horizontal].
   final Axis direction;
+
+  /// How chips are aligned in the main axis when not scrollable.
   final MainAxisAlignment mainAxisAlignment;
+
+  /// How chips are aligned in the wrap when [scrollable] is `false`.
   final WrapAlignment wrapAlignment;
+
+  /// Gap between chips along the main axis. Defaults to 8 dp.
   final double spacing;
+
+  /// Gap between chip rows in wrap mode. Defaults to 8 dp.
   final double runSpacing;
 
+  /// Creates an [NChipGroup].
   const NChipGroup({
     super.key,
     required this.items,
@@ -211,7 +324,7 @@ class NChipGroup extends StatelessWidget {
       return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           mainAxisAlignment: mainAxisAlignment,
           children: _buildChipsWithSpacing(chips, spacing),
@@ -220,7 +333,7 @@ class NChipGroup extends StatelessWidget {
     } else if (scrollable && direction == Axis.vertical) {
       return SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: Column(
           children: _buildChipsWithSpacing(chips, spacing),
         ),
@@ -250,12 +363,21 @@ class NChipGroup extends StatelessWidget {
   }
 }
 
+/// A data descriptor for a single chip inside [NChipGroup].
 class NChipItem {
+  /// The text label displayed on the chip.
   final String label;
+
+  /// The unique value emitted by [NChipGroup.onChanged] when this chip is selected.
   final String value;
+
+  /// An optional widget placed before [label].
   final Widget? leading;
+
+  /// An optional widget placed after [label].
   final Widget? trailing;
 
+  /// Creates an [NChipItem].
   const NChipItem({
     required this.label,
     required this.value,

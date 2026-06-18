@@ -2,24 +2,108 @@ import 'package:flutter/material.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
 
-enum NBadgeColor { primary, secondary, success, info, warning, error, neutral }
+/// The semantic color role applied to an [NBadge].
+enum NBadgeColor {
+  /// Uses the primary brand color.
+  primary,
 
-enum NBadgeVariant { solid, soft, outline, subtle }
+  /// Uses the secondary accent color.
+  secondary,
 
-enum NBadgeSize { xs, sm, md, lg, xl }
+  /// Uses the success color.
+  success,
 
+  /// Uses the informational color.
+  info,
+
+  /// Uses the warning color.
+  warning,
+
+  /// Uses the error color.
+  error,
+
+  /// Uses a neutral muted color.
+  neutral,
+}
+
+/// The visual style of an [NBadge].
+enum NBadgeVariant {
+  /// Filled background using the badge color. The most prominent variant.
+  solid,
+
+  /// Lightly tinted background using a low-opacity version of the badge color.
+  soft,
+
+  /// Transparent background with a colored border.
+  outline,
+
+  /// Neutral muted background regardless of the chosen color.
+  subtle,
+}
+
+/// The size of an [NBadge], controlling padding, font size, and icon size.
+enum NBadgeSize {
+  /// Extra small.
+  xs,
+
+  /// Small.
+  sm,
+
+  /// Medium. The default size.
+  md,
+
+  /// Large.
+  lg,
+
+  /// Extra large.
+  xl,
+}
+
+/// A compact label used to display status, categories, or counts.
+///
+/// Supports four [NBadgeVariant] styles, seven [NBadgeColor] semantic roles,
+/// and five [NBadgeSize] options. Optional [leading] and [trailing] widgets,
+/// an emoji prefix, a dot indicator, and a remove button are all composable.
+///
+/// Use named constructors for common patterns:
+/// ```dart
+/// NBadge.dot(label: 'Online', color: NBadgeColor.success)
+/// NBadge.emoji(emoji: 'flame', label: 'Hot')
+/// ```
 class NBadge extends StatelessWidget {
+  /// The text label displayed inside the badge.
   final String label;
+
+  /// The semantic color role. Defaults to [NBadgeColor.primary].
   final NBadgeColor color;
+
+  /// The visual style. Defaults to [NBadgeVariant.soft].
   final NBadgeVariant variant;
+
+  /// The size of the badge. Defaults to [NBadgeSize.md].
   final NBadgeSize size;
+
+  /// An optional widget placed before the label (e.g., an icon).
   final Widget? leading;
+
+  /// An optional widget placed after the label.
   final Widget? trailing;
+
+  /// An emoji character displayed before [label]. Use [NBadge.emoji] for convenience.
   final String? emoji;
+
+  /// When `true`, a small filled dot is rendered before [label].
+  /// Use [NBadge.dot] for convenience.
   final bool dot;
+
+  /// Called when the user taps the remove (X) button.
+  /// When set, a close icon replaces [trailing].
   final VoidCallback? onRemove;
+
+  /// When `true`, the badge uses square corners instead of rounded ones.
   final bool square;
 
+  /// Creates an [NBadge].
   const NBadge({
     super.key,
     required this.label,
@@ -34,6 +118,9 @@ class NBadge extends StatelessWidget {
     this.square = false,
   });
 
+  /// Creates an emoji-prefixed badge.
+  ///
+  /// Shorthand for `NBadge(emoji: ..., label: ..., ...)`.
   const NBadge.emoji({
     Key? key,
     required String emoji,
@@ -50,6 +137,9 @@ class NBadge extends StatelessWidget {
           size: size,
         );
 
+  /// Creates a dot-indicator badge.
+  ///
+  /// Shorthand for `NBadge(dot: true, label: ..., ...)`.
   const NBadge.dot({
     Key? key,
     required String label,
@@ -83,14 +173,14 @@ class NBadge extends StatelessWidget {
         children: [
           if (emoji != null) ...[
             Text(emoji!, style: TextStyle(fontSize: _getFontSize() + 2)),
-            SizedBox(width: 4),
+            const SizedBox(width: 4),
           ],
           if (dot) _buildDot(context, colors),
-          if (dot) SizedBox(width: 4),
+          if (dot) const SizedBox(width: 4),
           if (leading != null) ...[
             SizedBox(
                 width: _getIconSize(), height: _getIconSize(), child: leading),
-            SizedBox(width: 4),
+            const SizedBox(width: 4),
           ],
           Text(
             label,
@@ -102,7 +192,7 @@ class NBadge extends StatelessWidget {
             ),
           ),
           if (trailing != null || onRemove != null) ...[
-            SizedBox(width: 4),
+            const SizedBox(width: 4),
             if (onRemove != null)
               GestureDetector(
                 onTap: onRemove,
@@ -197,15 +287,15 @@ class NBadge extends StatelessWidget {
   EdgeInsetsGeometry _getPadding() {
     switch (size) {
       case NBadgeSize.xs:
-        return EdgeInsets.symmetric(horizontal: 6, vertical: 2);
+        return const EdgeInsets.symmetric(horizontal: 6, vertical: 2);
       case NBadgeSize.sm:
-        return EdgeInsets.symmetric(horizontal: 8, vertical: 3);
+        return const EdgeInsets.symmetric(horizontal: 8, vertical: 3);
       case NBadgeSize.md:
-        return EdgeInsets.symmetric(horizontal: 10, vertical: 4);
+        return const EdgeInsets.symmetric(horizontal: 10, vertical: 4);
       case NBadgeSize.lg:
-        return EdgeInsets.symmetric(horizontal: 12, vertical: 5);
+        return const EdgeInsets.symmetric(horizontal: 12, vertical: 5);
       case NBadgeSize.xl:
-        return EdgeInsets.symmetric(horizontal: 14, vertical: 6);
+        return const EdgeInsets.symmetric(horizontal: 14, vertical: 6);
     }
   }
 }

@@ -72,7 +72,7 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   /// The preferred height of the app bar (56 dp).
   @override
-  Size get preferredSize => Size.fromHeight(56);
+  Size get preferredSize => const Size.fromHeight(56);
 
   @override
   Widget build(BuildContext context) {

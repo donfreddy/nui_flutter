@@ -3,36 +3,133 @@ import '../../theme/n_color_palette.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
 
+/// The semantic color role applied to an [NAvatar]'s background and initials.
 enum NAvatarColor {
+  /// Uses the primary brand color.
   primary,
+
+  /// Uses the secondary accent color.
   secondary,
+
+  /// Uses the success color.
   success,
+
+  /// Uses the informational color.
   info,
+
+  /// Uses the warning color.
   warning,
+
+  /// Uses the error color.
   error,
+
+  /// Uses a neutral muted color.
   neutral,
-  random
+
+  /// Picks a color deterministically from [NColorPalette.avatarColors] based
+  /// on the hash of [NAvatar.name]. Ensures the same name always shows the
+  /// same color.
+  random,
 }
 
-enum NAvatarSize { xs, sm, md, lg, xl, xxl }
+/// The size of an [NAvatar], controlling its diameter, font size, and badge size.
+enum NAvatarSize {
+  /// Extra small (24 dp).
+  xs,
 
-enum NAvatarChipPosition { topRight, bottomRight }
+  /// Small (32 dp).
+  sm,
 
+  /// Medium (40 dp). The default size.
+  md,
+
+  /// Large (48 dp).
+  lg,
+
+  /// Extra large (64 dp).
+  xl,
+
+  /// Double extra large (96 dp).
+  xxl,
+}
+
+/// The corner position of the status chip badge on an [NAvatar].
+enum NAvatarChipPosition {
+  /// Chip is anchored to the top-right corner.
+  topRight,
+
+  /// Chip is anchored to the bottom-right corner.
+  bottomRight,
+}
+
+/// A circular avatar widget that displays an image, initials, or an icon.
+///
+/// Resolves its content in the following priority order:
+/// 1. [child] if provided.
+/// 2. [imageUrl] if non-empty (falls back to initials on load error).
+/// 3. Initials derived from [name] if provided.
+/// 4. A generic person icon.
+///
+/// An optional status chip can be shown with [chip], and tapping is supported
+/// via [onTap].
+///
+/// ```dart
+/// NAvatar(
+///   name: 'Jean Dupont',
+///   color: NAvatarColor.random,
+///   size: NAvatarSize.lg,
+///   chip: true,
+///   chipColor: Colors.green,
+/// )
+/// ```
 class NAvatar extends StatelessWidget {
+  /// URL of the image to display. Falls back to initials or icon on error.
   final String? imageUrl;
+
+  /// The full name used to generate initials when [imageUrl] is absent.
+  ///
+  /// Also determines the deterministic color when [color] is [NAvatarColor.random].
   final String? name;
+
+  /// A fallback icon shown when neither [imageUrl] nor [name] is provided.
   final IconData? icon;
+
+  /// A fully custom widget rendered inside the avatar circle.
+  ///
+  /// When provided, [imageUrl], [name], and [icon] are ignored.
   final Widget? child;
+
+  /// The diameter of the avatar. Defaults to [NAvatarSize.md].
   final NAvatarSize size;
+
+  /// The semantic color role for the background and initials.
+  /// Defaults to [NAvatarColor.neutral].
   final NAvatarColor color;
+
+  /// Called when the avatar is tapped. Wraps the avatar in a [GestureDetector]
+  /// with [Semantics.button] when set.
   final VoidCallback? onTap;
+
+  /// When `true`, a small status chip is shown at the [chipPosition] corner.
   final bool chip;
+
+  /// The color of the status chip. Defaults to [NTokens.success] when null.
   final Color? chipColor;
+
+  /// The corner position of the status chip. Defaults to [NAvatarChipPosition.bottomRight].
   final NAvatarChipPosition chipPosition;
+
+  /// Optional text rendered inside the chip badge (e.g., a short count).
+  /// When null, a plain dot is shown.
   final String? chipText;
+
+  /// When `true`, a primary-colored ring border is drawn around the avatar.
   final bool hasRing;
+
+  /// When `true`, the avatar is rendered at 40% opacity to convey an inactive state.
   final bool isGhost;
 
+  /// Creates an [NAvatar].
   const NAvatar({
     super.key,
     this.imageUrl,
@@ -104,7 +201,7 @@ class NAvatar extends StatelessWidget {
             child: chipText != null
                 ? Container(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                     decoration: BoxDecoration(
                       color: chipColor ?? NTokens.success(context),
                       borderRadius: BorderRadius.circular(6),
@@ -252,13 +349,37 @@ class NAvatar extends StatelessWidget {
   }
 }
 
+/// A horizontally overlapping stack of [NAvatar] widgets.
+///
+/// Renders up to [maxVisible] avatars; any additional avatars are summarised
+/// as a `+N` overflow indicator. Each avatar is bordered to separate it from
+/// its neighbor.
+///
+/// ```dart
+/// NAvatarGroup(
+///   names: ['Alice', 'Bob', 'Charlie', 'Diana'],
+///   maxVisible: 3,
+///   onMoreTap: () => showAllMembers(),
+/// )
+/// ```
 class NAvatarGroup extends StatelessWidget {
+  /// URLs of the avatar images. Provide parallel to [names].
   final List<String?> imageUrls;
+
+  /// Names used to generate initials. Provide parallel to [imageUrls].
   final List<String?> names;
+
+  /// The size applied to every avatar in the group. Defaults to [NAvatarSize.md].
   final NAvatarSize size;
+
+  /// The maximum number of avatars to show before the overflow indicator.
+  /// Defaults to 3.
   final int maxVisible;
+
+  /// Called when the user taps the overflow (`+N`) indicator.
   final VoidCallback? onMoreTap;
 
+  /// Creates an [NAvatarGroup].
   const NAvatarGroup({
     super.key,
     this.imageUrls = const [],
