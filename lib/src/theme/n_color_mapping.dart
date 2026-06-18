@@ -20,6 +20,11 @@ Color _readableOn(Color bg) {
   return _relativeLuminance(bg) > 0.179 ? const Color(0xFF18181B) : Colors.white;
 }
 
+/// Builds a Material 3 [ColorScheme] derived from the provided [NColorPalette].
+///
+/// This mapping ensures that standard Flutter components use the appropriate
+/// semantic tokens from the NUI palette. It automatically calculates legible
+/// foreground colors using relative luminance.
 ColorScheme buildColorScheme(NColorPalette palette, Brightness brightness) {
   final factory =
       brightness == Brightness.light ? ColorScheme.light : ColorScheme.dark;
@@ -39,6 +44,11 @@ ColorScheme buildColorScheme(NColorPalette palette, Brightness brightness) {
   );
 }
 
+/// Builds a scaled [TextTheme] based on the NUI typography specifications.
+///
+/// Applies the chosen [palette.textDefault] color and an optional custom
+/// [typography] font family. The [textScale] multiplier adjusts the size of
+/// all text styles proportionally.
 TextTheme buildTextTheme(NColorPalette palette, Brightness brightness,
     {double textScale = 1.0, NTypography? typography}) {
   final base = typography?.resolveTextTheme(brightness) ??
