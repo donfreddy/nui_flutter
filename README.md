@@ -4,19 +4,15 @@ A Flutter design system inspired by [Nuxt UI](https://ui.nuxt.com), bringing its
 
 Built on top of Flutter's `ThemeExtension` API for clean multi-brand support, full dark mode, and zero global state leakage between apps.
 
----
-
 ## Features
 
-- **15+ production-ready components** covering buttons, inputs, cards, avatars, badges, alerts, toggles, dropdowns, tab bars, bottom sheets, and more
+- **25+ production-ready components** covering buttons, inputs, cards, avatars, badges, alerts, toggles, dropdowns, tab bars, bottom sheets, modals, toasts, progress bars, skeletons, checkboxes, radio groups, textareas, and more
 - **Semantic color tokens** via `NColorPalette` and `NTokens` for consistent, brand-aware theming
 - **Full dark mode** with `NTheme.lightTheme` and `NTheme.darkTheme` factories
 - **Multi-brand support** by passing a custom `NColorPalette` per app with no shared state
 - **Nuxt UI variant system** ported to Flutter: `solid`, `outline`, `soft`, `subtle`, `ghost`, `link`
 - **Lucide icons** built-in via `lucide_icons_flutter`
 - **Accessibility-first** with `Semantics` wrappers on all interactive components
-
----
 
 ## Installation
 
@@ -33,8 +29,6 @@ Then run:
 ```sh
 flutter pub get
 ```
-
----
 
 See the [`example/`](example) directory for a complete showcase app demonstrating all components.
 
@@ -110,8 +104,6 @@ NCard(
   ]),
 )
 ```
-
----
 
 ## Theming
 
@@ -197,8 +189,6 @@ NTheme.lightTheme(
   ],
 )
 ```
-
----
 
 ## Component catalog
 
@@ -355,7 +345,111 @@ NIconButton(icon: LucideIcons.share2, onPressed: () {})
 NIconButton(icon: LucideIcons.trash2, color: NIconButtonColor.error, variant: NIconButtonVariant.soft, onPressed: () {})
 ```
 
----
+### Checkbox
+
+```dart
+NCheckbox(
+  value: _accepted,
+  onChanged: (v) => setState(() => _accepted = v),
+  label: 'Accept terms',
+  description: 'I agree to the terms and conditions.',
+)
+NCheckbox(value: null, label: 'Indeterminate')  // Indeterminate state
+```
+
+### Radio group
+
+```dart
+NRadioGroup<String>(
+  items: [
+    NRadioItem(label: 'Option A', value: 'a'),
+    NRadioItem(label: 'Option B', value: 'b'),
+    NRadioItem(label: 'Option C', description: 'With description', value: 'c'),
+  ],
+  value: _selected,
+  onChanged: (v) => setState(() => _selected = v),
+)
+```
+
+### Textarea
+
+```dart
+NTextarea(
+  label: 'Notes',
+  placeholder: 'Add your notes here...',
+  maxLines: 5,
+)
+NTextarea(
+  label: 'Bio',
+  maxLines: 3,
+  maxLength: 500,
+  helperText: 'Tell us about yourself',
+)
+```
+
+### Modal
+
+```dart
+// Simple confirm dialog
+final confirmed = await NModal.dialog(
+  context: context,
+  title: 'Delete item',
+  body: 'This action cannot be undone.',
+  destructive: true,
+);
+
+// Full custom modal
+NModal.show(
+  context: context,
+  builder: (ctx, close) => NModal(
+    title: 'Custom modal',
+    body: const Text('Any content here'),
+    footer: Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        TextButton(onPressed: close, child: const Text('Close')),
+      ],
+    ),
+  ),
+);
+```
+
+### Toast
+
+```dart
+// Auto-dismissing notification
+NToast.show(
+  context,
+  title: 'Payment sent',
+  description: 'Your transfer was successful.',
+  color: NToastColor.success,
+);
+
+// Persistent toast
+NToast.show(
+  context,
+  title: 'Uploading...',
+  color: NToastColor.info,
+  duration: Duration.zero,
+);
+```
+
+### Progress
+
+```dart
+NProgress(value: 0.5)                                  // Determinate
+NProgress(value: 0.75, color: NProgressColor.success)  // Colored
+NProgress()                                             // Indeterminate
+NProgress(value: null, size: NProgressSize.lg)          // Larger size
+```
+
+### Skeleton
+
+```dart
+NSkeleton(width: 250, height: 16)    // Text line placeholder
+NSkeleton(width: 48, height: 48)     // Avatar placeholder
+NSkeleton(height: 200)               // Card placeholder (full width)
+```
 
 ## Design tokens reference
 
@@ -371,14 +465,15 @@ NIconButton(icon: LucideIcons.trash2, color: NIconButtonColor.error, variant: NI
 | Spacing | `NSpacing.s4` | 16 dp |
 | Radius | `NTokens.radiusDefault` | 8 dp |
 
----
-
 ## Comparison with Nuxt UI
 
 | Nuxt UI component | nui_flutter equivalent |
 |-------------------|----------------------|
 | `UButton` | `NButton` |
 | `UInput` | `NInput` |
+| `UTextarea` | `NTextarea` |
+| `UCheckbox` | `NCheckbox` |
+| `URadioGroup` | `NRadioGroup` |
 | `UCard` | `NCard` |
 | `UAvatar` / `UAvatarGroup` | `NAvatar` / `NAvatarGroup` |
 | `UBadge` | `NBadge` |
@@ -387,19 +482,20 @@ NIconButton(icon: LucideIcons.trash2, color: NIconButtonColor.error, variant: NI
 | `USwitch` | `NToggle` |
 | `UDropdownMenu` | `NDropdown` |
 | `UTabs` | `NTabBar` |
-| `UModal` / `UDrawer` | `NBottomSheet` |
+| `UModal` | `NModal` |
+| `UToast` | `NToast` |
+| `UProgress` | `NProgress` |
+| `USkeleton` | `NSkeleton` |
+| `UEmpty` | `NEmptyState` |
+| `UModal` / `UDrawer` (mobile) | `NBottomSheet` |
 | CSS variables | `NColorPalette` + `NTokens` |
 | Tailwind variants | `NButtonVariant`, `NCardVariant`, etc. |
-
----
 
 ## Dependencies
 
 | Package | Role |
 |---------|------|
 | [`lucide_icons_flutter`](https://pub.dev/packages/lucide_icons_flutter) | Icon set (Lucide icon library) |
-
----
 
 ## License
 
