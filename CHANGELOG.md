@@ -33,6 +33,17 @@
 - Migrated `NButton`, `NAlert`, `NChip`, `NIconButton`, `NBadge`, `NAvatar`, `NCard`, `NInput`, `NToggle`, `NDropdown` — ~250 lines removed across components
 - Neutral mapping customizable via optional parameters per component
 
+### P3 — New components (for pub.dev)
+
+- **`NToast`**: Toast/snackbar overlay with slide animation, auto-dismiss, and `NToast.show()` static method supporting 6 semantic colors
+- **`NModal`**: Modal dialog with header/body/footer slots, `NModal.dialog()` helper for confirm dialogs, and `NModal.show()` builder for full customization
+- **`NSkeleton`**: Animated pulsing loading placeholder with configurable width, height, and border radius
+- **`NProgress`**: Linear progress bar with determinate/indeterminate modes, 5 sizes, 6 semantic colors, and animated transitions
+- **`NCheckbox`**: Checkbox input with label/description support, indeterminate state, and 7 color roles
+- **`NRadioGroup`**: Typed radio button group with `NRadioItem` model supporting label, description, and value
+- **`NTextarea`**: Multi-line text input with NUI theming, label, error text, leading icon, and configurable rows
+- **`nui_flutter.dart`**: Barrel file updated to export all 7 new components
+
 ### Infrastructure
 
 - **`CHANGELOG.md`**: Created with full history
