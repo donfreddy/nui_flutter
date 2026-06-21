@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
@@ -148,7 +149,11 @@ class NToast extends StatelessWidget {
         closable: closable,
         progress: progress,
         duration: duration,
-        onClose: () => entry.remove(),
+        onClose: () {
+          if (entry.mounted) {
+            entry.remove();
+          }
+        },
         onTap: onTap,
       ),
     );
@@ -377,6 +382,7 @@ class _NToastOverlayState extends State<_NToastOverlay> with TickerProviderState
   late final Animation<Offset> _slideAnimation;
   late final Animation<double> _fadeAnimation;
   AnimationController? _progressController;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -409,18 +415,21 @@ class _NToastOverlayState extends State<_NToastOverlay> with TickerProviderState
         );
         _progressController!.reverse(from: 1.0);
       }
-      Future.delayed(widget.duration, _dismiss);
+      _timer = Timer(widget.duration, _dismiss);
     }
   }
 
   void _dismiss() {
+    if (!mounted) return;
     _controller.reverse().then((_) {
+      if (!mounted) return;
       widget.onClose?.call();
     });
   }
 
   @override
   void dispose() {
+    _timer?.cancel();
     _controller.dispose();
     _progressController?.dispose();
     super.dispose();
