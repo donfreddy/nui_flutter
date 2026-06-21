@@ -80,8 +80,11 @@ class _HomePage extends StatelessWidget {
             _SectionTitle('Toggles'),
             _TogglesDemo(),
             SizedBox(height: 24),
-            _SectionTitle('Dropdowns'),
-            _DropdownsDemo(),
+            _SectionTitle('Select Menu'),
+            _SelectMenuDemo(),
+            SizedBox(height: 24),
+            _SectionTitle('Dropdown Menu'),
+            _DropdownMenuDemo(),
             SizedBox(height: 24),
             _SectionTitle('Avatars'),
             _AvatarsDemo(),
@@ -600,57 +603,116 @@ class _TogglesDemoState extends State<_TogglesDemo> {
 }
 
 // ---------------------------------------------------------------------------
-// Dropdowns
+// Select Menu
 // ---------------------------------------------------------------------------
-class _DropdownsDemo extends StatefulWidget {
+class _SelectMenuDemo extends StatefulWidget {
   @override
-  State<_DropdownsDemo> createState() => _DropdownsDemoState();
+  State<_SelectMenuDemo> createState() => _SelectMenuDemoState();
 }
 
-class _DropdownsDemoState extends State<_DropdownsDemo> {
+class _SelectMenuDemoState extends State<_SelectMenuDemo> {
   String? _value;
   List<String> _multi = [];
 
   @override
   Widget build(BuildContext context) {
-    final List<NDropdownItem<String>> items = [
-      const NDropdownItem(
+    final List<NSelectMenuItem<String>> items = [
+      const NSelectMenuItem(
           value: 'cm', label: 'Cameroon', icon: LucideIcons.mapPin),
-      const NDropdownItem(
+      const NSelectMenuItem(
           value: 'ng', label: 'Nigeria', icon: LucideIcons.mapPin),
-      const NDropdownItem(
+      const NSelectMenuItem(
           value: 'fr', label: 'France', icon: LucideIcons.mapPin),
-      NDropdownItem<String>.separator(),
-      const NDropdownItem(value: 'other', label: 'Other'),
+      NSelectMenuItem<String>.separator(),
+      const NSelectMenuItem(value: 'other', label: 'Other'),
     ];
 
     return Column(
       children: [
-        NDropdown<String>(
+        NSelectMenu<String>(
           label: 'Country',
           items: items,
           value: _value,
           onChanged: (v) => setState(() => _value = v),
         ),
         SizedBox(height: 12),
-        NDropdown<String>(
+        NSelectMenu<String>(
           label: 'Multi-select',
           items: [
-            NDropdownItem(value: 'a', label: 'Option A'),
-            NDropdownItem(value: 'b', label: 'Option B'),
-            NDropdownItem(value: 'c', label: 'Option C'),
+            NSelectMenuItem(value: 'a', label: 'Option A'),
+            NSelectMenuItem(value: 'b', label: 'Option B'),
+            NSelectMenuItem(value: 'c', label: 'Option C'),
           ],
           values: _multi,
           onChangedMultiple: (v) => setState(() => _multi = v),
           multiple: true,
         ),
         SizedBox(height: 12),
-        NDropdown<String>(
+        NSelectMenu<String>(
           label: 'Searchable',
           items: items,
           value: _value,
           onChanged: (v) => setState(() => _value = v),
           searchable: true,
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Dropdown Menu
+// ---------------------------------------------------------------------------
+class _DropdownMenuDemo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        NDropdownMenu(
+          items: [
+            [
+              const NDropdownMenuItem(label: 'Profile', icon: LucideIcons.user),
+              const NDropdownMenuItem(
+                  label: 'Billing', icon: LucideIcons.creditCard),
+              const NDropdownMenuItem(
+                  label: 'Settings', icon: LucideIcons.cog, kbds: [',']),
+            ],
+            [
+              const NDropdownMenuItem(label: 'Team', icon: LucideIcons.users),
+              const NDropdownMenuItem(
+                  label: 'Invite users', icon: LucideIcons.userPlus),
+              const NDropdownMenuItem(
+                  label: 'New team', icon: LucideIcons.plus, kbds: ['⌘', 'N']),
+            ],
+            [
+              const NDropdownMenuItem(
+                  label: 'GitHub', icon: LucideIcons.code),
+              const NDropdownMenuItem(
+                  label: 'Support', icon: LucideIcons.lifeBuoy),
+              const NDropdownMenuItem(
+                  label: 'API', icon: LucideIcons.cloud, disabled: true),
+            ],
+            [
+              NDropdownMenuItem(
+                label: 'Logout',
+                icon: LucideIcons.logOut,
+                color: NDropdownMenuColor.error,
+                kbds: ['⇧', '⌘', 'Q'],
+                onSelect: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Logged out!')),
+                  );
+                },
+              ),
+            ],
+          ],
+          child: NButton.outline(
+              label: 'Open',
+              leading: const Icon(LucideIcons.menu, size: 16),
+              color: NButtonColor.neutral,
+              onPressed: () {},
+          ),
         ),
       ],
     );

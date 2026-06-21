@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
 
-/// The size of an [NDropdown], affecting padding and font size.
-enum NDropdownSize {
+/// The size of an [NSelectMenu], affecting padding and font size.
+enum NSelectMenuSize {
   /// Small.
   sm,
 
@@ -14,8 +14,8 @@ enum NDropdownSize {
   lg,
 }
 
-/// The visual style of an [NDropdown].
-enum NDropdownVariant {
+/// The visual style of an [NSelectMenu].
+enum NSelectMenuVariant {
   /// White background with a full border.
   outline,
 
@@ -32,8 +32,8 @@ enum NDropdownVariant {
   none,
 }
 
-/// The row type of an entry in an [NDropdown]'s item list.
-enum NDropdownItemType {
+/// The row type of an entry in an [NSelectMenu]'s item list.
+enum NSelectMenuItemType {
   /// A selectable value row.
   item,
 
@@ -44,8 +44,8 @@ enum NDropdownItemType {
   separator,
 }
 
-/// The semantic color role applied to the focused border of an [NDropdown].
-enum NDropdownColor {
+/// The semantic color role applied to the focused border of an [NSelectMenu].
+enum NSelectMenuColor {
   /// Uses the primary brand color.
   primary,
 
@@ -68,31 +68,31 @@ enum NDropdownColor {
   neutral,
 }
 
-/// A single entry in the list rendered by an [NDropdown].
+/// A single entry in the list rendered by an [NSelectMenu].
 ///
 /// Three special factory constructors simplify creating separators and labels:
 /// ```dart
-/// NDropdownItem.separator()
-/// NDropdownItem.label('Group A')
-/// NDropdownItem(value: 'usd', label: 'US Dollar')
+/// NSelectMenuItem.separator()
+/// NSelectMenuItem.label('Group A')
+/// NSelectMenuItem(value: 'usd', label: 'US Dollar')
 /// ```
-class NDropdownItem<T> {
+class NSelectMenuItem<T> {
   final T? _value;
 
   /// The value of the item.
   ///
   /// Throws a [StateError] if accessed on an item where [type] is
-  /// [NDropdownItemType.separator] or [NDropdownItemType.label].
+  /// [NSelectMenuItemType.separator] or [NSelectMenuItemType.label].
   T get value {
-    if (type == NDropdownItemType.item) return _value as T;
+    if (type == NSelectMenuItemType.item) return _value as T;
     throw StateError('Separator or label items do not have a value.');
   }
 
   /// The text displayed in the menu row.
   final String label;
 
-  /// The type of this entry. Defaults to [NDropdownItemType.item].
-  final NDropdownItemType type;
+  /// The type of this entry. Defaults to [NSelectMenuItemType.item].
+  final NSelectMenuItemType type;
 
   /// An optional icon shown to the left of [label].
   final IconData? icon;
@@ -109,11 +109,11 @@ class NDropdownItem<T> {
   /// An optional secondary description shown below [label].
   final String? description;
 
-  /// Creates a selectable [NDropdownItem] with the given [value] and [label].
-  const NDropdownItem({
+  /// Creates a selectable [NSelectMenuItem] with the given [value] and [label].
+  const NSelectMenuItem({
     required T value,
     required this.label,
-    this.type = NDropdownItemType.item,
+    this.type = NSelectMenuItemType.item,
     this.icon,
     this.avatar,
     this.trailing,
@@ -121,7 +121,7 @@ class NDropdownItem<T> {
     this.description,
   }) : _value = value;
 
-  const NDropdownItem._internal({
+  const NSelectMenuItem._internal({
     required this.type,
     required this.label,
     this.icon,
@@ -132,36 +132,36 @@ class NDropdownItem<T> {
   }) : _value = null;
 
   /// Creates a horizontal separator row.
-  factory NDropdownItem.separator() {
-    return const NDropdownItem._internal(
-        label: '', type: NDropdownItemType.separator);
+  factory NSelectMenuItem.separator() {
+    return const NSelectMenuItem._internal(
+        label: '', type: NSelectMenuItemType.separator);
   }
 
   /// Creates a non-selectable group label row.
-  factory NDropdownItem.label(String label) {
-    return NDropdownItem._internal(label: label, type: NDropdownItemType.label);
+  factory NSelectMenuItem.label(String label) {
+    return NSelectMenuItem._internal(label: label, type: NSelectMenuItemType.label);
   }
 }
 
 /// A styled select / dropdown form field.
 ///
-/// Wraps a tap-triggered overlay menu that shows a list of [NDropdownItem]
+/// Wraps a tap-triggered overlay menu that shows a list of [NSelectMenuItem]
 /// values. Supports single and multiple selection, optional search, clearable
 /// values, loading state, and validation error display.
 ///
 /// ```dart
-/// NDropdown<String>(
+/// NSelectMenu<String>(
 ///   label: 'Currency',
 ///   placeholder: 'Select a currency',
 ///   items: [
-///     NDropdownItem(value: 'xaf', label: 'FCFA'),
-///     NDropdownItem(value: 'usd', label: 'USD'),
+///     NSelectMenuItem(value: 'xaf', label: 'FCFA'),
+///     NSelectMenuItem(value: 'usd', label: 'USD'),
 ///   ],
 ///   value: _currency,
 ///   onChanged: (v) => setState(() => _currency = v),
 /// )
 /// ```
-class NDropdown<T> extends StatefulWidget {
+class NSelectMenu<T> extends StatefulWidget {
   /// An optional label displayed above the field.
   final String? label;
 
@@ -178,7 +178,7 @@ class NDropdown<T> extends StatefulWidget {
   final String? errorText;
 
   /// The list of selectable items.
-  final List<NDropdownItem<T>> items;
+  final List<NSelectMenuItem<T>> items;
 
   /// The currently selected value (single-select mode).
   final T? value;
@@ -213,21 +213,21 @@ class NDropdown<T> extends StatefulWidget {
   /// When `true`, a clear (X) button appears when the field has a value.
   final bool clearable;
 
-  /// The size of the dropdown trigger field. Defaults to [NDropdownSize.md].
-  final NDropdownSize size;
+  /// The size of the dropdown trigger field. Defaults to [NSelectMenuSize.md].
+  final NSelectMenuSize size;
 
-  /// The visual style of the trigger field. Defaults to [NDropdownVariant.outline].
-  final NDropdownVariant variant;
+  /// The visual style of the trigger field. Defaults to [NSelectMenuVariant.outline].
+  final NSelectMenuVariant variant;
 
-  /// The semantic color role applied to the focused border. Defaults to [NDropdownColor.neutral].
-  final NDropdownColor color;
+  /// The semantic color role applied to the focused border. Defaults to [NSelectMenuColor.neutral].
+  final NSelectMenuColor color;
 
   /// When `true`, multiple items can be selected simultaneously.
   /// Use [values] and [onChangedMultiple] in multi-select mode.
   final bool multiple;
 
-  /// Creates an [NDropdown].
-  const NDropdown({
+  /// Creates an [NSelectMenu].
+  const NSelectMenu({
     super.key,
     this.label,
     this.placeholder,
@@ -245,17 +245,17 @@ class NDropdown<T> extends StatefulWidget {
     this.searchable = false,
     this.searchPlaceholder = 'Search...',
     this.clearable = true,
-    this.size = NDropdownSize.md,
-    this.variant = NDropdownVariant.outline,
-    this.color = NDropdownColor.neutral,
+    this.size = NSelectMenuSize.md,
+    this.variant = NSelectMenuVariant.outline,
+    this.color = NSelectMenuColor.neutral,
     this.multiple = false,
   });
 
   @override
-  State<NDropdown<T>> createState() => _NDropdownState<T>();
+  State<NSelectMenu<T>> createState() => _NSelectMenuState<T>();
 }
 
-class _NDropdownState<T> extends State<NDropdown<T>> {
+class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
   bool _isOpen = false;
@@ -263,7 +263,8 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
 
   @override
   void dispose() {
-    _removeOverlay();
+    _overlayEntry?.remove();
+    _overlayEntry = null;
     _focusNode.dispose();
     super.dispose();
   }
@@ -351,50 +352,50 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
 
   double _getVerticalPadding() {
     switch (widget.size) {
-      case NDropdownSize.sm:
+      case NSelectMenuSize.sm:
         return 8;
-      case NDropdownSize.md:
+      case NSelectMenuSize.md:
         return 10;
-      case NDropdownSize.lg:
+      case NSelectMenuSize.lg:
         return 12;
     }
   }
 
   double _getHorizontalPadding() {
     switch (widget.size) {
-      case NDropdownSize.sm:
+      case NSelectMenuSize.sm:
         return 12;
-      case NDropdownSize.md:
+      case NSelectMenuSize.md:
         return 14;
-      case NDropdownSize.lg:
+      case NSelectMenuSize.lg:
         return 16;
     }
   }
 
   double _getFontSize() {
     switch (widget.size) {
-      case NDropdownSize.sm:
+      case NSelectMenuSize.sm:
         return 13;
-      case NDropdownSize.md:
+      case NSelectMenuSize.md:
         return 14;
-      case NDropdownSize.lg:
+      case NSelectMenuSize.lg:
         return 15;
     }
   }
 
   bool _showBorder() =>
-      widget.variant == NDropdownVariant.outline ||
-      widget.variant == NDropdownVariant.subtle;
+      widget.variant == NSelectMenuVariant.outline ||
+      widget.variant == NSelectMenuVariant.subtle;
 
   NComponentColor _dropdownComponentColor() {
     return switch (widget.color) {
-      NDropdownColor.primary => NComponentColor.primary,
-      NDropdownColor.secondary => NComponentColor.secondary,
-      NDropdownColor.neutral => NComponentColor.neutral,
-      NDropdownColor.success => NComponentColor.success,
-      NDropdownColor.error => NComponentColor.error,
-      NDropdownColor.warning => NComponentColor.warning,
-      NDropdownColor.info => NComponentColor.info,
+      NSelectMenuColor.primary => NComponentColor.primary,
+      NSelectMenuColor.secondary => NComponentColor.secondary,
+      NSelectMenuColor.neutral => NComponentColor.neutral,
+      NSelectMenuColor.success => NComponentColor.success,
+      NSelectMenuColor.error => NComponentColor.error,
+      NSelectMenuColor.warning => NComponentColor.warning,
+      NSelectMenuColor.info => NComponentColor.info,
     };
   }
 
@@ -419,14 +420,14 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
       }
       return widget.items
           .where((i) =>
-              i.type == NDropdownItemType.item &&
+              i.type == NSelectMenuItemType.item &&
               widget.values!.contains(i.value))
           .map((i) => i.label)
           .join(', ');
     }
     if (widget.value == null) return widget.placeholder ?? '';
-    final match = widget.items.cast<NDropdownItem<T>?>().firstWhere(
-          (i) => i!.type == NDropdownItemType.item && i.value == widget.value,
+    final match = widget.items.cast<NSelectMenuItem<T>?>().firstWhere(
+          (i) => i!.type == NSelectMenuItemType.item && i.value == widget.value,
           orElse: () => null,
         );
     return match?.label ?? widget.placeholder ?? '';
@@ -448,8 +449,8 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
           size: 18, color: NTokens.textMuted(context));
     }
     if (!widget.multiple && widget.value != null) {
-      final selectedItem = widget.items.cast<NDropdownItem<T>?>().firstWhere(
-            (i) => i!.type == NDropdownItemType.item && i.value == widget.value,
+      final selectedItem = widget.items.cast<NSelectMenuItem<T>?>().firstWhere(
+            (i) => i!.type == NSelectMenuItemType.item && i.value == widget.value,
             orElse: () => null,
           );
       if (selectedItem?.avatar != null) return selectedItem!.avatar;
@@ -561,7 +562,7 @@ class _NDropdownState<T> extends State<NDropdown<T>> {
 }
 
 class _DropdownMenu<T> extends StatefulWidget {
-  final List<NDropdownItem<T>> items;
+  final List<NSelectMenuItem<T>> items;
   final T? selectedValue;
   final List<T> selectedValues;
   final bool multiple;
@@ -585,7 +586,7 @@ class _DropdownMenu<T> extends StatefulWidget {
 
 class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
   final TextEditingController _searchController = TextEditingController();
-  List<NDropdownItem<T>> _filteredItems = [];
+  List<NSelectMenuItem<T>> _filteredItems = [];
 
   @override
   void initState() {
@@ -607,8 +608,8 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
       } else {
         _filteredItems = widget.items
             .where((item) =>
-                item.type == NDropdownItemType.separator ||
-                item.type == NDropdownItemType.label ||
+                item.type == NSelectMenuItemType.separator ||
+                item.type == NSelectMenuItemType.label ||
                 item.label
                     .toLowerCase()
                     .contains(_searchController.text.toLowerCase()))
@@ -684,7 +685,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
               itemCount: _filteredItems.length,
               itemBuilder: (context, index) {
                 final item = _filteredItems[index];
-                if (item.type == NDropdownItemType.separator) {
+                if (item.type == NSelectMenuItemType.separator) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Divider(
@@ -693,7 +694,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                         color: NTokens.borderMuted(context)),
                   );
                 }
-                if (item.type == NDropdownItemType.label) {
+                if (item.type == NSelectMenuItemType.label) {
                   return Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
