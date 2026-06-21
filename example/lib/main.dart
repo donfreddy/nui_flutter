@@ -68,6 +68,9 @@ class _HomePage extends StatelessWidget {
             _SectionTitle('Alerts'),
             _AlertsDemo(),
             SizedBox(height: 24),
+            _SectionTitle('Toasts'),
+            _ToastsDemo(),
+            SizedBox(height: 24),
             _SectionTitle('Badges'),
             _BadgesDemo(),
             SizedBox(height: 24),
@@ -375,6 +378,82 @@ class _AlertsDemo extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 8),
       child: Text(text,
           style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Toasts
+// ---------------------------------------------------------------------------
+class _ToastsDemo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        NButton(
+          label: 'Success',
+          color: NButtonColor.success,
+          onPressed: () {
+            NToast.show(
+              context,
+              title: 'Payment sent',
+              description: 'Your transfer was successful.',
+              color: NToastColor.success,
+            );
+          },
+        ),
+        NButton(
+          label: 'Warning',
+          color: NButtonColor.warning,
+          onPressed: () {
+            NToast.show(
+              context,
+              title: 'Check details',
+              description: 'Some information may need your attention.',
+              color: NToastColor.warning,
+            );
+          },
+        ),
+        NButton(
+          label: 'Error',
+          color: NButtonColor.error,
+          onPressed: () {
+            NToast.show(
+              context,
+              title: 'Transfer failed',
+              description: 'Please try again in a moment.',
+              color: NToastColor.error,
+            );
+          },
+        ),
+        NButton(
+          label: 'Info',
+          color: NButtonColor.info,
+          onPressed: () {
+            NToast.show(
+              context,
+              title: 'New update',
+              description: 'Your dashboard has refreshed.',
+              color: NToastColor.info,
+              icon: LucideIcons.bell,
+            );
+          },
+        ),
+        NButton.outline(
+          label: 'Persistent',
+          onPressed: () {
+            NToast.show(
+              context,
+              title: 'Saved draft',
+              description: 'This toast stays until you close it.',
+              color: NToastColor.neutral,
+              duration: Duration.zero,
+            );
+          },
+        ),
+      ],
     );
   }
 }
