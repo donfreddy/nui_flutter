@@ -453,6 +453,44 @@ class _ToastsDemo extends StatelessWidget {
             );
           },
         ),
+        NButton.outline(
+          label: 'Top Position & Avatar',
+          onPressed: () {
+            NToast.show(
+              context,
+              title: 'New message',
+              description: 'You have received a new message from Jane.',
+              position: NToastPosition.top,
+              avatar: const NAvatar(name: 'JA', size: NAvatarSize.sm),
+            );
+          },
+        ),
+        NButton.outline(
+          label: 'With Actions',
+          onPressed: () {
+            NToast.show(
+              context,
+              title: 'Update available',
+              description: 'A new software version is ready to install.',
+              icon: LucideIcons.downloadCloud,
+              color: NToastColor.primary,
+              orientation: NToastOrientation.vertical,
+              actions: [
+                NButton(
+                  label: 'Install',
+                  size: NButtonSize.sm,
+                  onPressed: () {},
+                ),
+                NButton.ghost(
+                  label: 'Later',
+                  size: NButtonSize.sm,
+                  color: NButtonColor.neutral,
+                  onPressed: () {},
+                ),
+              ],
+            );
+          },
+        ),
       ],
     );
   }

@@ -73,7 +73,7 @@ export 'src/components/elements/n_dropdown.dart';
 export 'src/components/elements/n_empty_state.dart';
 export 'src/components/elements/n_skeleton.dart';
 export 'src/components/elements/n_progress.dart';
-export 'src/components/elements/n_toast.dart';
+export 'src/components/overlay/n_toast.dart';
 
 // Overlay
 export 'src/components/overlay/n_bottom_sheet.dart';
