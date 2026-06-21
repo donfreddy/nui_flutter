@@ -119,7 +119,7 @@ class NTabItem extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 14,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+            fontWeight: FontWeight.w500,
             color: selected
                 ? NTokens.primary(context)
                 : NTokens.textMuted(context),
@@ -236,6 +236,7 @@ class NTabBar extends StatelessWidget {
         final isSelected = index == selectedIndex;
 
         return GestureDetector(
+          key: ValueKey(tab.label),
           onTap: () => onChanged(index),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
