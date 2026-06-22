@@ -126,7 +126,8 @@ class NToast extends StatelessWidget {
   ///
   /// The toast automatically dismisses after [duration] (defaults to 4
   /// seconds). Pass [duration] as Duration.zero to make it persistent until
-  /// manually dismissed.
+  /// manually dismissed. Set [pauseOnTouch] to true to pause auto-dismiss and
+  /// progress while the user is touching the toast.
   static void show(
     BuildContext context, {
     String? title,
@@ -140,6 +141,7 @@ class NToast extends StatelessWidget {
     bool closable = true,
     bool showIcon = true,
     bool dragToClose = false,
+    bool pauseOnTouch = false,
     bool progress = true,
     Duration duration = const Duration(seconds: 4),
     VoidCallback? onTap,
@@ -159,6 +161,7 @@ class NToast extends StatelessWidget {
         orientation: orientation,
         closable: closable,
         dragToClose: dragToClose,
+        pauseOnTouch: pauseOnTouch,
         showIcon: showIcon,
         progress: progress,
         duration: duration,
@@ -179,7 +182,7 @@ class NToast extends StatelessWidget {
     final colors = _getColors(context);
     final defaultIcon = _getDefaultIcon();
 
-    return GestureDetector(
+    final toast = GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
@@ -310,6 +313,15 @@ class NToast extends StatelessWidget {
         ),
       ),
     );
+
+    if (!dragToClose) {
+      return toast;
+    }
+
+    return _NToastDragToClose(
+      onClose: onClose,
+      child: toast,
+    );
   }
 
   NComponentColor? get _componentColor {
@@ -359,6 +371,62 @@ class NToast extends StatelessWidget {
   }
 }
 
+class _NToastDragToClose extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onClose;
+
+  const _NToastDragToClose({
+    required this.child,
+    this.onClose,
+  });
+
+  @override
+  State<_NToastDragToClose> createState() => _NToastDragToCloseState();
+}
+
+class _NToastDragToCloseState extends State<_NToastDragToClose> {
+  double _dragOffset = 0;
+  bool _closing = false;
+
+  void _onDragUpdate(DragUpdateDetails details) {
+    if (_closing) return;
+    setState(() {
+      _dragOffset += details.delta.dy;
+    });
+  }
+
+  void _onDragEnd(DragEndDetails details) {
+    if (_closing) return;
+
+    const distanceThreshold = 80.0;
+    const velocityThreshold = 700.0;
+    final velocity = details.primaryVelocity ?? 0;
+
+    if (_dragOffset.abs() > distanceThreshold ||
+        velocity.abs() > velocityThreshold) {
+      _closing = true;
+      widget.onClose?.call();
+    } else {
+      setState(() {
+        _dragOffset = 0;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onVerticalDragUpdate: _onDragUpdate,
+      onVerticalDragEnd: _onDragEnd,
+      child: Transform.translate(
+        offset: Offset(0, _dragOffset),
+        child: widget.child,
+      ),
+    );
+  }
+}
+
 /// Internal widget that manages toast overlay lifecycle with animation.
 class _NToastOverlay extends StatefulWidget {
   final String? title;
@@ -371,6 +439,7 @@ class _NToastOverlay extends StatefulWidget {
   final NToastOrientation orientation;
   final bool closable;
   final bool dragToClose;
+  final bool pauseOnTouch;
   final bool showIcon;
   final bool progress;
   final Duration duration;
@@ -388,6 +457,7 @@ class _NToastOverlay extends StatefulWidget {
     required this.orientation,
     required this.closable,
     required this.dragToClose,
+    required this.pauseOnTouch,
     required this.showIcon,
     required this.progress,
     required this.duration,
@@ -406,7 +476,11 @@ class _NToastOverlayState extends State<_NToastOverlay>
   late final Animation<double> _fadeAnimation;
   AnimationController? _progressController;
   Timer? _timer;
+  DateTime? _timerStartedAt;
+  Duration _remainingDuration = Duration.zero;
   double _dragOffset = 0;
+  bool _dismissing = false;
+  bool _paused = false;
 
   @override
   void initState() {
@@ -416,7 +490,7 @@ class _NToastOverlayState extends State<_NToastOverlay>
       duration: const Duration(milliseconds: 300),
     );
 
-    final yOffset = widget.position == NToastPosition.top ? -0.5 : 0.5;
+    final yOffset = widget.position == NToastPosition.top ? -1.0 : 1.0;
     _slideAnimation = Tween<Offset>(
       begin: Offset(0, yOffset),
       end: Offset.zero,
@@ -437,14 +511,29 @@ class _NToastOverlayState extends State<_NToastOverlay>
           vsync: this,
           duration: widget.duration,
         );
-        _progressController!.reverse(from: 1.0);
+        _progressController!.value = 1.0;
       }
-      _timer = Timer(widget.duration, _dismiss);
+      _scheduleDismiss(widget.duration);
     }
   }
 
+  void _scheduleDismiss(Duration duration) {
+    _remainingDuration = duration;
+    _timerStartedAt = DateTime.now();
+    _timer?.cancel();
+    _timer = Timer(duration, _dismiss);
+    _progressController?.animateTo(
+      0,
+      duration: duration,
+      curve: Curves.linear,
+    );
+  }
+
   void _dismiss() {
-    if (!mounted) return;
+    if (!mounted || _dismissing) return;
+    _dismissing = true;
+    _timer?.cancel();
+    _progressController?.stop();
     _controller.reverse().then((_) {
       if (!mounted) return;
       widget.onClose?.call();
@@ -459,25 +548,58 @@ class _NToastOverlayState extends State<_NToastOverlay>
     super.dispose();
   }
 
+  void _pauseAutoDismiss() {
+    if (!widget.pauseOnTouch ||
+        widget.duration <= Duration.zero ||
+        _paused ||
+        _dismissing) {
+      return;
+    }
+
+    _timer?.cancel();
+    _progressController?.stop();
+
+    final startedAt = _timerStartedAt;
+    if (startedAt != null) {
+      final elapsed = DateTime.now().difference(startedAt);
+      _remainingDuration -= elapsed;
+      if (_remainingDuration < Duration.zero) {
+        _remainingDuration = Duration.zero;
+      }
+    }
+
+    _paused = true;
+  }
+
+  void _resumeAutoDismiss() {
+    if (!_paused || _dismissing) return;
+
+    _paused = false;
+    if (_remainingDuration <= Duration.zero) {
+      _dismiss();
+      return;
+    }
+
+    _scheduleDismiss(_remainingDuration);
+  }
+
   void _onDragUpdate(DragUpdateDetails details) {
+    if (_dismissing) return;
     setState(() {
       _dragOffset += details.delta.dy;
     });
   }
 
   void _onDragEnd(DragEndDetails details) {
-    const threshold = 120.0;
-    final direction = widget.position == NToastPosition.top ? -1.0 : 1.0;
+    if (_dismissing) return;
 
-    if (_dragOffset * direction > threshold) {
-      final remaining =
-          1 - _dragOffset.abs() / (MediaQuery.of(context).size.height * 0.5);
-      _controller
-        ..value = _controller.value.clamp(0, remaining)
-        ..reverse().then((_) {
-          if (!mounted) return;
-          widget.onClose?.call();
-        });
+    const distanceThreshold = 80.0;
+    const velocityThreshold = 700.0;
+    final velocity = details.primaryVelocity ?? 0;
+
+    if (_dragOffset.abs() > distanceThreshold ||
+        velocity.abs() > velocityThreshold) {
+      _dismiss();
     } else {
       setState(() {
         _dragOffset = 0;
@@ -505,6 +627,28 @@ class _NToastOverlayState extends State<_NToastOverlay>
       onTap: widget.onTap,
     );
 
+    Widget child = widget.dragToClose
+        ? GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onVerticalDragUpdate: _onDragUpdate,
+            onVerticalDragEnd: _onDragEnd,
+            child: Transform.translate(
+              offset: Offset(0, _dragOffset),
+              child: toast,
+            ),
+          )
+        : toast;
+
+    if (widget.pauseOnTouch) {
+      child = Listener(
+        behavior: HitTestBehavior.translucent,
+        onPointerDown: (_) => _pauseAutoDismiss(),
+        onPointerUp: (_) => _resumeAutoDismiss(),
+        onPointerCancel: (_) => _resumeAutoDismiss(),
+        child: child,
+      );
+    }
+
     return Positioned(
       bottom: widget.position == NToastPosition.bottom ? 24 : null,
       top: widget.position == NToastPosition.top ? topPadding + 24 : null,
@@ -516,16 +660,7 @@ class _NToastOverlayState extends State<_NToastOverlay>
           opacity: _fadeAnimation,
           child: Material(
             type: MaterialType.transparency,
-            child: widget.dragToClose
-                ? GestureDetector(
-                    onVerticalDragUpdate: _onDragUpdate,
-                    onVerticalDragEnd: _onDragEnd,
-                    child: Transform.translate(
-                      offset: Offset(0, _dragOffset),
-                      child: toast,
-                    ),
-                  )
-                : toast,
+            child: child,
           ),
         ),
       ),

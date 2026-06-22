@@ -444,6 +444,8 @@ class _ToastsDemo extends StatelessWidget {
               description: 'Your dashboard has refreshed.',
               color: NToastColor.info,
               icon: LucideIcons.bell,
+              dragToClose: true,
+              pauseOnTouch: true,
             );
           },
         ),
@@ -466,6 +468,7 @@ class _ToastsDemo extends StatelessWidget {
               context,
               title: 'New message',
               description: 'You have received a new message from Jane.',
+              pauseOnTouch: true,
               position: NToastPosition.top,
               avatar: const NAvatar(name: 'JA', size: NAvatarSize.sm),
             );
@@ -497,6 +500,20 @@ class _ToastsDemo extends StatelessWidget {
             );
           },
         ),
+        NButton.outline(
+            label: 'Without Description',
+            onPressed: () {
+              NToast.show(
+                context,
+                title:
+                    'Le propriétaire accepte les nouveaux co-abonnés automatiquement',
+                color: NToastColor.error,
+                //showIcon: false,
+                closable: false,
+                dragToClose: true,
+                pauseOnTouch: true,
+              );
+            })
       ],
     );
   }
