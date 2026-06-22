@@ -141,7 +141,7 @@ class NToast extends StatelessWidget {
     bool closable = true,
     bool showIcon = true,
     bool dragToClose = false,
-    bool pauseOnTouch = false,
+    bool pauseOnTouch = true,
     bool progress = true,
     Duration duration = const Duration(seconds: 4),
     VoidCallback? onTap,
