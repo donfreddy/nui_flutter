@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
 
+// ---------------------------------------------------------------------------
+// Enums & Data classes
+// ---------------------------------------------------------------------------
+
 /// The semantic color role applied to an [NDropdownMenuItem].
 enum NDropdownMenuColor {
   primary,
@@ -24,17 +28,17 @@ class NDropdownMenuItem {
   /// An optional avatar widget shown to the left of [label].
   final Widget? avatar;
 
-  /// A list of keyboard shortcut keys shown on the right (e.g., ['⌘', 'K']).
+  /// A list of keyboard shortcut keys shown on the right (e.g. ['⌘', 'K']).
   final List<String>? kbds;
 
-  /// The color role of the item. Defaults to neutral, but can be set to
-  /// [NDropdownMenuColor.error] for destructive actions.
+  /// The color role of the item. Use [NDropdownMenuColor.error] for destructive
+  /// actions to tint the label and icon in red.
   final NDropdownMenuColor? color;
 
-  /// When `true`, this item cannot be selected and appears faded.
+  /// When `true`, this item cannot be tapped and appears faded.
   final bool disabled;
 
-  /// Called when the user taps this item.
+  /// Called when the user selects this item.
   final VoidCallback? onSelect;
 
   /// Creates an [NDropdownMenuItem].
@@ -49,17 +53,21 @@ class NDropdownMenuItem {
   });
 }
 
-/// A menu to display actions when clicking on an element.
+// ---------------------------------------------------------------------------
+// NDropdownMenu widget
+// ---------------------------------------------------------------------------
+
+/// A contextual action menu that appears when the [child] is tapped.
 ///
-/// Use a Button or any other component in the [child] property of the DropdownMenu.
-/// Items are passed as a `List<List<NDropdownMenuItem>>` to allow grouping.
+/// Pass items as a `List<List<NDropdownMenuItem>>`. Each inner list forms a
+/// visual group separated by a thin divider.
 ///
 /// ```dart
 /// NDropdownMenu(
 ///   items: [
 ///     [
 ///       NDropdownMenuItem(label: 'Profile', icon: LucideIcons.user),
-///       NDropdownMenuItem(label: 'Billing', icon: LucideIcons.creditCard),
+///       NDropdownMenuItem(label: 'Settings', icon: LucideIcons.cog, kbds: [',']),
 ///     ],
 ///     [
 ///       NDropdownMenuItem(
@@ -67,113 +75,92 @@ class NDropdownMenuItem {
 ///         icon: LucideIcons.logOut,
 ///         color: NDropdownMenuColor.error,
 ///         kbds: ['⇧', '⌘', 'Q'],
-///         onSelect: () => print('Logout'),
+///         onSelect: () => signOut(),
 ///       ),
 ///     ],
 ///   ],
-///   child: NButton.outline(icon: LucideIcons.menu),
+///   child: NButton.outline(label: 'Open', leading: Icon(LucideIcons.menu)),
 /// )
 /// ```
 class NDropdownMenu extends StatefulWidget {
-  /// The trigger widget that opens the dropdown menu when tapped.
+  /// The widget that triggers the menu when tapped.
   final Widget child;
 
-  /// Groups of items to display in the menu. Each inner list represents a group
-  /// separated by a visual divider.
+  /// Item groups. Each inner list renders as a group with a divider between
+  /// consecutive groups.
   final List<List<NDropdownMenuItem>> items;
 
-  /// When `true`, the menu opens automatically on load (useful for testing).
-  final bool defaultOpen;
+  /// Preferred minimum width for the popup. Defaults to 200.
+  final double minWidth;
 
-  /// Creates an [NDropdownMenu].
   const NDropdownMenu({
     super.key,
     required this.child,
     required this.items,
-    this.defaultOpen = false,
+    this.minWidth = 200,
   });
 
   @override
   State<NDropdownMenu> createState() => _NDropdownMenuState();
 }
 
-class _NDropdownMenuState extends State<NDropdownMenu> {
+class _NDropdownMenuState extends State<NDropdownMenu>
+    with SingleTickerProviderStateMixin {
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
   bool _isOpen = false;
+  late AnimationController _animCtrl;
+  late Animation<double> _scaleAnim;
+  late Animation<double> _fadeAnim;
 
   @override
   void initState() {
     super.initState();
-    if (widget.defaultOpen) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _showOverlay();
-      });
-    }
+    _animCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 140),
+    );
+    _scaleAnim = CurvedAnimation(parent: _animCtrl, curve: Curves.easeOutCubic);
+    _fadeAnim = CurvedAnimation(parent: _animCtrl, curve: Curves.easeOut);
   }
 
   @override
   void dispose() {
+    _animCtrl.dispose();
     _overlayEntry?.remove();
     _overlayEntry = null;
     super.dispose();
   }
 
-  void _toggleMenu() {
-    if (_isOpen) {
-      _closeMenu();
-    } else {
-      _showOverlay();
-    }
-  }
+  void _toggle() => _isOpen ? _close() : _open();
 
-  void _closeMenu() {
-    if (_overlayEntry == null) return;
+  Future<void> _close() async {
+    await _animCtrl.reverse();
     _overlayEntry?.remove();
     _overlayEntry = null;
-    if (mounted) {
-      setState(() => _isOpen = false);
-    }
+    if (mounted) setState(() => _isOpen = false);
   }
 
-  void _showOverlay() {
-    _overlayEntry = _createOverlayEntry();
+  void _open() {
+    _overlayEntry = _buildOverlay();
     Overlay.of(context).insert(_overlayEntry!);
+    _animCtrl.forward(from: 0);
     setState(() => _isOpen = true);
   }
 
-  OverlayEntry _createOverlayEntry() {
-    RenderBox renderBox = context.findRenderObject() as RenderBox;
-    var size = renderBox.size;
+  OverlayEntry _buildOverlay() {
+    final box = context.findRenderObject() as RenderBox;
+    final size = box.size;
 
     return OverlayEntry(
-      builder: (context) => Stack(
-        children: [
-          // Invisible layer to catch outside taps
-          Positioned.fill(
-            child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: _closeMenu,
-              // We don't use a child here so it just intercepts taps
-            ),
-          ),
-          Positioned(
-            width: 220, // Default width for a standard dropdown menu
-            child: CompositedTransformFollower(
-              link: _layerLink,
-              showWhenUnlinked: false,
-              offset: Offset(0, size.height + 4),
-              child: Material(
-                elevation: 0,
-                color: Colors.transparent,
-                child: _DropdownMenuContent(
-                  items: widget.items,
-                  onClose: _closeMenu,
-                ),
-              ),
-            ),
-          ),
-        ],
+      builder: (_) => _DropdownOverlay(
+        layerLink: _layerLink,
+        triggerSize: size,
+        items: widget.items,
+        minWidth: widget.minWidth,
+        scaleAnim: _scaleAnim,
+        fadeAnim: _fadeAnim,
+        onClose: _close,
       ),
     );
   }
@@ -183,178 +170,286 @@ class _NDropdownMenuState extends State<NDropdownMenu> {
     return CompositedTransformTarget(
       link: _layerLink,
       child: GestureDetector(
-        onTap: _toggleMenu,
-        behavior: HitTestBehavior.translucent,
+        onTap: _toggle,
+        behavior: HitTestBehavior.opaque,
         child: widget.child,
       ),
     );
   }
 }
 
-class _DropdownMenuContent extends StatelessWidget {
+// ---------------------------------------------------------------------------
+// Overlay content
+// ---------------------------------------------------------------------------
+
+class _DropdownOverlay extends StatelessWidget {
+  final LayerLink layerLink;
+  final Size triggerSize;
   final List<List<NDropdownMenuItem>> items;
+  final double minWidth;
+  final Animation<double> scaleAnim;
+  final Animation<double> fadeAnim;
   final VoidCallback onClose;
 
-  const _DropdownMenuContent({
+  const _DropdownOverlay({
+    required this.layerLink,
+    required this.triggerSize,
     required this.items,
+    required this.minWidth,
+    required this.scaleAnim,
+    required this.fadeAnim,
     required this.onClose,
   });
 
   @override
   Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // Full-screen tap catcher for outside taps
+        Positioned.fill(
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: onClose,
+            child: const SizedBox.expand(),
+          ),
+        ),
+        // The popup positioned below the trigger
+        Positioned(
+          width: minWidth,
+          child: CompositedTransformFollower(
+            link: layerLink,
+            showWhenUnlinked: false,
+            targetAnchor: Alignment.bottomLeft,
+            followerAnchor: Alignment.topLeft,
+            offset: const Offset(0, 6),
+            child: FadeTransition(
+              opacity: fadeAnim,
+              child: ScaleTransition(
+                scale: Tween<double>(begin: 0.95, end: 1.0).animate(scaleAnim),
+                alignment: Alignment.topLeft,
+                child: Material(
+                  color: Colors.transparent,
+                  child: _MenuPanel(items: items, onClose: onClose),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Panel
+// ---------------------------------------------------------------------------
+
+class _MenuPanel extends StatelessWidget {
+  final List<List<NDropdownMenuItem>> items;
+  final VoidCallback onClose;
+
+  const _MenuPanel({required this.items, required this.onClose});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(maxHeight: 400),
       decoration: BoxDecoration(
         color: NTokens.bgElevated(context),
         borderRadius: BorderRadius.circular(NTokens.radiusDefault),
         border: Border.all(color: NTokens.borderDefault(context)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 16,
+            spreadRadius: 0,
+            offset: const Offset(0, 6),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 4,
+            spreadRadius: 0,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            for (var i = 0; i < items.length; i++) ...[
-              if (i > 0)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Divider(
-                    height: 1,
-                    thickness: 1,
-                    color: NTokens.borderMuted(context),
-                  ),
-                ),
-              ...items[i].map((item) => _buildItem(context, item)),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildItem(BuildContext context, NDropdownMenuItem item) {
-    final textColor = _getTextColor(context, item);
-    final iconColor = _getIconColor(context, item);
-    final hoverColor = _getHoverColor(context, item);
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: item.disabled
-            ? null
-            : () {
-                item.onSelect?.call();
-                onClose();
-              },
-        hoverColor: hoverColor,
-        splashColor: hoverColor,
-        highlightColor: hoverColor.withValues(alpha: 0.2),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Row(
-            children: [
-              if (item.avatar != null) ...[
-                SizedBox(width: 20, height: 20, child: item.avatar!),
-                const SizedBox(width: 10),
-              ] else if (item.icon != null) ...[
-                Icon(item.icon, size: 16, color: iconColor),
-                const SizedBox(width: 10),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(NTokens.radiusDefault),
+        child: IntrinsicWidth(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (var i = 0; i < items.length; i++) ...[
+                  if (i > 0)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: NTokens.borderMuted(context),
+                      ),
+                    ),
+                  ...items[i].map((item) => _MenuItem(item: item, onClose: onClose)),
+                ],
               ],
-              Expanded(
-                child: Text(
-                  item.label,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: textColor,
-                  ),
-                ),
-              ),
-              if (item.kbds != null && item.kbds!.isNotEmpty) ...[
-                const SizedBox(width: 12),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: item.kbds!.map((kbd) => _buildKbd(context, kbd)).toList(),
-                ),
-              ],
-            ],
+            ),
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildKbd(BuildContext context, String text) {
-    return Container(
-      margin: const EdgeInsets.only(left: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-      decoration: BoxDecoration(
-        color: NTokens.bgMuted(context),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: NTokens.borderMuted(context)),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: NTokens.textMuted(context),
-          fontFamily: 'Courier', // Standard for keyboard shortcuts
-        ),
-      ),
-    );
-  }
+// ---------------------------------------------------------------------------
+// Menu item
+// ---------------------------------------------------------------------------
 
-  Color _getTextColor(BuildContext context, NDropdownMenuItem item) {
-    if (item.disabled) return NTokens.textDisabled(context);
-    if (item.color != null && item.color != NDropdownMenuColor.neutral) {
-      return NComponentColors.resolve(
-        context,
-        _mapColor(item.color!),
-      ).text;
-    }
-    return NTokens.textDefault(context);
-  }
+class _MenuItem extends StatefulWidget {
+  final NDropdownMenuItem item;
+  final VoidCallback onClose;
 
-  Color _getIconColor(BuildContext context, NDropdownMenuItem item) {
-    if (item.disabled) return NTokens.textDisabled(context);
-    if (item.color != null && item.color != NDropdownMenuColor.neutral) {
-      return NComponentColors.resolve(
-        context,
-        _mapColor(item.color!),
-      ).main;
-    }
-    return NTokens.textMuted(context);
-  }
+  const _MenuItem({required this.item, required this.onClose});
 
-  Color _getHoverColor(BuildContext context, NDropdownMenuItem item) {
-    if (item.disabled) return Colors.transparent;
-    if (item.color != null && item.color != NDropdownMenuColor.neutral) {
-      return NComponentColors.resolve(
-        context,
-        _mapColor(item.color!),
-      ).softBg;
-    }
-    return NTokens.bgMuted(context);
-  }
+  @override
+  State<_MenuItem> createState() => _MenuItemState();
+}
 
-  NComponentColor _mapColor(NDropdownMenuColor color) {
-    return switch (color) {
+class _MenuItemState extends State<_MenuItem> {
+  bool _hovered = false;
+
+  NDropdownMenuItem get item => widget.item;
+
+  NComponentColor _componentColor() {
+    return switch (item.color) {
+      null || NDropdownMenuColor.neutral => NComponentColor.neutral,
       NDropdownMenuColor.primary => NComponentColor.primary,
       NDropdownMenuColor.secondary => NComponentColor.secondary,
       NDropdownMenuColor.success => NComponentColor.success,
       NDropdownMenuColor.info => NComponentColor.info,
       NDropdownMenuColor.warning => NComponentColor.warning,
       NDropdownMenuColor.error => NComponentColor.error,
-      NDropdownMenuColor.neutral => NComponentColor.neutral,
     };
+  }
+
+  bool get _isSemantic =>
+      item.color != null && item.color != NDropdownMenuColor.neutral;
+
+  @override
+  Widget build(BuildContext context) {
+    if (item.disabled) return _buildRow(context, isHovered: false);
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          item.onSelect?.call();
+          widget.onClose();
+        },
+        child: _buildRow(context, isHovered: _hovered),
+      ),
+    );
+  }
+
+  Widget _buildRow(BuildContext context, {required bool isHovered}) {
+    final colors = _isSemantic
+        ? NComponentColors.resolve(context, _componentColor())
+        : null;
+
+    final textColor = item.disabled
+        ? NTokens.textDisabled(context)
+        : colors?.text ?? NTokens.textDefault(context);
+
+    final iconColor = item.disabled
+        ? NTokens.textDisabled(context)
+        : _isSemantic
+            ? (colors?.main ?? NTokens.textMuted(context))
+            : NTokens.textMuted(context);
+
+    final bgColor = isHovered
+        ? (colors?.softBg ?? NTokens.bgMuted(context))
+        : Colors.transparent;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 80),
+      color: bgColor,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Leading: avatar or icon
+          if (item.avatar != null) ...[
+            SizedBox(width: 18, height: 18, child: item.avatar!),
+            const SizedBox(width: 8),
+          ] else if (item.icon != null) ...[
+            Icon(item.icon, size: 15, color: iconColor),
+            const SizedBox(width: 8),
+          ],
+          // Label
+          Expanded(
+            child: Text(
+              item.label,
+              style: TextStyle(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w500,
+                color: textColor,
+                height: 1.4,
+              ),
+            ),
+          ),
+          // Keyboard shortcuts
+          if (item.kbds != null && item.kbds!.isNotEmpty) ...[
+            const SizedBox(width: 16),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: item.kbds!
+                  .map((k) => _KbdBadge(text: k))
+                  .toList(),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Keyboard badge
+// ---------------------------------------------------------------------------
+
+class _KbdBadge extends StatelessWidget {
+  final String text;
+  const _KbdBadge({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(left: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+      decoration: BoxDecoration(
+        color: NTokens.bgMuted(context),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: NTokens.borderDefault(context)),
+        boxShadow: [
+          BoxShadow(
+            color: NTokens.borderDefault(context).withValues(alpha: 0.5),
+            offset: const Offset(0, 1),
+            blurRadius: 0,
+          ),
+        ],
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 10.5,
+          fontWeight: FontWeight.w600,
+          color: NTokens.textMuted(context),
+          letterSpacing: 0.3,
+        ),
+      ),
+    );
   }
 }
