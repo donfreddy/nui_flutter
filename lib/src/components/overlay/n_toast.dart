@@ -85,6 +85,9 @@ class NToast extends StatelessWidget {
   /// When true, a close button is rendered at the trailing edge.
   final bool closable;
 
+  /// When true, the toast can be dismissed by dragging it vertically.
+  final bool dragToClose;
+
   /// An optional avatar displayed before the text.
   final Widget? avatar;
 
@@ -114,6 +117,7 @@ class NToast extends StatelessWidget {
     this.orientation = NToastOrientation.horizontal,
     this.closable = true,
     this.showIcon = true,
+    this.dragToClose = false,
     this.onClose,
     this.onTap,
   });
@@ -135,6 +139,7 @@ class NToast extends StatelessWidget {
     NToastOrientation orientation = NToastOrientation.vertical,
     bool closable = true,
     bool showIcon = true,
+    bool dragToClose = false,
     bool progress = true,
     Duration duration = const Duration(seconds: 4),
     VoidCallback? onTap,
@@ -153,6 +158,7 @@ class NToast extends StatelessWidget {
         position: position,
         orientation: orientation,
         closable: closable,
+        dragToClose: dragToClose,
         showIcon: showIcon,
         progress: progress,
         duration: duration,
@@ -194,8 +200,7 @@ class NToast extends StatelessWidget {
             child: Stack(
               children: [
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -248,17 +253,14 @@ class NToast extends StatelessWidget {
                           ],
                         ),
                       ),
-                      if (orientation == NToastOrientation.horizontal &&
-                          actions != null &&
-                          actions!.isNotEmpty) ...[
+                      if (orientation == NToastOrientation.horizontal && actions != null && actions!.isNotEmpty) ...[
                         const SizedBox(width: 12),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             for (var i = 0; i < actions!.length; i++) ...[
                               actions![i],
-                              if (i < actions!.length - 1)
-                                const SizedBox(width: 8),
+                              if (i < actions!.length - 1) const SizedBox(width: 8),
                             ],
                           ],
                         ),
@@ -363,6 +365,7 @@ class _NToastOverlay extends StatefulWidget {
   final NToastPosition position;
   final NToastOrientation orientation;
   final bool closable;
+  final bool dragToClose;
   final bool showIcon;
   final bool progress;
   final Duration duration;
@@ -379,6 +382,7 @@ class _NToastOverlay extends StatefulWidget {
     required this.position,
     required this.orientation,
     required this.closable,
+    required this.dragToClose,
     required this.showIcon,
     required this.progress,
     required this.duration,
@@ -390,13 +394,13 @@ class _NToastOverlay extends StatefulWidget {
   State<_NToastOverlay> createState() => _NToastOverlayState();
 }
 
-class _NToastOverlayState extends State<_NToastOverlay>
-    with TickerProviderStateMixin {
+class _NToastOverlayState extends State<_NToastOverlay> with TickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<Offset> _slideAnimation;
   late final Animation<double> _fadeAnimation;
   AnimationController? _progressController;
   Timer? _timer;
+  double _dragOffset = 0;
 
   @override
   void initState() {
@@ -449,36 +453,72 @@ class _NToastOverlayState extends State<_NToastOverlay>
     super.dispose();
   }
 
+  void _onDragUpdate(DragUpdateDetails details) {
+    setState(() {
+      _dragOffset += details.delta.dy;
+    });
+  }
+
+  void _onDragEnd(DragEndDetails details) {
+    const threshold = 120.0;
+    final direction = widget.position == NToastPosition.top ? -1.0 : 1.0;
+
+    if (_dragOffset * direction > threshold) {
+      final remaining = 1 - _dragOffset.abs() / (MediaQuery.of(context).size.height * 0.5);
+      _controller
+        ..value = _controller.value.clamp(0, remaining)
+        ..reverse().then((_) {
+          if (!mounted) return;
+          widget.onClose?.call();
+        });
+    } else {
+      setState(() {
+        _dragOffset = 0;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
 
+    final toast = NToast(
+      title: widget.title,
+      description: widget.description,
+      icon: widget.icon,
+      avatar: widget.avatar,
+      actions: widget.actions,
+      color: widget.color,
+      position: widget.position,
+      orientation: widget.orientation,
+      closable: widget.closable,
+      showIcon: widget.showIcon,
+      progressAnimation: _progressController,
+      onClose: _dismiss,
+      onTap: widget.onTap,
+    );
+
     return Positioned(
-      bottom: widget.position == NToastPosition.bottom ? 24 : null,
-      top: widget.position == NToastPosition.top ? topPadding + 24 : null,
-      left: 16,
-      right: 16,
+      bottom: widget.position == NToastPosition.bottom ? NTokens.paddingLg : null,
+      top: widget.position == NToastPosition.top ? topPadding + NTokens.paddingLg : null,
+      left: NTokens.paddingDefault,
+      right: NTokens.paddingDefault,
       child: SlideTransition(
         position: _slideAnimation,
         child: FadeTransition(
           opacity: _fadeAnimation,
           child: Material(
             type: MaterialType.transparency,
-            child: NToast(
-              title: widget.title,
-              description: widget.description,
-              icon: widget.icon,
-              avatar: widget.avatar,
-              actions: widget.actions,
-              color: widget.color,
-              position: widget.position,
-              orientation: widget.orientation,
-              closable: widget.closable,
-              showIcon: widget.showIcon,
-              progressAnimation: _progressController,
-              onClose: _dismiss,
-              onTap: widget.onTap,
-            ),
+            child: widget.dragToClose
+                ? GestureDetector(
+                    onVerticalDragUpdate: _onDragUpdate,
+                    onVerticalDragEnd: _onDragEnd,
+                    child: Transform.translate(
+                      offset: Offset(0, _dragOffset),
+                      child: toast,
+                    ),
+                  )
+                : toast,
           ),
         ),
       ),
