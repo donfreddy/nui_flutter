@@ -100,6 +100,9 @@ class _HomePage extends StatelessWidget {
             SizedBox(height: 24),
             _SectionTitle('Tab Bar'),
             _TabBarDemo(),
+            SizedBox(height: 24),
+            _SectionTitle('Error'),
+            _ErrorDemo(),
             SizedBox(height: 32),
           ],
         ),
@@ -912,6 +915,57 @@ class _TabBarDemoState extends State<_TabBarDemo> {
           selectedIndex: _pill,
           onChanged: (i) => setState(() => _pill = i),
           variant: NTabBarVariant.pill,
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Error
+// ---------------------------------------------------------------------------
+class _ErrorDemo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // 404 example
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Theme.of(context).dividerColor),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: NError(
+            statusCode: 404,
+            statusMessage: 'Page not found',
+            message:
+                'The page you are looking for does not exist or has been moved.',
+            onClear: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Navigating to home...')),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 12),
+        // 500 example
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Theme.of(context).dividerColor),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: NError(
+            statusCode: 500,
+            statusMessage: 'Internal server error',
+            message:
+                'Something went wrong on our end. Please try again later.',
+            clearLabel: 'Try again',
+            onClear: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Retrying...')),
+              );
+            },
+          ),
         ),
       ],
     );

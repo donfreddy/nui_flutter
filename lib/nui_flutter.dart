@@ -75,6 +75,7 @@ export 'src/components/elements/n_progress.dart';
 
 // Data
 export 'src/components/data/n_empty_state.dart';
+export 'src/components/data/n_error.dart';
 
 // Overlay
 export 'src/components/overlay/n_bottom_sheet.dart';

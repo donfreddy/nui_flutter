@@ -71,7 +71,6 @@
 - [ ] **Carousel** -- Swipeable horizontal carousel
 - [ ] **Listbox** -- Searchable selectable list
 - [ ] **ColorPicker** -- Color selection UI
-- [ ] **Error** -- Full error state display
 - [ ] **NavigationMenu** -- Multi-level navigation
 - [ ] **ScrollArea** -- Scrollable container with shadow hints
 - [ ] **Sidebar** -- Collapsible sidebar navigation
