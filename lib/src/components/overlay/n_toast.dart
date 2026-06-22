@@ -506,13 +506,10 @@ class _NToastOverlayState extends State<_NToastOverlay>
     );
 
     return Positioned(
-      bottom:
-          widget.position == NToastPosition.bottom ? NTokens.paddingLg : null,
-      top: widget.position == NToastPosition.top
-          ? topPadding + NTokens.paddingLg
-          : null,
-      left: NTokens.paddingDefault,
-      right: NTokens.paddingDefault,
+      bottom: widget.position == NToastPosition.bottom ? 24 : null,
+      top: widget.position == NToastPosition.top ? topPadding + 24 : null,
+      left: 16,
+      right: 16,
       child: SlideTransition(
         position: _slideAnimation,
         child: FadeTransition(
