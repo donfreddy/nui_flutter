@@ -200,7 +200,8 @@ class NToast extends StatelessWidget {
             child: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -208,7 +209,8 @@ class NToast extends StatelessWidget {
                       if (avatar != null) ...[
                         avatar!,
                         NSpacing.horizontal(NSpacing.s2),
-                      ] else if (icon != null || (showIcon && defaultIcon != null)) ...[
+                      ] else if (icon != null ||
+                          (showIcon && defaultIcon != null)) ...[
                         Icon(
                           icon ?? defaultIcon,
                           size: 20,
@@ -253,14 +255,17 @@ class NToast extends StatelessWidget {
                           ],
                         ),
                       ),
-                      if (orientation == NToastOrientation.horizontal && actions != null && actions!.isNotEmpty) ...[
+                      if (orientation == NToastOrientation.horizontal &&
+                          actions != null &&
+                          actions!.isNotEmpty) ...[
                         const SizedBox(width: 12),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             for (var i = 0; i < actions!.length; i++) ...[
                               actions![i],
-                              if (i < actions!.length - 1) const SizedBox(width: 8),
+                              if (i < actions!.length - 1)
+                                const SizedBox(width: 8),
                             ],
                           ],
                         ),
@@ -394,7 +399,8 @@ class _NToastOverlay extends StatefulWidget {
   State<_NToastOverlay> createState() => _NToastOverlayState();
 }
 
-class _NToastOverlayState extends State<_NToastOverlay> with TickerProviderStateMixin {
+class _NToastOverlayState extends State<_NToastOverlay>
+    with TickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<Offset> _slideAnimation;
   late final Animation<double> _fadeAnimation;
@@ -464,7 +470,8 @@ class _NToastOverlayState extends State<_NToastOverlay> with TickerProviderState
     final direction = widget.position == NToastPosition.top ? -1.0 : 1.0;
 
     if (_dragOffset * direction > threshold) {
-      final remaining = 1 - _dragOffset.abs() / (MediaQuery.of(context).size.height * 0.5);
+      final remaining =
+          1 - _dragOffset.abs() / (MediaQuery.of(context).size.height * 0.5);
       _controller
         ..value = _controller.value.clamp(0, remaining)
         ..reverse().then((_) {
@@ -499,8 +506,11 @@ class _NToastOverlayState extends State<_NToastOverlay> with TickerProviderState
     );
 
     return Positioned(
-      bottom: widget.position == NToastPosition.bottom ? NTokens.paddingLg : null,
-      top: widget.position == NToastPosition.top ? topPadding + NTokens.paddingLg : null,
+      bottom:
+          widget.position == NToastPosition.bottom ? NTokens.paddingLg : null,
+      top: widget.position == NToastPosition.top
+          ? topPadding + NTokens.paddingLg
+          : null,
       left: NTokens.paddingDefault,
       right: NTokens.paddingDefault,
       child: SlideTransition(
