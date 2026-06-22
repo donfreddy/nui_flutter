@@ -67,6 +67,10 @@ class NToast extends StatelessWidget {
   /// An optional icon displayed before the text.
   final IconData? icon;
 
+  /// Whether to show the default icon when no custom [icon] is provided.
+  /// Defaults to true.
+  final bool showIcon;
+
   /// The semantic color role. Defaults to [NToastColor.primary].
   final NToastColor color;
 
@@ -109,6 +113,7 @@ class NToast extends StatelessWidget {
     this.position = NToastPosition.bottom,
     this.orientation = NToastOrientation.horizontal,
     this.closable = true,
+    this.showIcon = true,
     this.onClose,
     this.onTap,
   });
@@ -129,6 +134,7 @@ class NToast extends StatelessWidget {
     NToastPosition position = NToastPosition.bottom,
     NToastOrientation orientation = NToastOrientation.vertical,
     bool closable = true,
+    bool showIcon = true,
     bool progress = true,
     Duration duration = const Duration(seconds: 4),
     VoidCallback? onTap,
@@ -147,6 +153,7 @@ class NToast extends StatelessWidget {
         position: position,
         orientation: orientation,
         closable: closable,
+        showIcon: showIcon,
         progress: progress,
         duration: duration,
         onClose: () {
@@ -196,7 +203,7 @@ class NToast extends StatelessWidget {
                       if (avatar != null) ...[
                         avatar!,
                         NSpacing.horizontal(NSpacing.s2),
-                      ] else if (icon != null || defaultIcon != null) ...[
+                      ] else if (icon != null || (showIcon && defaultIcon != null)) ...[
                         Icon(
                           icon ?? defaultIcon,
                           size: 20,
@@ -356,6 +363,7 @@ class _NToastOverlay extends StatefulWidget {
   final NToastPosition position;
   final NToastOrientation orientation;
   final bool closable;
+  final bool showIcon;
   final bool progress;
   final Duration duration;
   final VoidCallback? onClose;
@@ -371,6 +379,7 @@ class _NToastOverlay extends StatefulWidget {
     required this.position,
     required this.orientation,
     required this.closable,
+    required this.showIcon,
     required this.progress,
     required this.duration,
     this.onClose,
@@ -465,6 +474,7 @@ class _NToastOverlayState extends State<_NToastOverlay>
               position: widget.position,
               orientation: widget.orientation,
               closable: widget.closable,
+              showIcon: widget.showIcon,
               progressAnimation: _progressController,
               onClose: _dismiss,
               onTap: widget.onTap,
