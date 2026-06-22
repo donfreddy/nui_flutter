@@ -92,8 +92,8 @@ class _HomePage extends StatelessWidget {
             _SectionTitle('Icon Buttons'),
             _IconButtonsDemo(),
             SizedBox(height: 24),
-            _SectionTitle('Empty State'),
-            _EmptyStateDemo(),
+            _SectionTitle('Empty'),
+            _EmptyDemo(),
             SizedBox(height: 24),
             _SectionTitle('Bottom Sheet'),
             _BottomSheetDemo(),
@@ -689,8 +689,7 @@ class _DropdownMenuDemo extends StatelessWidget {
                   label: 'New team', icon: LucideIcons.plus, kbds: ['⌘', 'N']),
             ],
             [
-              const NDropdownMenuItem(
-                  label: 'GitHub', icon: LucideIcons.code),
+              const NDropdownMenuItem(label: 'GitHub', icon: LucideIcons.code),
               const NDropdownMenuItem(
                   label: 'Support', icon: LucideIcons.lifeBuoy),
               const NDropdownMenuItem(
@@ -711,10 +710,10 @@ class _DropdownMenuDemo extends StatelessWidget {
             ],
           ],
           child: NButton.outline(
-              label: 'Open',
-              leading: const Icon(LucideIcons.menu, size: 16),
-              color: NButtonColor.neutral,
-              onPressed: () {},
+            label: 'Open',
+            leading: const Icon(LucideIcons.menu, size: 16),
+            color: NButtonColor.neutral,
+            onPressed: () {},
           ),
         ),
       ],
@@ -831,16 +830,37 @@ class _IconButtonsDemo extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Empty State
+// Empty
 // ---------------------------------------------------------------------------
-class _EmptyStateDemo extends StatelessWidget {
+class _EmptyDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return NEmptyState(
-      icon: LucideIcons.inbox,
-      title: 'No messages',
-      description: 'You are all caught up. New messages will appear here.',
-      action: NButton(label: 'Refresh', onPressed: () {}),
+    return Column(
+      children: [
+        NEmpty(
+          icon: LucideIcons.inbox,
+          title: 'No messages',
+          description: 'You are all caught up. New messages will appear here.',
+          actions: [
+            NButton(label: 'Refresh', onPressed: () {}),
+          ],
+        ),
+        const SizedBox(height: 16),
+        NEmpty(
+          avatar: const NAvatar(
+              imageUrl: 'https://avatars.githubusercontent.com/u/1?v=4'),
+          title: 'No users found',
+          description: 'Try adjusting your search filters.',
+          variant: NEmptyVariant.solid,
+          actions: [
+            NButton.outline(
+              label: 'Clear filters',
+              onPressed: () {},
+              color: NButtonColor.neutral,
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -957,8 +977,7 @@ class _ErrorDemo extends StatelessWidget {
           child: NError(
             statusCode: 500,
             statusMessage: 'Internal server error',
-            message:
-                'Something went wrong on our end. Please try again later.',
+            message: 'Something went wrong on our end. Please try again later.',
             clearLabel: 'Try again',
             onClear: () {
               ScaffoldMessenger.of(context).showSnackBar(

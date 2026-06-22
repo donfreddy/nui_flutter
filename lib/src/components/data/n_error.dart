@@ -215,9 +215,8 @@ class _ClearButtonState extends State<_ClearButton> {
           duration: const Duration(milliseconds: 120),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           decoration: BoxDecoration(
-            color: _hovered
-                ? widget.color.withValues(alpha: 0.88)
-                : widget.color,
+            color:
+                _hovered ? widget.color.withValues(alpha: 0.88) : widget.color,
             borderRadius: BorderRadius.circular(NTokens.radiusDefault),
             boxShadow: [
               BoxShadow(

@@ -143,14 +143,14 @@ class _DeterminateBar extends StatelessWidget {
               height: double.infinity,
               decoration: BoxDecoration(
                 color: NTokens.bgAccented(context),
-                borderRadius:
-                    BorderRadius.circular(constraints.maxHeight / 2),
+                borderRadius: BorderRadius.circular(constraints.maxHeight / 2),
               ),
             ),
             AnimatedFractionallySizedBox(
               widthFactor: value.clamp(0.0, 1.0),
               heightFactor: 1,
-              alignment: inverted ? Alignment.centerRight : Alignment.centerLeft,
+              alignment:
+                  inverted ? Alignment.centerRight : Alignment.centerLeft,
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeOut,
               child: Container(
@@ -218,8 +218,7 @@ class _IndeterminateBarState extends State<_IndeterminateBar>
               height: double.infinity,
               decoration: BoxDecoration(
                 color: NTokens.bgAccented(context),
-                borderRadius:
-                    BorderRadius.circular(constraints.maxHeight / 2),
+                borderRadius: BorderRadius.circular(constraints.maxHeight / 2),
               ),
             ),
             AnimatedBuilder(

@@ -291,7 +291,8 @@ class _MenuPanel extends StatelessWidget {
                         color: NTokens.borderMuted(context),
                       ),
                     ),
-                  ...items[i].map((item) => _MenuItem(item: item, onClose: onClose)),
+                  ...items[i]
+                      .map((item) => _MenuItem(item: item, onClose: onClose)),
                 ],
               ],
             ),
@@ -405,9 +406,7 @@ class _MenuItemState extends State<_MenuItem> {
             const SizedBox(width: 16),
             Row(
               mainAxisSize: MainAxisSize.min,
-              children: item.kbds!
-                  .map((k) => _KbdBadge(text: k))
-                  .toList(),
+              children: item.kbds!.map((k) => _KbdBadge(text: k)).toList(),
             ),
           ],
         ],

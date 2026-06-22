@@ -192,7 +192,8 @@ class NModal extends StatelessWidget {
           ),
           if (showClose)
             IconButton(
-              icon: Icon(Icons.close, size: 20, color: NTokens.textMuted(context)),
+              icon: Icon(Icons.close,
+                  size: 20, color: NTokens.textMuted(context)),
               onPressed: onClose ?? () => Navigator.of(context).pop(),
               splashRadius: 20,
             ),
@@ -288,7 +289,8 @@ class _NModalActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = destructive ? NTokens.error(context) : NTokens.primary(context);
+    final bgColor =
+        destructive ? NTokens.error(context) : NTokens.primary(context);
     return GestureDetector(
       onTap: onPressed,
       child: Container(

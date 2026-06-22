@@ -77,6 +77,7 @@
 - [ ] **Slideover** -- Slide-in panel (all sides)
 - [ ] **Switch** -- Additional NToggle variant
 - [ ] **Tree** -- Hierarchical tree view
+- [x] **Error** -- Full error state display
 - [ ] **User** -- User display (avatar + name + description)
 - [ ] **Marquee** -- Infinite scrolling ticker
 

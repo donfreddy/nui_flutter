@@ -373,13 +373,11 @@ class _NTextareaState extends State<NTextarea> {
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: borderRadius,
-                borderSide:
-                    BorderSide(color: NTokens.error(context), width: 1),
+                borderSide: BorderSide(color: NTokens.error(context), width: 1),
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderRadius: borderRadius,
-                borderSide:
-                    BorderSide(color: NTokens.error(context), width: 2),
+                borderSide: BorderSide(color: NTokens.error(context), width: 2),
               ),
               disabledBorder: OutlineInputBorder(
                 borderRadius: borderRadius,

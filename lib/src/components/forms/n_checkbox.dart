@@ -129,7 +129,8 @@ class NCheckbox extends StatelessWidget {
                   color: value == true ? c.main : Colors.transparent,
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
-                    color: value == true ? c.main : NTokens.borderDefault(context),
+                    color:
+                        value == true ? c.main : NTokens.borderDefault(context),
                     width: 1.5,
                   ),
                 ),

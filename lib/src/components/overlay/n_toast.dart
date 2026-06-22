@@ -187,7 +187,8 @@ class NToast extends StatelessWidget {
             child: Stack(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -240,14 +241,17 @@ class NToast extends StatelessWidget {
                           ],
                         ),
                       ),
-                      if (orientation == NToastOrientation.horizontal && actions != null && actions!.isNotEmpty) ...[
+                      if (orientation == NToastOrientation.horizontal &&
+                          actions != null &&
+                          actions!.isNotEmpty) ...[
                         const SizedBox(width: 12),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             for (var i = 0; i < actions!.length; i++) ...[
                               actions![i],
-                              if (i < actions!.length - 1) const SizedBox(width: 8),
+                              if (i < actions!.length - 1)
+                                const SizedBox(width: 8),
                             ],
                           ],
                         ),
@@ -377,7 +381,8 @@ class _NToastOverlay extends StatefulWidget {
   State<_NToastOverlay> createState() => _NToastOverlayState();
 }
 
-class _NToastOverlayState extends State<_NToastOverlay> with TickerProviderStateMixin {
+class _NToastOverlayState extends State<_NToastOverlay>
+    with TickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<Offset> _slideAnimation;
   late final Animation<double> _fadeAnimation;

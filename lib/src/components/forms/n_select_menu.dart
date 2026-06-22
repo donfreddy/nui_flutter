@@ -139,7 +139,8 @@ class NSelectMenuItem<T> {
 
   /// Creates a non-selectable group label row.
   factory NSelectMenuItem.label(String label) {
-    return NSelectMenuItem._internal(label: label, type: NSelectMenuItemType.label);
+    return NSelectMenuItem._internal(
+        label: label, type: NSelectMenuItemType.label);
   }
 }
 
@@ -450,7 +451,8 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
     }
     if (!widget.multiple && widget.value != null) {
       final selectedItem = widget.items.cast<NSelectMenuItem<T>?>().firstWhere(
-            (i) => i!.type == NSelectMenuItemType.item && i.value == widget.value,
+            (i) =>
+                i!.type == NSelectMenuItemType.item && i.value == widget.value,
             orElse: () => null,
           );
       if (selectedItem?.avatar != null) return selectedItem!.avatar;

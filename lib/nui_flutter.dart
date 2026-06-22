@@ -74,7 +74,7 @@ export 'src/components/elements/n_skeleton.dart';
 export 'src/components/elements/n_progress.dart';
 
 // Data
-export 'src/components/data/n_empty_state.dart';
+export 'src/components/data/n_empty.dart';
 export 'src/components/data/n_error.dart';
 
 // Overlay
