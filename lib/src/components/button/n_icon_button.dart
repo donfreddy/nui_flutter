@@ -273,11 +273,11 @@ class NIconButton extends StatelessWidget {
   double _getBorderRadius() {
     switch (size) {
       case NIconButtonSize.sm:
-        return 8;
+        return 16;
       case NIconButtonSize.md:
-        return 10;
+        return 20;
       case NIconButtonSize.lg:
-        return 12;
+        return 24;
     }
   }
 }
