@@ -10,6 +10,9 @@ enum NIconButtonVariant {
   /// Lightly tinted background using a low-opacity version of the button color.
   soft,
 
+  /// Lightly tinted background with a colored border.
+  subtle,
+
   /// Transparent background with a colored border.
   outline,
 
@@ -53,7 +56,7 @@ enum NIconButtonSize {
   lg,
 }
 
-/// An icon-only button with four visual variants and seven semantic color roles.
+/// An icon-only button with five visual variants and seven semantic color roles.
 ///
 /// Use [NIconButton.sm] or [NIconButton.lg] for convenient size shortcuts.
 /// An optional [tooltip] is shown on long-press.
@@ -223,6 +226,12 @@ class NIconButton extends StatelessWidget {
           'background': semanticColor.withValues(alpha: 0.1),
           'foreground': semanticColor,
           'border': null
+        };
+      case NIconButtonVariant.subtle:
+        return {
+          'background': semanticColor.withValues(alpha: 0.1),
+          'foreground': semanticColor,
+          'border': semanticColor.withValues(alpha: 0.3)
         };
       case NIconButtonVariant.outline:
         return {
