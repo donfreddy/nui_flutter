@@ -112,7 +112,7 @@ class NIconButton extends StatelessWidget {
     super.key,
     required this.icon,
     this.onPressed,
-    this.variant = NIconButtonVariant.soft,
+    this.variant = NIconButtonVariant.subtle,
     this.color = NIconButtonColor.neutral,
     this.size = NIconButtonSize.md,
     this.disabled = false,
