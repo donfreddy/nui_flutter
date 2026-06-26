@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../theme/n_tokens.dart';
@@ -253,9 +255,11 @@ class NButton extends StatefulWidget {
   State<NButton> createState() => _NButtonState();
 }
 
-class _NButtonState extends State<NButton> with SingleTickerProviderStateMixin {
+class _NButtonState extends State<NButton> with TickerProviderStateMixin {
   late final AnimationController _ctrl;
   late final Animation<double> _scale;
+  late final AnimationController _loadingCtrl;
+  late final Animation<double> _loadingRotation;
   bool _tapping = false;
 
   @override
@@ -267,12 +271,32 @@ class _NButtonState extends State<NButton> with SingleTickerProviderStateMixin {
     );
     _scale = Tween<double>(begin: 1.0, end: 0.97)
         .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
+    _loadingCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+    _loadingRotation = Tween<double>(begin: 0.0, end: 2 * math.pi)
+        .animate(_loadingCtrl);
+    if (widget.loading) _loadingCtrl.repeat();
   }
 
   @override
   void dispose() {
+    _loadingCtrl.dispose();
     _ctrl.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(NButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.loading != oldWidget.loading) {
+      if (widget.loading) {
+        _loadingCtrl.repeat();
+      } else {
+        _loadingCtrl.stop();
+      }
+    }
   }
 
   Future<void> _onTap() async {
@@ -306,10 +330,17 @@ class _NButtonState extends State<NButton> with SingleTickerProviderStateMixin {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (widget.loading)
-          Icon(
-            loadingIcon ?? LucideIcons.loader,
-            size: iconSize,
-            color: colors['foreground'],
+          AnimatedBuilder(
+            animation: _loadingCtrl,
+            builder: (_, child) => Transform.rotate(
+              angle: _loadingRotation.value,
+              child: child,
+            ),
+            child: Icon(
+              loadingIcon ?? LucideIcons.loader,
+              size: iconSize,
+              color: colors['foreground'],
+            ),
           )
         else if (widget.leading != null)
           IconTheme(

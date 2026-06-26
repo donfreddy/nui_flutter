@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -382,9 +384,11 @@ class NInput extends StatefulWidget {
   State<NInput> createState() => _NInputState();
 }
 
-class _NInputState extends State<NInput> {
+class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
   late TextEditingController _controller;
   late FocusNode _focusNode;
+  late final AnimationController _loadingCtrl;
+  late final Animation<double> _loadingRotation;
   bool _obscureText = false;
   bool _isFocused = false;
 
@@ -398,13 +402,33 @@ class _NInputState extends State<NInput> {
     _focusNode
         .addListener(() => setState(() => _isFocused = _focusNode.hasFocus));
     _controller.addListener(() => setState(() {}));
+    _loadingCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+    _loadingRotation = Tween<double>(begin: 0.0, end: 2 * math.pi)
+        .animate(_loadingCtrl);
+    if (widget.loading) _loadingCtrl.repeat();
   }
 
   @override
   void dispose() {
     if (widget.controller == null) _controller.dispose();
     if (widget.focusNode == null) _focusNode.dispose();
+    _loadingCtrl.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(NInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.loading != oldWidget.loading) {
+      if (widget.loading) {
+        _loadingCtrl.repeat();
+      } else {
+        _loadingCtrl.stop();
+      }
+    }
   }
 
   void _handleClear() {
@@ -488,10 +512,17 @@ class _NInputState extends State<NInput> {
     if (widget.loading) {
       final theme =
           Theme.of(context).extension<NInputTheme>() ?? const NInputTheme();
-      return Icon(
-        theme.loadingIcon ?? LucideIcons.loader,
-        size: 16,
-        color: NTokens.textMuted(context),
+      return AnimatedBuilder(
+        animation: _loadingCtrl,
+        builder: (_, child) => Transform.rotate(
+          angle: _loadingRotation.value,
+          child: child,
+        ),
+        child: Icon(
+          theme.loadingIcon ?? LucideIcons.loader,
+          size: 16,
+          color: NTokens.textMuted(context),
+        ),
       );
     }
     return widget.leading;
