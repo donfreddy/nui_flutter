@@ -406,8 +406,8 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 1000),
     );
-    _loadingRotation = Tween<double>(begin: 0.0, end: 2 * math.pi)
-        .animate(_loadingCtrl);
+    _loadingRotation =
+        Tween<double>(begin: 0.0, end: 2 * math.pi).animate(_loadingCtrl);
     if (widget.loading) _loadingCtrl.repeat();
   }
 

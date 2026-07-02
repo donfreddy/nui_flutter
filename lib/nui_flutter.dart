@@ -83,6 +83,9 @@ export 'src/components/overlay/n_dropdown_menu.dart';
 export 'src/components/overlay/n_modal.dart';
 export 'src/components/overlay/n_toast.dart';
 
+// Widgets
+export 'src/components/widgets/n_scroll_fade.dart';
+
 // Navigation
 export 'src/components/navigation/n_app_bar.dart';
 export 'src/components/navigation/n_tab_bar.dart';

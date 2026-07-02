@@ -199,8 +199,6 @@ class NCard extends StatelessWidget {
     if (onTap != null) {
       return Material(
         color: Colors.transparent,
-        clipBehavior: Clip.antiAlias,
-        borderRadius: defaultBorderRadius,
         child: InkWell(
             onTap: onTap, borderRadius: defaultBorderRadius, child: container),
       );

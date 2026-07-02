@@ -275,8 +275,8 @@ class _NButtonState extends State<NButton> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 1000),
     );
-    _loadingRotation = Tween<double>(begin: 0.0, end: 2 * math.pi)
-        .animate(_loadingCtrl);
+    _loadingRotation =
+        Tween<double>(begin: 0.0, end: 2 * math.pi).animate(_loadingCtrl);
     if (widget.loading) _loadingCtrl.repeat();
   }
 
