@@ -116,7 +116,8 @@ class NBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final resolved = NVariantResolver.resolve(color, variant, context.nui.colors);
+    final resolved =
+        NVariantResolver.resolve(color, variant, context.nui.colors);
     final borderRadius = square ? 0.0 : 6.0;
 
     return Container(
@@ -174,8 +175,7 @@ class NBadge extends StatelessWidget {
     return Container(
       width: 6,
       height: 6,
-      decoration:
-          BoxDecoration(color: foregroundColor, shape: BoxShape.circle),
+      decoration: BoxDecoration(color: foregroundColor, shape: BoxShape.circle),
     );
   }
 

@@ -35,8 +35,7 @@ ColorScheme buildColorScheme(NColors colors, Brightness brightness) {
     secondary: colors.secondary,
     onSecondary: _readableOn(colors.secondary),
     tertiary: colors.info,
-    surface:
-        brightness == Brightness.light ? colors.bg : colors.bgElevated,
+    surface: brightness == Brightness.light ? colors.bg : colors.bgElevated,
     onSurface: colors.text,
     error: colors.error,
     onError: _readableOn(colors.error),

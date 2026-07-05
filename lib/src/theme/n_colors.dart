@@ -1,7 +1,6 @@
 import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
 
-
 /// Resolved semantic colors for one brightness and neutral palette.
 ///
 /// Widgets consume these colors; they never touch raw palette shades directly.

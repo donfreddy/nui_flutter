@@ -58,7 +58,9 @@ class NProgress extends StatelessWidget {
   Widget build(BuildContext context) {
     final thickness = _getThickness();
     final indicatorColor = NVariantResolver.resolve(
-      color, NVariant.solid, context.nui.colors,
+      color,
+      NVariant.solid,
+      context.nui.colors,
     ).background!;
 
     return ClipRRect(

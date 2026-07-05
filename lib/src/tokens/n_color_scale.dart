@@ -207,12 +207,10 @@ class NColorScale {
       NColorScale.fromSeed(const Color(0xFF00DC82));
 
   /// Neutral blue for secondary actions.
-  static final NColorScale blue =
-      NColorScale.fromSeed(const Color(0xFF3B82F6));
+  static final NColorScale blue = NColorScale.fromSeed(const Color(0xFF3B82F6));
 
   /// Sky blue for info states.
-  static final NColorScale sky =
-      NColorScale.fromSeed(const Color(0xFF0EA5E9));
+  static final NColorScale sky = NColorScale.fromSeed(const Color(0xFF0EA5E9));
 
   /// A predefined amber scale.
   static final amber = NColorScale.fromSeed(const Color(0xFFF59E0B));
@@ -230,8 +228,7 @@ class NColorScale {
   static final stone = NColorScale.fromSeed(const Color(0xFF78716C));
 
   /// Red for errors.
-  static final NColorScale red =
-      NColorScale.fromSeed(const Color(0xFFEF4444));
+  static final NColorScale red = NColorScale.fromSeed(const Color(0xFFEF4444));
 
   /// Orange: default nui_flutter primary brand.
   static final NColorScale orange =

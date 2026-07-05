@@ -132,7 +132,9 @@ class _NRawButtonState extends State<NRawButton> {
               builder: (ctx) {
                 return GestureDetector(
                   behavior: HitTestBehavior.translucent,
-                  onTapDown: interactive ? (_) => setState(() => _pressed = true) : null,
+                  onTapDown: interactive
+                      ? (_) => setState(() => _pressed = true)
+                      : null,
                   onTapUp: (_) => setState(() => _pressed = false),
                   onTapCancel: () => setState(() => _pressed = false),
                   child: widget.builder(ctx, _states),

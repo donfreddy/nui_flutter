@@ -1,8 +1,6 @@
 import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
 
-
-
 /// The size of an [NToggle], controlling its width, height, and thumb diameter.
 enum NToggleSize {
   /// Extra small (28 x 16 dp).
@@ -121,8 +119,8 @@ class NToggle extends StatelessWidget {
               padding: EdgeInsets.only(left: _getWidth() + 12),
               child: Text(
                 helperText!,
-                style:
-                    TextStyle(fontSize: 12, color: context.nui.colors.textMuted),
+                style: TextStyle(
+                    fontSize: 12, color: context.nui.colors.textMuted),
               ),
             ),
           ],

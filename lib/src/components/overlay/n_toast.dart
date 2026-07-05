@@ -224,7 +224,8 @@ class NToast extends StatelessWidget {
                                 description!,
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: resolved.foreground.withValues(alpha: 0.9),
+                                  color: resolved.foreground
+                                      .withValues(alpha: 0.9),
                                 ),
                               ),
                             ],

@@ -83,9 +83,8 @@ class NRawCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget content = padding != null
-        ? Padding(padding: padding!, child: child)
-        : child;
+    Widget content =
+        padding != null ? Padding(padding: padding!, child: child) : child;
 
     if (decoration != null) {
       content = DecoratedBox(

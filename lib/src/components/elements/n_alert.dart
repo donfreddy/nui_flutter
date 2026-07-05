@@ -84,7 +84,8 @@ class NAlert extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final resolved = NVariantResolver.resolve(color, variant, context.nui.colors);
+    final resolved =
+        NVariantResolver.resolve(color, variant, context.nui.colors);
     final defaultIcon = _getDefaultIcon();
 
     return Container(
@@ -92,12 +93,11 @@ class NAlert extends StatelessWidget {
       decoration: BoxDecoration(
         color: resolved.background,
         borderRadius: context.nui.radius.radiusMd,
-        border:
-            variant == NVariant.outline || variant == NVariant.subtle
-                ? Border.all(
-                    color: resolved.border!,
-                    width: variant == NVariant.outline ? 1.5 : 1)
-                : null,
+        border: variant == NVariant.outline || variant == NVariant.subtle
+            ? Border.all(
+                color: resolved.border!,
+                width: variant == NVariant.outline ? 1.5 : 1)
+            : null,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

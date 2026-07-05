@@ -3,7 +3,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../theme/components/n_input_theme.dart';
 
 /// The size of an [NInput], affecting padding and font size.
 enum NInputSize {
@@ -504,8 +503,7 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
       children.add(
         GestureDetector(
           onTap: _handleClear,
-          child:
-              Icon(NIcons.x, size: 16, color: context.nui.colors.textMuted),
+          child: Icon(NIcons.x, size: 16, color: context.nui.colors.textMuted),
         ),
       );
     }
@@ -562,8 +560,8 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
               ),
               if (widget.required)
                 Text(' *',
-                    style:
-                        TextStyle(fontSize: 14, color: context.nui.colors.error)),
+                    style: TextStyle(
+                        fontSize: 14, color: context.nui.colors.error)),
             ],
           ),
           const SizedBox(height: 6),
@@ -652,11 +650,13 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: borderRadius,
-                borderSide: BorderSide(color: context.nui.colors.error, width: 1),
+                borderSide:
+                    BorderSide(color: context.nui.colors.error, width: 1),
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderRadius: borderRadius,
-                borderSide: BorderSide(color: context.nui.colors.error, width: 2),
+                borderSide:
+                    BorderSide(color: context.nui.colors.error, width: 2),
               ),
               disabledBorder: OutlineInputBorder(
                 borderRadius: borderRadius,

@@ -105,8 +105,8 @@ export 'src/theme/components/n_input_theme.dart';
 // ---------------------------------------------------------------------------
 export 'src/tokens/n_color_roles.dart'; // NColorRole, NNeutralPalette
 export 'src/tokens/n_color_scale.dart'; // NColorScale.fromSeed()
-export 'src/tokens/n_radius.dart';      // NRadius
-export 'src/tokens/n_shadows.dart';     // NShadows
+export 'src/tokens/n_radius.dart'; // NRadius
+export 'src/tokens/n_shadows.dart'; // NShadows
 
 // ---------------------------------------------------------------------------
 // Primitives

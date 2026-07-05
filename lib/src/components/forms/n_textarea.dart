@@ -1,7 +1,5 @@
 import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_spacing.dart';
-import '../../theme/components/n_input_theme.dart';
 
 /// The size of an [NTextarea], affecting padding and font size.
 enum NTextareaSize {
@@ -338,11 +336,13 @@ class _NTextareaState extends State<NTextarea> {
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: borderRadius,
-                borderSide: BorderSide(color: context.nui.colors.error, width: 1),
+                borderSide:
+                    BorderSide(color: context.nui.colors.error, width: 1),
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderRadius: borderRadius,
-                borderSide: BorderSide(color: context.nui.colors.error, width: 2),
+                borderSide:
+                    BorderSide(color: context.nui.colors.error, width: 2),
               ),
               disabledBorder: OutlineInputBorder(
                 borderRadius: borderRadius,

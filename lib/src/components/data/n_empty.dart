@@ -137,7 +137,8 @@ class NEmpty extends StatelessWidget {
     return switch (variant) {
       NEmptyVariant.solid => context.nui.colors.bgInverted,
       NEmptyVariant.outline => context.nui.colors.bg,
-      NEmptyVariant.soft => context.nui.colors.bgElevated.withValues(alpha: 0.5),
+      NEmptyVariant.soft =>
+        context.nui.colors.bgElevated.withValues(alpha: 0.5),
       NEmptyVariant.subtle =>
         context.nui.colors.bgElevated.withValues(alpha: 0.5),
       NEmptyVariant.naked => Colors.transparent,
@@ -146,8 +147,7 @@ class NEmpty extends StatelessWidget {
 
   Border? _getBorder(BuildContext context) {
     return switch (variant) {
-      NEmptyVariant.outline =>
-        Border.all(color: context.nui.colors.border),
+      NEmptyVariant.outline => Border.all(color: context.nui.colors.border),
       NEmptyVariant.subtle => Border.all(color: context.nui.colors.border),
       _ => null,
     };

@@ -119,7 +119,8 @@ class NBottomSheet extends StatelessWidget {
             ),
           if (title != null || showCloseButton)
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: NSpacing.s4, vertical: NSpacing.s2),
+              padding: EdgeInsets.symmetric(
+                  horizontal: NSpacing.s4, vertical: NSpacing.s2),
               child: Row(
                 children: [
                   Expanded(
@@ -182,7 +183,9 @@ class NBottomSheet extends StatelessWidget {
               ),
               child: footer,
             ),
-          if (footer == null) SizedBox(height: MediaQuery.of(context).padding.bottom + NSpacing.s2),
+          if (footer == null)
+            SizedBox(
+                height: MediaQuery.of(context).padding.bottom + NSpacing.s2),
         ],
       ),
     );
@@ -270,13 +273,17 @@ class NBottomSheetActionList extends StatelessWidget {
           leading: action.icon != null
               ? Icon(
                   action.icon,
-                  color: action.isDestructive ? context.nui.colors.error : context.nui.colors.text,
+                  color: action.isDestructive
+                      ? context.nui.colors.error
+                      : context.nui.colors.text,
                 )
               : null,
           title: Text(
             action.label,
             style: TextStyle(
-              color: action.isDestructive ? context.nui.colors.error : context.nui.colors.text,
+              color: action.isDestructive
+                  ? context.nui.colors.error
+                  : context.nui.colors.text,
               fontWeight: FontWeight.w500,
             ),
           ),

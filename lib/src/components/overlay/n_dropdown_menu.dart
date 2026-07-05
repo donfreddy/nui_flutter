@@ -333,7 +333,8 @@ class _MenuItemState extends State<_MenuItem> {
 
   Widget _buildRow(BuildContext context, {required bool isHovered}) {
     final resolved = _isSemantic
-        ? NVariantResolver.resolve(item.color!, NVariant.soft, context.nui.colors)
+        ? NVariantResolver.resolve(
+            item.color!, NVariant.soft, context.nui.colors)
         : null;
 
     final textColor = item.disabled

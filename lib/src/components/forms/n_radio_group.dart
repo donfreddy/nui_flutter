@@ -19,8 +19,6 @@ enum NRadioSize {
   xl,
 }
 
-
-
 /// An item model used by [NRadioGroup] to render each option.
 ///
 /// Use [NRadioItem] to provide a label, optional description, and value for

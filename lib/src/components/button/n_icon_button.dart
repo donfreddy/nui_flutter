@@ -119,7 +119,8 @@ class NIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final resolved = NVariantResolver.resolve(color, variant, context.nui.colors);
+    final resolved =
+        NVariantResolver.resolve(color, variant, context.nui.colors);
     final iconSize = _getIconSize();
     final pad = padding ?? _getPadding();
     final radius = borderRadius ?? _getBorderRadius();

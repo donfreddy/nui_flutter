@@ -203,8 +203,8 @@ class NAvatar extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: chipColor ?? context.nui.colors.success,
                       borderRadius: BorderRadius.circular(6),
-                      border: Border.all(
-                          color: context.nui.colors.bg, width: 2),
+                      border:
+                          Border.all(color: context.nui.colors.bg, width: 2),
                     ),
                     child: Text(
                       chipText!,
@@ -221,8 +221,8 @@ class NAvatar extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: chipColor ?? context.nui.colors.success,
                       shape: BoxShape.circle,
-                      border: Border.all(
-                          color: context.nui.colors.bg, width: 2),
+                      border:
+                          Border.all(color: context.nui.colors.bg, width: 2),
                     ),
                   ),
           ),
@@ -252,13 +252,17 @@ class NAvatar extends StatelessWidget {
             color: colors.foreground),
       );
     }
-    return Icon(Icons.person,
-        size: avatarSize * 0.5, color: colors.foreground);
+    return Icon(Icons.person, size: avatarSize * 0.5, color: colors.foreground);
   }
 
   NResolvedColors _getColors(BuildContext context) {
     if (color == NAvatarColor.random) {
-      final palette = [context.nui.colors.primary, context.nui.colors.secondary, context.nui.colors.success, context.nui.colors.warning];
+      final palette = [
+        context.nui.colors.primary,
+        context.nui.colors.secondary,
+        context.nui.colors.success,
+        context.nui.colors.warning
+      ];
       final index = name != null && name!.isNotEmpty
           ? name!.codeUnits.fold(0, (sum, c) => sum + c) % palette.length
           : 0;
@@ -395,8 +399,7 @@ class NAvatarGroup extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border:
-                      Border.all(color: context.nui.colors.bg, width: 2),
+                  border: Border.all(color: context.nui.colors.bg, width: 2),
                 ),
                 child: NAvatar(
                   imageUrl: index < imageUrls.length ? imageUrls[index] : null,
@@ -417,8 +420,7 @@ class NAvatarGroup extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: context.nui.colors.bgMuted,
                     shape: BoxShape.circle,
-                    border:
-                        Border.all(color: context.nui.colors.bg, width: 2),
+                    border: Border.all(color: context.nui.colors.bg, width: 2),
                   ),
                   child: Center(
                     child: Text(

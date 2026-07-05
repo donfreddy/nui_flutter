@@ -72,8 +72,7 @@ class NuiThemeData {
       );
     }
     final radius = Theme.of(context).extension<NRadius>() ?? const NRadius();
-    final isDark =
-        Theme.of(context).brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final shadows = Theme.of(context).extension<NShadows>() ??
         (isDark ? NShadows.dark() : NShadows.light());
 
@@ -89,8 +88,7 @@ class NuiThemeData {
     final colors = Theme.of(context).extension<NColors>();
     if (colors == null) return null;
     final radius = Theme.of(context).extension<NRadius>() ?? const NRadius();
-    final isDark =
-        Theme.of(context).brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final shadows = Theme.of(context).extension<NShadows>() ??
         (isDark ? NShadows.dark() : NShadows.light());
     return NuiThemeData._(

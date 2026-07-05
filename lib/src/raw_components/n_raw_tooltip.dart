@@ -189,17 +189,15 @@ class _TooltipOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.sizeOf(context);
-    final showBelow = preferBelow ||
-        anchorOffset.dy < screenSize.height / 2;
+    final showBelow = preferBelow || anchorOffset.dy < screenSize.height / 2;
 
-    final top = showBelow
-        ? anchorOffset.dy + anchorSize.height + verticalOffset
-        : null;
+    final top =
+        showBelow ? anchorOffset.dy + anchorSize.height + verticalOffset : null;
     final bottom = !showBelow
         ? screenSize.height - anchorOffset.dy + verticalOffset
         : null;
-    final left =
-        (anchorOffset.dx + anchorSize.width / 2).clamp(8.0, screenSize.width - 8);
+    final left = (anchorOffset.dx + anchorSize.width / 2)
+        .clamp(8.0, screenSize.width - 8);
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,

@@ -1,7 +1,6 @@
 import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/widgets.dart';
 
-
 /// The shared visual variants used across interactive surfaces.
 enum NVariant {
   /// Filled with the role color.

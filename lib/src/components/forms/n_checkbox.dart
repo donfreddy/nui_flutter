@@ -19,8 +19,6 @@ enum NCheckboxSize {
   xl,
 }
 
-
-
 /// A checkbox input element with optional label and description.
 ///
 /// Supports a checked, unchecked, and indeterminate state. The checkbox

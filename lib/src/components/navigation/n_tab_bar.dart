@@ -213,8 +213,7 @@ class NTabBar extends StatelessWidget {
       decoration: BoxDecoration(
         border: variant == NTabBarVariant.underline
             ? Border(
-                bottom:
-                    BorderSide(color: context.nui.colors.border, width: 1))
+                bottom: BorderSide(color: context.nui.colors.border, width: 1))
             : null,
       ),
       child: scrollable

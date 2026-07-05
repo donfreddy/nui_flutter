@@ -66,7 +66,7 @@ class NButton extends StatefulWidget {
     this.borderRadius,
     this.padding,
     this.roundedFull = true,
-  })  : assert(label != null || child != null,
+  }) : assert(label != null || child != null,
             'Either label or child must be provided');
 
   const NButton.outline({
@@ -192,8 +192,8 @@ class _NButtonState extends State<NButton> with TickerProviderStateMixin {
     final defaultBorderRadius = widget.roundedFull
         ? BorderRadius.circular(999)
         : (widget.borderRadius ?? BorderRadius.circular(theme.radius));
-    final resolved =
-        NVariantResolver.resolve(widget.color, widget.variant, context.nui.colors);
+    final resolved = NVariantResolver.resolve(
+        widget.color, widget.variant, context.nui.colors);
     final loadingIcon = theme.loadingIcon;
 
     Widget buttonChild = Row(

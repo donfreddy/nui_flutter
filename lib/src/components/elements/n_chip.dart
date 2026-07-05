@@ -89,7 +89,8 @@ class NChip extends StatelessWidget {
           decoration: BoxDecoration(
             color: resolved.background,
             borderRadius: BorderRadius.circular(size == NChipSize.sm ? 16 : 20),
-            border: Border.all(color: resolved.border ?? resolved.foreground, width: 1),
+            border: Border.all(
+                color: resolved.border ?? resolved.foreground, width: 1),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -155,8 +156,6 @@ class NChip extends StatelessWidget {
         return 18;
     }
   }
-
-
 }
 
 /// A managed group of [NChip] widgets that enforces a single selection.

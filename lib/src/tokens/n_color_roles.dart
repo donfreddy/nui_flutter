@@ -49,8 +49,8 @@ abstract final class NRoleScales {
       case NColorRole.error:
         return NColorScale.red;
       case NColorRole.neutral:
-        throw ArgumentError('neutral has no fixed scale. Read it from NColors.neutral');
+        throw ArgumentError(
+            'neutral has no fixed scale. Read it from NColors.neutral');
     }
   }
 }
-

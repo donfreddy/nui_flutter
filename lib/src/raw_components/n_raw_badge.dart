@@ -109,7 +109,8 @@ class NRawBadge extends StatelessWidget {
     if (decoration != null) {
       result = DecoratedBox(
         decoration: decoration!,
-        child: padding != null ? Padding(padding: padding!, child: child) : child,
+        child:
+            padding != null ? Padding(padding: padding!, child: child) : child,
       );
     }
     return result;

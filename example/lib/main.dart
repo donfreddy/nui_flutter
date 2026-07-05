@@ -371,14 +371,10 @@ class _AlertsDemo extends StatelessWidget {
             variant: NVariant.outline),
         SizedBox(height: 8),
         NAlert(
-            title: 'Soft',
-            color: NColorRole.secondary,
-            variant: NVariant.soft),
+            title: 'Soft', color: NColorRole.secondary, variant: NVariant.soft),
         SizedBox(height: 8),
         NAlert(
-            title: 'Subtle',
-            color: NColorRole.info,
-            variant: NVariant.subtle),
+            title: 'Subtle', color: NColorRole.info, variant: NVariant.subtle),
       ],
     );
   }

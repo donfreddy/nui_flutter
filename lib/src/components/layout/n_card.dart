@@ -144,8 +144,7 @@ class NCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final defaultBorderRadius =
-        borderRadius ?? BorderRadius.circular(8.0);
+    final defaultBorderRadius = borderRadius ?? BorderRadius.circular(8.0);
     final styles = _getStyles(context);
 
     Widget cardContent = Column(
@@ -207,8 +206,7 @@ class NCard extends StatelessWidget {
   }
 
   Widget _buildDivider(BuildContext context) {
-    return Divider(
-        height: 1, thickness: 1, color: context.nui.colors.border);
+    return Divider(height: 1, thickness: 1, color: context.nui.colors.border);
   }
 
   _NCardStyles _getStyles(BuildContext context) {
@@ -226,7 +224,8 @@ class NCard extends StatelessWidget {
       NCardColor.error => NColorRole.error,
       NCardColor.warning => NColorRole.warning,
     };
-    final resolved = NVariantResolver.resolve(role, NVariant.soft, context.nui.colors);
+    final resolved =
+        NVariantResolver.resolve(role, NVariant.soft, context.nui.colors);
     final bg = resolved.background ?? context.nui.colors.bgElevated;
     final border = resolved.border ?? context.nui.colors.border;
     final text = resolved.foreground;

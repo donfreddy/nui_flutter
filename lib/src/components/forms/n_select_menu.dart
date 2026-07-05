@@ -447,8 +447,8 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
                       color: context.nui.colors.text)),
               if (widget.required)
                 Text(' *',
-                    style:
-                        TextStyle(fontSize: 14, color: context.nui.colors.error)),
+                    style: TextStyle(
+                        fontSize: 14, color: context.nui.colors.error)),
             ],
           ),
           const SizedBox(height: 6),
@@ -615,13 +615,11 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                       size: 20, color: context.nui.colors.textMuted),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(6.0),
-                    borderSide:
-                        BorderSide(color: context.nui.colors.border),
+                    borderSide: BorderSide(color: context.nui.colors.border),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(6.0),
-                    borderSide:
-                        BorderSide(color: context.nui.colors.border),
+                    borderSide: BorderSide(color: context.nui.colors.border),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(6.0),
@@ -632,8 +630,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   isDense: true,
                 ),
-                style: TextStyle(
-                    fontSize: 14, color: context.nui.colors.text),
+                style: TextStyle(fontSize: 14, color: context.nui.colors.text),
               ),
             ),
             Divider(
