@@ -32,7 +32,7 @@ enum NTabBarSize {
 /// NTabBar(
 ///   tabs: [
 ///     NTab(label: 'Transactions'),
-///     NTab(label: 'Contacts', icon: LucideIcons.users, count: 3),
+///     NTab(label: 'Contacts', icon: NIcons.users, count: 3),
 ///   ],
 ///   selectedIndex: _index,
 ///   onChanged: (i) => setState(() => _index = i),

@@ -26,9 +26,14 @@ platforms:
 dependencies:
   flutter:
     sdk: flutter
-  lucide_icons_flutter: ^3.1.9
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+
+flutter:
+  fonts:
+    - family: LucideIcons
+      fonts:
+        - asset: assets/fonts/lucide.ttf

@@ -2,7 +2,6 @@ import 'package:nui_flutter/nui_flutter.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 /// The size of an [NButton], controlling padding, font size, and icon size.
 enum NButtonSize {
@@ -209,7 +208,7 @@ class _NButtonState extends State<NButton> with TickerProviderStateMixin {
               child: child,
             ),
             child: Icon(
-              loadingIcon ?? LucideIcons.loader,
+              loadingIcon ?? NIcons.loader,
               size: iconSize,
               color: resolved.foreground,
             ),

@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 /// NTheme.lightTheme(
 ///   colors: myPalette,
 ///   extensions: [
-///     NInputTheme(radius: 12.0, loadingIcon: LucideIcons.loaderCircle),
+///     NInputTheme(radius: 12.0, loadingIcon: NIcons.loader),
 ///   ],
 /// )
 /// ```
@@ -18,7 +18,7 @@ class NInputTheme extends ThemeExtension<NInputTheme> {
   /// An optional icon to display in the leading position while
   /// [NInput.loading] is true.
   ///
-  /// Defaults to [LucideIcons.loader] when not set.
+  /// Defaults to [NIcons.loader] when not set.
   final IconData? loadingIcon;
 
   /// The corner radius applied to the input field container.

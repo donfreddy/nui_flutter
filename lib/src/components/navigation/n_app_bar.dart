@@ -1,6 +1,5 @@
 import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 /// A Material [AppBar] styled with NUI design tokens.
 ///
@@ -12,7 +11,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 ///   appBar: NAppBar(
 ///     title: 'Wallet',
 ///     showBack: true,
-///     actions: [NIconButton(icon: LucideIcons.bell, onPressed: () {})],
+///     actions: [NIconButton(icon: NIcons.bell, onPressed: () {})],
 ///   ),
 /// )
 /// ```
@@ -36,7 +35,7 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// When both are null, no leading widget is rendered.
   final Widget? leading;
 
-  /// When `true`, renders an [LucideIcons.arrowLeft] back button as the
+  /// When `true`, renders an [NIcons.arrowLeft] back button as the
   /// leading widget. Has no effect when [leading] is provided.
   ///
   /// Defaults to `false`.
@@ -89,7 +88,7 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: leading ??
           (showBack
               ? NIconButton(
-                  icon: LucideIcons.arrowLeft,
+                  icon: NIcons.arrowLeft,
                   onPressed: onBack ?? () => Navigator.of(context).pop(),
                 )
               : null),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:nui_flutter/nui_flutter.dart';
 
 /// A styled bottom sheet widget rendered inside [showModalBottomSheet].
@@ -152,7 +151,7 @@ class NBottomSheet extends StatelessWidget {
                   ),
                   if (showCloseButton)
                     NIconButton(
-                      icon: LucideIcons.x,
+                      icon: NIcons.x,
                       variant: NVariant.ghost,
                       size: NIconButtonSize.sm,
                       onPressed: () => Navigator.of(context).pop(),
@@ -224,8 +223,8 @@ class NBottomSheetAction {
 ///   context: context,
 ///   title: 'Options',
 ///   actions: [
-///     NBottomSheetAction(label: 'Edit', icon: LucideIcons.pencil, onTap: _edit),
-///     NBottomSheetAction(label: 'Delete', icon: LucideIcons.trash2,
+///     NBottomSheetAction(label: 'Edit', icon: NIcons.pencil, onTap: _edit),
+///     NBottomSheetAction(label: 'Delete', icon: NIcons.trash,
 ///         isDestructive: true, onTap: _delete),
 ///   ],
 /// );

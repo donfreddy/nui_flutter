@@ -3,7 +3,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../theme/components/n_input_theme.dart';
 
 /// The size of an [NInput], affecting padding and font size.
@@ -482,7 +481,7 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
           child: child,
         ),
         child: Icon(
-          theme.loadingIcon ?? LucideIcons.loader,
+          theme.loadingIcon ?? NIcons.loader,
           size: 16,
           color: context.nui.colors.textMuted,
         ),
@@ -506,7 +505,7 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
         GestureDetector(
           onTap: _handleClear,
           child:
-              Icon(LucideIcons.x, size: 16, color: context.nui.colors.textMuted),
+              Icon(NIcons.x, size: 16, color: context.nui.colors.textMuted),
         ),
       );
     }
@@ -515,7 +514,7 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
         GestureDetector(
           onTap: () => setState(() => _obscureText = !_obscureText),
           child: Icon(
-            _obscureText ? LucideIcons.eye : LucideIcons.eyeOff,
+            _obscureText ? NIcons.eye : NIcons.eyeOff,
             size: 18,
             color: context.nui.colors.textMuted,
           ),

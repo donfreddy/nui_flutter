@@ -90,6 +90,7 @@ export 'src/theme/n_variant_resolver.dart';
 export 'src/theme/n_spacing.dart';
 export 'src/theme/n_text_scale.dart';
 export 'src/theme/n_theme.dart';
+export 'src/theme/n_icons.dart'; // NIcons
 export 'src/theme/n_theme_extension.dart'; // context.nui
 export 'src/theme/n_typography.dart';
 

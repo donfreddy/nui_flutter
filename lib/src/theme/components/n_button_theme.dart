@@ -10,14 +10,14 @@ import 'package:flutter/material.dart';
 /// NTheme.lightTheme(
 ///   colors: myPalette,
 ///   extensions: [
-///     NButtonTheme(radius: 4.0, loadingIcon: LucideIcons.loaderCircle),
+///     NButtonTheme(radius: 4.0, loadingIcon: NIcons.loader),
 ///   ],
 /// )
 /// ```
 class NButtonTheme extends ThemeExtension<NButtonTheme> {
   /// An optional icon to display while [NButton.loading] is true.
   ///
-  /// Defaults to [LucideIcons.loader] when not set.
+  /// Defaults to [NIcons.loader] when not set.
   final IconData? loadingIcon;
 
   /// The corner radius applied to buttons that do not use [NButton.roundedFull].

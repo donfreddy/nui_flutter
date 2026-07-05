@@ -54,20 +54,20 @@ class NDropdownMenuItem {
 /// NDropdownMenu(
 ///   items: [
 ///     [
-///       NDropdownMenuItem(label: 'Profile', icon: LucideIcons.user),
-///       NDropdownMenuItem(label: 'Settings', icon: LucideIcons.cog, kbds: [',']),
+///       NDropdownMenuItem(label: 'Profile', icon: NIcons.user),
+///       NDropdownMenuItem(label: 'Settings', icon: NIcons.cog, kbds: [',']),
 ///     ],
 ///     [
 ///       NDropdownMenuItem(
 ///         label: 'Logout',
-///         icon: LucideIcons.logOut,
+///         icon: NIcons.logOut,
 ///         color: NColorRole.error,
 ///         kbds: ['⇧', '⌘', 'Q'],
 ///         onSelect: () => signOut(),
 ///       ),
 ///     ],
 ///   ],
-///   child: NButton.outline(label: 'Open', leading: Icon(LucideIcons.menu)),
+///   child: NButton.outline(label: 'Open', leading: Icon(NIcons.menu)),
 /// )
 /// ```
 class NDropdownMenu extends StatefulWidget {

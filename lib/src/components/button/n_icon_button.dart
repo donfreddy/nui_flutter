@@ -20,7 +20,7 @@ enum NIconButtonSize {
 ///
 /// ```dart
 /// NIconButton(
-///   icon: LucideIcons.bell,
+///   icon: NIcons.bell,
 ///   onPressed: _openNotifications,
 ///   variant: NVariant.soft,
 ///   color: NColorRole.primary,

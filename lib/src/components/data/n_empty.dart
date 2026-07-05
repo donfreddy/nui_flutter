@@ -26,11 +26,11 @@ enum NEmptyVariant {
 ///
 /// ```dart
 /// NEmpty(
-///   icon: LucideIcons.inbox,
+///   icon: NIcons.inbox,
 ///   title: 'No projects found',
 ///   description: 'It looks like you haven\'t added any projects.',
 ///   actions: [
-///     NButton(label: 'Create new', icon: LucideIcons.plus),
+///     NButton(label: 'Create new', icon: NIcons.plus),
 ///   ],
 /// )
 /// ```
