@@ -5,6 +5,8 @@ import 'n_typography.dart';
 import '../components/button/n_button_theme.dart';
 import '../components/forms/n_input_theme.dart';
 import '../components/layout/n_card_theme.dart';
+import '../tokens/n_radius.dart';
+import '../tokens/n_shadows.dart';
 
 /// Factory class for building a [ThemeData] from an [NColorPalette].
 ///
@@ -31,8 +33,10 @@ abstract class NTheme {
     double radius = 8.0,
     double textScale = 1.0,
     NTypography? typography,
+    NRadius? radiusScale,
     Iterable<ThemeExtension<dynamic>> extensions = const [],
   }) {
+    final nRadius = radiusScale ?? NRadius(base: radius);
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
@@ -43,8 +47,10 @@ abstract class NTheme {
           textScale: textScale, typography: typography),
       extensions: [
         palette,
-        NButtonTheme(radius: radius),
-        NInputTheme(radius: radius),
+        nRadius,
+        NShadows.light(),
+        NButtonTheme(radius: nRadius.md),
+        NInputTheme(radius: nRadius.md),
         const NCardTheme(),
         if (typography != null) typography,
         ...extensions,
@@ -64,8 +70,10 @@ abstract class NTheme {
     double radius = 8.0,
     double textScale = 1.0,
     NTypography? typography,
+    NRadius? radiusScale,
     Iterable<ThemeExtension<dynamic>> extensions = const [],
   }) {
+    final nRadius = radiusScale ?? NRadius(base: radius);
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
@@ -76,8 +84,10 @@ abstract class NTheme {
           textScale: textScale, typography: typography),
       extensions: [
         palette,
-        NButtonTheme(radius: radius),
-        NInputTheme(radius: radius),
+        nRadius,
+        NShadows.dark(),
+        NButtonTheme(radius: nRadius.md),
+        NInputTheme(radius: nRadius.md),
         const NCardTheme(),
         if (typography != null) typography,
         ...extensions,

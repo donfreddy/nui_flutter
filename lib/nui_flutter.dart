@@ -1,4 +1,4 @@
-/// NUI Flutter — a Nuxt UI-inspired design system for Flutter.
+/// NUI Flutter: a Nuxt UI-inspired design system for Flutter.
 ///
 /// Import this single file to access the entire NUI component library:
 ///
@@ -8,31 +8,76 @@
 ///
 /// ## Getting started
 ///
-/// 1. Wrap your [MaterialApp] with [NTheme]:
-///    ```dart
-///    MaterialApp(
-///      theme: NTheme.lightTheme(palette: NColorPalette.light(
-///        primary: Color(0xFFF97316),
-///        secondary: Color(0xFF6B7280),
-///        success: Color(0xFF10B981),
-///        error: Color(0xFFEF4444),
-///      )),
-///      darkTheme: NTheme.darkTheme(palette: NColorPalette.dark(
-///        primary: Color(0xFFF97316),
-///        secondary: Color(0xFF6B7280),
-///        success: Color(0xFF10B981),
-///        error: Color(0xFFEF4444),
-///      )),
-///    )
-///    ```
+/// ### Option A: NApp (recommended, drop-in MaterialApp)
 ///
-/// 2. Use design tokens anywhere via [NTokens], [NSpacing], and [NTextScale].
+/// ```dart
+/// NApp(
+///   palette: NColorPalette.light(
+///     primary: Color(0xFFF97316),
+///     secondary: Color(0xFF6B7280),
+///     success: Color(0xFF10B981),
+///     error: Color(0xFFEF4444),
+///   ),
+///   darkPalette: NColorPalette.dark(
+///     primary: Color(0xFFF97316),
+///     secondary: Color(0xFF6B7280),
+///     success: Color(0xFF10B981),
+///     error: Color(0xFFEF4444),
+///   ),
+///   home: const HomeScreen(),
+/// )
+/// ```
 ///
-/// 3. Drop in pre-built components: [NButton], [NInput], [NCard], [NAlert],
-///    [NAvatar], [NBadge], [NChip], [NToggle], [NDropdown], [NIconButton],
-///    [NAppBar], [NTabBar], [NBottomSheet], [NModal], [NToast], [NProgress],
-///    [NSkeleton], [NCheckbox], [NRadioGroup], and [NTextarea].
+/// ### Option B: Manual MaterialApp
+///
+/// ```dart
+/// MaterialApp(
+///   theme: NTheme.lightTheme(palette: myLightPalette),
+///   darkTheme: NTheme.darkTheme(palette: myDarkPalette),
+/// )
+/// ```
+///
+/// ## Design tokens
+///
+/// Read tokens anywhere inside a build method:
+/// ```dart
+/// // Idiomatic (new):
+/// context.nui.colors.primary
+/// context.nui.radius.md
+/// context.nui.shadows.sm
+///
+/// // Static accessors (legacy, still valid):
+/// NTokens.primary(context)
+/// NSpacing.s4
+/// NTokens.radiusDefault
+/// ```
+///
+/// ## Seed-based theming (NColorScale)
+///
+/// Generate a full 11-step scale from a single brand color:
+/// ```dart
+/// final violet = NColorScale.fromSeed(Color(0xFF7C3AED));
+/// violet.s50  // lightest tint
+/// violet.s500 // seed color
+/// violet.s900 // darkest shade
+/// ```
+///
+/// ## Raw primitives (unstyled building blocks)
+///
+/// Build your own components using NUI primitives:
+/// ```dart
+/// NRawButton(
+///   onPressed: () {},
+///   builder: (ctx, states) => MyCustomButton(pressed: states.isPressed),
+/// )
+/// NPressScale(onTap: () {}, child: MyWidget())
+/// ```
 library;
+
+// ---------------------------------------------------------------------------
+// App
+// ---------------------------------------------------------------------------
+export 'src/app/n_app.dart';
 
 // ---------------------------------------------------------------------------
 // Theme
@@ -42,18 +87,41 @@ export 'src/theme/n_component_colors.dart';
 export 'src/theme/n_spacing.dart';
 export 'src/theme/n_text_scale.dart';
 export 'src/theme/n_theme.dart';
+export 'src/theme/n_theme_extension.dart'; // context.nui
 export 'src/theme/n_typography.dart';
 
 // ---------------------------------------------------------------------------
-// Components
+// Tokens
 // ---------------------------------------------------------------------------
+export 'src/tokens/n_color_scale.dart'; // NColorScale.fromSeed()
+export 'src/tokens/n_radius.dart';      // NRadius
+export 'src/tokens/n_shadows.dart';     // NShadows
 
-// Button
+// ---------------------------------------------------------------------------
+// Primitives
+// ---------------------------------------------------------------------------
+export 'src/primitives/n_press_scale.dart'; // NPressScale
+
+// ---------------------------------------------------------------------------
+// Raw components (unstyled building blocks)
+// ---------------------------------------------------------------------------
+export 'src/raw_components/n_raw_button.dart';
+export 'src/raw_components/n_raw_input.dart';
+export 'src/raw_components/n_raw_badge.dart';
+export 'src/raw_components/n_raw_card.dart';
+export 'src/raw_components/n_raw_tooltip.dart';
+export 'src/raw_components/n_raw_dismissible.dart';
+
+// ---------------------------------------------------------------------------
+// Components: Button
+// ---------------------------------------------------------------------------
 export 'src/components/button/n_button.dart';
 export 'src/components/button/n_button_theme.dart';
 export 'src/components/button/n_icon_button.dart';
 
-// Forms
+// ---------------------------------------------------------------------------
+// Components: Forms
+// ---------------------------------------------------------------------------
 export 'src/components/forms/n_input.dart';
 export 'src/components/forms/n_input_theme.dart';
 export 'src/components/forms/n_checkbox.dart';
@@ -62,10 +130,14 @@ export 'src/components/forms/n_textarea.dart';
 export 'src/components/forms/n_select_menu.dart';
 export 'src/components/forms/n_toggle.dart';
 
-// Layout
+// ---------------------------------------------------------------------------
+// Components: Layout
+// ---------------------------------------------------------------------------
 export 'src/components/layout/n_card.dart';
 
-// Elements
+// ---------------------------------------------------------------------------
+// Components: Elements
+// ---------------------------------------------------------------------------
 export 'src/components/elements/n_alert.dart';
 export 'src/components/elements/n_avatar.dart';
 export 'src/components/elements/n_badge.dart';
@@ -73,19 +145,27 @@ export 'src/components/elements/n_chip.dart';
 export 'src/components/elements/n_skeleton.dart';
 export 'src/components/elements/n_progress.dart';
 
-// Data
+// ---------------------------------------------------------------------------
+// Components: Data
+// ---------------------------------------------------------------------------
 export 'src/components/data/n_empty.dart';
 export 'src/components/data/n_error.dart';
 
-// Overlay
+// ---------------------------------------------------------------------------
+// Components: Overlay
+// ---------------------------------------------------------------------------
 export 'src/components/overlay/n_bottom_sheet.dart';
 export 'src/components/overlay/n_dropdown_menu.dart';
 export 'src/components/overlay/n_modal.dart';
 export 'src/components/overlay/n_toast.dart';
 
-// Widgets
+// ---------------------------------------------------------------------------
+// Components: Widgets
+// ---------------------------------------------------------------------------
 export 'src/components/widgets/n_scroll_fade.dart';
 
-// Navigation
+// ---------------------------------------------------------------------------
+// Components: Navigation
+// ---------------------------------------------------------------------------
 export 'src/components/navigation/n_app_bar.dart';
 export 'src/components/navigation/n_tab_bar.dart';
