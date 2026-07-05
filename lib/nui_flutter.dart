@@ -91,6 +91,12 @@ export 'src/theme/n_theme_extension.dart'; // context.nui
 export 'src/theme/n_typography.dart';
 
 // ---------------------------------------------------------------------------
+// Theme: Components
+// ---------------------------------------------------------------------------
+export 'src/theme/components/n_button_theme.dart';
+export 'src/theme/components/n_input_theme.dart';
+
+// ---------------------------------------------------------------------------
 // Tokens
 // ---------------------------------------------------------------------------
 export 'src/tokens/n_color_scale.dart'; // NColorScale.fromSeed()
@@ -102,12 +108,6 @@ export 'src/tokens/n_shadows.dart';     // NShadows
 // ---------------------------------------------------------------------------
 export 'src/primitives/n_press_scale.dart'; // NPressScale
 export 'src/primitives/n_scroll_fade.dart'; // NScrollFade
-
-// ---------------------------------------------------------------------------
-// Theme Extensions
-// ---------------------------------------------------------------------------
-export 'src/theme/components/n_button_theme.dart';
-export 'src/theme/components/n_input_theme.dart';
 
 // ---------------------------------------------------------------------------
 // Raw components (unstyled building blocks)
