@@ -1,42 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
-import '../../theme/n_component_colors.dart';
-
-/// The semantic color role applied to an [NChip] in the selected state.
-enum NChipColor {
-  /// Uses the primary brand color.
-  primary,
-
-  /// Uses the secondary accent color.
-  secondary,
-
-  /// Uses the success color.
-  success,
-
-  /// Uses the informational color.
-  info,
-
-  /// Uses the warning color.
-  warning,
-
-  /// Uses the error color.
-  error,
-
-  /// Uses a neutral muted color.
-  neutral,
-}
-
-/// The visual style of an [NChip].
-enum NChipVariant {
-  /// Selected chip gets a fully filled background using the chip color.
-  solid,
-
-  /// Selected chip gets a lightly tinted background.
-  soft,
-
-  /// Selected chip uses a transparent background with a colored border.
-  outline,
-}
 
 /// The size of an [NChip], controlling padding and font size.
 enum NChipSize {
@@ -52,7 +15,7 @@ enum NChipSize {
 
 /// A selectable filter chip that toggles between a selected and unselected state.
 ///
-/// Supports three [NChipVariant] styles, seven [NChipColor] semantic roles,
+/// Supports three [NVariant] styles, seven [NColorRole] semantic roles,
 /// and three [NChipSize] options. Optional [leading] and [trailing] widgets
 /// can be added to the chip row.
 ///
@@ -76,11 +39,11 @@ class NChip extends StatelessWidget {
   final VoidCallback? onTap;
 
   /// The semantic color role used for the selected state.
-  /// Defaults to [NChipColor.primary].
-  final NChipColor color;
+  /// Defaults to [NColorRole.primary].
+  final NColorRole color;
 
-  /// The visual style. Defaults to [NChipVariant.soft].
-  final NChipVariant variant;
+  /// The visual style. Defaults to [NVariant.soft].
+  final NVariant variant;
 
   /// The size of the chip. Defaults to [NChipSize.md].
   final NChipSize size;
@@ -97,8 +60,8 @@ class NChip extends StatelessWidget {
     required this.label,
     this.selected = false,
     this.onTap,
-    this.color = NChipColor.primary,
-    this.variant = NChipVariant.soft,
+    this.color = NColorRole.primary,
+    this.variant = NVariant.soft,
     this.size = NChipSize.md,
     this.leading,
     this.trailing,
@@ -106,7 +69,13 @@ class NChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = _getColors(context);
+    final resolved = selected
+        ? NVariantResolver.resolve(color, variant, context.nui.colors)
+        : NResolvedColors(
+            foreground: context.nui.colors.textMuted,
+            background: Colors.transparent,
+            border: context.nui.colors.border,
+          );
 
     return Semantics(
       button: true,
@@ -118,9 +87,9 @@ class NChip extends StatelessWidget {
           curve: Curves.easeInOut,
           padding: _getPadding(),
           decoration: BoxDecoration(
-            color: colors['background'],
+            color: resolved.background,
             borderRadius: BorderRadius.circular(size == NChipSize.sm ? 16 : 20),
-            border: Border.all(color: colors['border']!, width: 1),
+            border: Border.all(color: resolved.border ?? resolved.foreground, width: 1),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -137,7 +106,7 @@ class NChip extends StatelessWidget {
                 style: TextStyle(
                   fontSize: _getFontSize(),
                   fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                  color: colors['foreground'],
+                  color: resolved.foreground,
                 ),
               ),
               if (trailing != null) ...[
@@ -187,54 +156,7 @@ class NChip extends StatelessWidget {
     }
   }
 
-  NComponentColor get _componentColor => NComponentColor.values[color.index];
 
-  Map<String, Color> _getColors(BuildContext context) {
-    final c = NComponentColors.resolve(context, _componentColor);
-    final semanticColor = c.main;
-
-    switch (variant) {
-      case NChipVariant.solid:
-        if (selected) {
-          return {
-            'background': semanticColor,
-            'foreground': NTokens.textInverted(context),
-            'border': semanticColor
-          };
-        }
-        return {
-          'background': NTokens.bgMuted(context),
-          'foreground': NTokens.textMuted(context),
-          'border': NTokens.borderDefault(context)
-        };
-      case NChipVariant.soft:
-        if (selected) {
-          return {
-            'background': semanticColor.withValues(alpha: 0.15),
-            'foreground': semanticColor,
-            'border': semanticColor.withValues(alpha: 0.3)
-          };
-        }
-        return {
-          'background': NTokens.bgMuted(context),
-          'foreground': NTokens.textMuted(context),
-          'border': NTokens.borderDefault(context)
-        };
-      case NChipVariant.outline:
-        if (selected) {
-          return {
-            'background': Colors.transparent,
-            'foreground': semanticColor,
-            'border': semanticColor
-          };
-        }
-        return {
-          'background': Colors.transparent,
-          'foreground': NTokens.textMuted(context),
-          'border': NTokens.borderDefault(context)
-        };
-    }
-  }
 }
 
 /// A managed group of [NChip] widgets that enforces a single selection.
@@ -263,8 +185,8 @@ class NChipGroup extends StatelessWidget {
   /// Called when the user selects a different chip, passing the new value.
   final ValueChanged<String> onChanged;
 
-  /// The visual style applied to every chip. Defaults to [NChipVariant.solid].
-  final NChipVariant variant;
+  /// The visual style applied to every chip. Defaults to [NVariant.solid].
+  final NVariant variant;
 
   /// The size applied to every chip. Defaults to [NChipSize.sm].
   final NChipSize size;
@@ -294,7 +216,7 @@ class NChipGroup extends StatelessWidget {
     required this.items,
     required this.selectedValue,
     required this.onChanged,
-    this.variant = NChipVariant.solid,
+    this.variant = NVariant.solid,
     this.size = NChipSize.sm,
     this.scrollable = true,
     this.direction = Axis.horizontal,

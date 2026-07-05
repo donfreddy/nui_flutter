@@ -1,79 +1,22 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import '../../theme/n_tokens.dart';
-import '../../theme/n_spacing.dart';
-import '../../theme/n_component_colors.dart';
-import '../../theme/components/n_button_theme.dart';
-
-/// The visual style of an [NButton].
-enum NButtonVariant {
-  /// Filled background using the button color. The most prominent variant.
-  solid,
-
-  /// Transparent background with a colored border.
-  outline,
-
-  /// Lightly tinted background using a low-opacity version of the button color.
-  soft,
-
-  /// Lightly tinted background with a colored border.
-  subtle,
-
-  /// Fully transparent background with no border. Shows color on press.
-  ghost,
-
-  /// Renders as a [TextButton] with no background or border.
-  link,
-}
 
 /// The size of an [NButton], controlling padding, font size, and icon size.
 enum NButtonSize {
-  /// Extra small.
   xs,
-
-  /// Small.
   sm,
-
-  /// Medium. The default size.
   md,
-
-  /// Large.
   lg,
-
-  /// Extra large.
   xl,
-}
-
-/// The semantic color role applied to an [NButton].
-enum NButtonColor {
-  /// Uses [NTokens.primary].
-  primary,
-
-  /// Uses [NTokens.secondary].
-  secondary,
-
-  /// Uses [NTokens.success].
-  success,
-
-  /// Uses [NTokens.warning].
-  warning,
-
-  /// Uses [NTokens.error].
-  error,
-
-  /// Uses [NTokens.info].
-  info,
-
-  /// Uses a neutral text color with an inverted background.
-  neutral,
 }
 
 /// A versatile button component inspired by Nuxt UI's Button.
 ///
-/// Supports six [NButtonVariant] styles, five [NButtonSize] options, and seven
-/// [NButtonColor] roles. All visual defaults are read from [NButtonTheme],
+/// Supports six [NVariant] styles, five [NButtonSize] options, and seven
+/// [NColorRole] roles. All visual defaults are read from [NButtonTheme],
 /// which is automatically registered by [NTheme].
 ///
 /// At least one of [label] or [child] must be provided.
@@ -82,7 +25,7 @@ enum NButtonColor {
 /// NButton(
 ///   label: 'Save',
 ///   onPressed: () => save(),
-///   color: NButtonColor.success,
+///   color: NColorRole.success,
 /// )
 /// ```
 ///
@@ -93,72 +36,29 @@ enum NButtonColor {
 /// NButton.destructive(label: 'Delete', onPressed: _delete)
 /// ```
 class NButton extends StatefulWidget {
-  /// The text label rendered inside the button.
-  ///
-  /// Either [label] or [child] must be provided.
   final String? label;
-
-  /// A custom widget rendered as the button content.
-  ///
-  /// Either [label] or [child] must be provided.
   final Widget? child;
-
-  /// Called when the button is tapped.
-  ///
-  /// Set to `null` to make the button appear interactive but do nothing,
-  /// or set [disabled] to `true` to also reduce opacity.
   final VoidCallback? onPressed;
-
-  /// The visual style of the button. Defaults to [NButtonVariant.solid].
-  final NButtonVariant variant;
-
-  /// The size of the button, affecting padding and font size.
-  /// Defaults to [NButtonSize.md].
+  final NVariant variant;
   final NButtonSize size;
-
-  /// The semantic color role for the button. Defaults to [NButtonColor.primary].
-  final NButtonColor color;
-
-  /// An optional widget placed before the label (e.g., an icon).
+  final NColorRole color;
   final Widget? leading;
-
-  /// An optional widget placed after the label.
   final Widget? trailing;
-
-  /// When `true`, shows a loading spinner in the leading position and
-  /// prevents the button from firing [onPressed]. Defaults to `false`.
   final bool loading;
-
-  /// When `true`, reduces button opacity to 50% and blocks interaction.
-  /// Defaults to `false`.
   final bool disabled;
-
-  /// When `true`, the button expands to fill its parent's width.
-  /// Defaults to `false`.
   final bool block;
-
-  /// Overrides the button's corner radius. Has no effect when [roundedFull]
-  /// is `true`.
   final BorderRadius? borderRadius;
-
-  /// Overrides the button's inner padding.
   final EdgeInsetsGeometry? padding;
-
-  /// When `true` (the default), the button uses a fully rounded pill shape
-  /// regardless of [NButtonTheme.radius] or [borderRadius].
   final bool roundedFull;
 
-  /// Creates an [NButton].
-  ///
-  /// At least one of [label] or [child] must be non-null.
   const NButton({
     super.key,
     this.label,
     this.child,
     this.onPressed,
-    this.variant = NButtonVariant.solid,
+    this.variant = NVariant.solid,
     this.size = NButtonSize.md,
-    this.color = NButtonColor.primary,
+    this.color = NColorRole.primary,
     this.leading,
     this.trailing,
     this.loading = false,
@@ -167,18 +67,15 @@ class NButton extends StatefulWidget {
     this.borderRadius,
     this.padding,
     this.roundedFull = true,
-  }) : assert(label != null || child != null,
+  })  : assert(label != null || child != null,
             'Either label or child must be provided');
 
-  /// Creates an outline-variant button.
-  ///
-  /// Shorthand for `NButton(variant: NButtonVariant.outline, ...)`.
   const NButton.outline({
     Key? key,
     String? label,
     Widget? child,
     required VoidCallback? onPressed,
-    NButtonColor color = NButtonColor.primary,
+    NColorRole color = NColorRole.primary,
     NButtonSize size = NButtonSize.md,
     Widget? leading,
     Widget? trailing,
@@ -190,7 +87,7 @@ class NButton extends StatefulWidget {
           label: label,
           child: child,
           onPressed: onPressed,
-          variant: NButtonVariant.outline,
+          variant: NVariant.outline,
           color: color,
           size: size,
           leading: leading,
@@ -200,15 +97,12 @@ class NButton extends StatefulWidget {
           roundedFull: roundedFull,
         );
 
-  /// Creates a ghost-variant button.
-  ///
-  /// Shorthand for `NButton(variant: NButtonVariant.ghost, ...)`.
   const NButton.ghost({
     Key? key,
     String? label,
     Widget? child,
     required VoidCallback? onPressed,
-    NButtonColor color = NButtonColor.primary,
+    NColorRole color = NColorRole.primary,
     NButtonSize size = NButtonSize.md,
     Widget? leading,
     Widget? trailing,
@@ -218,7 +112,7 @@ class NButton extends StatefulWidget {
           label: label,
           child: child,
           onPressed: onPressed,
-          variant: NButtonVariant.ghost,
+          variant: NVariant.ghost,
           color: color,
           size: size,
           leading: leading,
@@ -227,9 +121,6 @@ class NButton extends StatefulWidget {
           roundedFull: true,
         );
 
-  /// Creates a destructive (solid error-colored) button.
-  ///
-  /// Shorthand for `NButton(variant: NButtonVariant.solid, color: NButtonColor.error, ...)`.
   const NButton.destructive({
     Key? key,
     String? label,
@@ -243,8 +134,8 @@ class NButton extends StatefulWidget {
           label: label,
           child: child,
           onPressed: onPressed,
-          variant: NButtonVariant.solid,
-          color: NButtonColor.error,
+          variant: NVariant.solid,
+          color: NColorRole.error,
           size: size,
           loading: loading,
           block: block,
@@ -256,21 +147,14 @@ class NButton extends StatefulWidget {
 }
 
 class _NButtonState extends State<NButton> with TickerProviderStateMixin {
-  late final AnimationController _ctrl;
-  late final Animation<double> _scale;
   late final AnimationController _loadingCtrl;
   late final Animation<double> _loadingRotation;
-  bool _tapping = false;
 
   @override
   void initState() {
     super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 80),
-    );
-    _scale = Tween<double>(begin: 1.0, end: 0.97)
-        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
+    assert(NVariantSupport.button.contains(widget.variant),
+        'Variant ${widget.variant} is not supported by NButton.');
     _loadingCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -283,7 +167,6 @@ class _NButtonState extends State<NButton> with TickerProviderStateMixin {
   @override
   void dispose() {
     _loadingCtrl.dispose();
-    _ctrl.dispose();
     super.dispose();
   }
 
@@ -299,18 +182,6 @@ class _NButtonState extends State<NButton> with TickerProviderStateMixin {
     }
   }
 
-  Future<void> _onTap() async {
-    if (_tapping || widget.onPressed == null || widget.loading) return;
-    _tapping = true;
-    try {
-      await _ctrl.forward();
-      await _ctrl.reverse();
-      widget.onPressed!();
-    } finally {
-      _tapping = false;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDisabled = widget.disabled || widget.loading;
@@ -322,7 +193,8 @@ class _NButtonState extends State<NButton> with TickerProviderStateMixin {
     final defaultBorderRadius = widget.roundedFull
         ? BorderRadius.circular(999)
         : (widget.borderRadius ?? BorderRadius.circular(theme.radius));
-    final colors = _getColors(context);
+    final resolved =
+        NVariantResolver.resolve(widget.color, widget.variant, context.nui.colors);
     final loadingIcon = theme.loadingIcon;
 
     Widget buttonChild = Row(
@@ -339,12 +211,12 @@ class _NButtonState extends State<NButton> with TickerProviderStateMixin {
             child: Icon(
               loadingIcon ?? LucideIcons.loader,
               size: iconSize,
-              color: colors['foreground'],
+              color: resolved.foreground,
             ),
           )
         else if (widget.leading != null)
           IconTheme(
-            data: IconThemeData(color: colors['foreground'], size: iconSize),
+            data: IconThemeData(color: resolved.foreground, size: iconSize),
             child: widget.leading!,
           ),
         if ((widget.loading || widget.leading != null) &&
@@ -356,7 +228,7 @@ class _NButtonState extends State<NButton> with TickerProviderStateMixin {
             style: TextStyle(
               fontSize: fontSize,
               fontWeight: FontWeight.w600,
-              color: colors['foreground'],
+              color: resolved.foreground,
             ),
           )
         else if (widget.child != null)
@@ -364,28 +236,28 @@ class _NButtonState extends State<NButton> with TickerProviderStateMixin {
             style: TextStyle(
               fontSize: fontSize,
               fontWeight: FontWeight.w600,
-              color: colors['foreground'],
+              color: resolved.foreground,
             ),
             child: IconTheme(
-              data: IconThemeData(color: colors['foreground'], size: iconSize),
+              data: IconThemeData(color: resolved.foreground, size: iconSize),
               child: widget.child!,
             ),
           ),
         if (widget.trailing != null && !widget.loading) ...[
           SizedBox(width: NSpacing.s2),
           IconTheme(
-            data: IconThemeData(color: colors['foreground'], size: iconSize),
+            data: IconThemeData(color: resolved.foreground, size: iconSize),
             child: widget.trailing!,
           ),
         ],
       ],
     );
 
-    if (widget.variant == NButtonVariant.link) {
+    if (widget.variant == NVariant.link) {
       return TextButton(
         onPressed: isDisabled ? null : widget.onPressed,
         style: TextButton.styleFrom(
-          foregroundColor: colors['foreground'],
+          foregroundColor: resolved.foreground,
           padding: buttonPadding,
           minimumSize: Size.zero,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -394,34 +266,26 @@ class _NButtonState extends State<NButton> with TickerProviderStateMixin {
       );
     }
 
-    return Semantics(
-      button: true,
+    return NPressScale(
+      onTap: isDisabled ? null : widget.onPressed,
       enabled: !isDisabled,
-      child: ScaleTransition(
-        scale: _scale,
+      child: Semantics(
+        button: true,
+        enabled: !isDisabled,
         child: SizedBox(
           width: widget.block ? double.infinity : null,
           child: Opacity(
             opacity: isDisabled ? 0.5 : 1.0,
-            child: Material(
-              color: colors['background'],
-              borderRadius: defaultBorderRadius,
-              child: InkWell(
-                onTap: _onTap,
-                onTapDown: (_) => _ctrl.forward(),
-                onTapCancel: () => _ctrl.reverse(),
+            child: Container(
+              padding: buttonPadding,
+              decoration: BoxDecoration(
+                color: resolved.background,
                 borderRadius: defaultBorderRadius,
-                child: Container(
-                  padding: buttonPadding,
-                  decoration: BoxDecoration(
-                    borderRadius: defaultBorderRadius,
-                    border: colors['border'] != null
-                        ? Border.all(color: colors['border']!, width: 1)
-                        : null,
-                  ),
-                  child: buttonChild,
-                ),
+                border: resolved.border != null
+                    ? Border.all(color: resolved.border!, width: 1)
+                    : null,
               ),
+              child: buttonChild,
             ),
           ),
         ),
@@ -469,47 +333,6 @@ class _NButtonState extends State<NButton> with TickerProviderStateMixin {
         return 20;
       case NButtonSize.xl:
         return 24;
-    }
-  }
-
-  NComponentColor get _componentColor =>
-      NComponentColor.values[widget.color.index];
-
-  Map<String, Color?> _getColors(BuildContext context) {
-    final c = NComponentColors.resolve(context, _componentColor);
-    final neutralFg = widget.color == NButtonColor.neutral
-        ? NTokens.bgDefault(context)
-        : c.foreground;
-
-    switch (widget.variant) {
-      case NButtonVariant.solid:
-        return {'background': c.main, 'foreground': neutralFg, 'border': null};
-      case NButtonVariant.outline:
-        return {
-          'background': Colors.transparent,
-          'foreground': c.main,
-          'border': NTokens.borderDefault(context)
-        };
-      case NButtonVariant.soft:
-        return {'background': c.softBg, 'foreground': c.main, 'border': null};
-      case NButtonVariant.subtle:
-        return {
-          'background': c.softBg,
-          'foreground': c.main,
-          'border': c.main.withValues(alpha: 0.3)
-        };
-      case NButtonVariant.ghost:
-        return {
-          'background': Colors.transparent,
-          'foreground': c.main,
-          'border': null
-        };
-      case NButtonVariant.link:
-        return {
-          'background': Colors.transparent,
-          'foreground': c.main,
-          'border': null
-        };
     }
   }
 }

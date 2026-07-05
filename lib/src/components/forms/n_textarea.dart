@@ -1,6 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
-import '../../theme/n_component_colors.dart';
 import '../../theme/n_spacing.dart';
 import '../../theme/components/n_input_theme.dart';
 
@@ -38,27 +37,6 @@ enum NTextareaVariant {
 
   /// Bare textarea with no decoration.
   none,
-}
-
-/// The semantic color role applied to the focused border of an [NTextarea].
-enum NTextareaColor {
-  /// Uses [NTokens.primary] for the focus border.
-  primary,
-
-  /// Uses a neutral border color.
-  neutral,
-
-  /// Uses [NTokens.success] for the focus border.
-  success,
-
-  /// Uses [NTokens.error] for the focus border.
-  error,
-
-  /// Uses [NTokens.warning] for the focus border.
-  warning,
-
-  /// Uses [NTokens.info] for the focus border.
-  info,
 }
 
 /// A multi-line text input component for longer form content.
@@ -102,8 +80,8 @@ class NTextarea extends StatefulWidget {
   final NTextareaVariant variant;
 
   /// The semantic color role for the focus border. Defaults to
-  /// [NTextareaColor.primary].
-  final NTextareaColor color;
+  /// [NColorRole.primary].
+  final NColorRole color;
 
   /// An optional widget placed at the start of the field (e.g., an icon).
   final Widget? leading;
@@ -159,7 +137,7 @@ class NTextarea extends StatefulWidget {
     this.initialValue,
     this.size = NTextareaSize.md,
     this.variant = NTextareaVariant.outline,
-    this.color = NTextareaColor.primary,
+    this.color = NColorRole.primary,
     this.leading,
     this.disabled = false,
     this.required = false,
@@ -234,13 +212,13 @@ class _NTextareaState extends State<NTextarea> {
   }
 
   Color _getBackgroundColor(BuildContext context) {
-    if (widget.disabled) return NTokens.bgMuted(context);
+    if (widget.disabled) return context.nui.colors.bgMuted;
     switch (widget.variant) {
       case NTextareaVariant.outline:
       case NTextareaVariant.subtle:
-        return NTokens.bgDefault(context);
+        return context.nui.colors.bg;
       case NTextareaVariant.soft:
-        return NTokens.bgElevated(context).withValues(alpha: 0.5);
+        return context.nui.colors.bgElevated.withValues(alpha: 0.5);
       case NTextareaVariant.ghost:
       case NTextareaVariant.none:
         return Colors.transparent;
@@ -249,24 +227,11 @@ class _NTextareaState extends State<NTextarea> {
 
   Color _getBorderColor(BuildContext context) {
     final hasError = widget.errorText != null && widget.errorText!.isNotEmpty;
-    if (hasError) return NTokens.error(context);
+    if (hasError) return context.nui.colors.error;
     if (_isFocused || widget.highlight) {
-      final c = NComponentColors.resolve(context, _textareaComponentColor(),
-          neutralMain: (ctx) => NTokens.borderDefault(ctx));
-      return c.main;
+      return context.nui.colors.role(widget.color);
     }
-    return NTokens.borderDefault(context);
-  }
-
-  NComponentColor _textareaComponentColor() {
-    return switch (widget.color) {
-      NTextareaColor.primary => NComponentColor.primary,
-      NTextareaColor.neutral => NComponentColor.neutral,
-      NTextareaColor.success => NComponentColor.success,
-      NTextareaColor.error => NComponentColor.error,
-      NTextareaColor.warning => NComponentColor.warning,
-      NTextareaColor.info => NComponentColor.info,
-    };
+    return context.nui.colors.border;
   }
 
   @override
@@ -292,7 +257,7 @@ class _NTextareaState extends State<NTextarea> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: NTokens.textDefault(context),
+                  color: context.nui.colors.text,
                 ),
               ),
               if (widget.required)
@@ -300,7 +265,7 @@ class _NTextareaState extends State<NTextarea> {
                   ' *',
                   style: TextStyle(
                     fontSize: 14,
-                    color: NTokens.error(context),
+                    color: context.nui.colors.error,
                   ),
                 ),
             ],
@@ -326,14 +291,14 @@ class _NTextareaState extends State<NTextarea> {
             style: TextStyle(
               fontSize: fontSize,
               color: widget.disabled || widget.loading
-                  ? NTokens.textDisabled(context)
-                  : NTokens.textDefault(context),
+                  ? context.nui.colors.textMuted
+                  : context.nui.colors.text,
             ),
             decoration: InputDecoration(
               hintText: widget.placeholder,
               hintStyle: TextStyle(
                 fontSize: fontSize,
-                color: NTokens.textMuted(context),
+                color: context.nui.colors.textMuted,
               ),
               prefixIcon: widget.loading
                   ? Padding(
@@ -341,7 +306,7 @@ class _NTextareaState extends State<NTextarea> {
                       child: Icon(
                         theme.loadingIcon ?? Icons.hourglass_empty,
                         size: 16,
-                        color: NTokens.textMuted(context),
+                        color: context.nui.colors.textMuted,
                       ),
                     )
                   : (widget.leading != null
@@ -373,16 +338,16 @@ class _NTextareaState extends State<NTextarea> {
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: borderRadius,
-                borderSide: BorderSide(color: NTokens.error(context), width: 1),
+                borderSide: BorderSide(color: context.nui.colors.error, width: 1),
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderRadius: borderRadius,
-                borderSide: BorderSide(color: NTokens.error(context), width: 2),
+                borderSide: BorderSide(color: context.nui.colors.error, width: 2),
               ),
               disabledBorder: OutlineInputBorder(
                 borderRadius: borderRadius,
                 borderSide:
-                    BorderSide(color: NTokens.borderMuted(context), width: 1),
+                    BorderSide(color: context.nui.colors.borderMuted, width: 1),
               ),
               counterText: '',
             ),
@@ -395,8 +360,8 @@ class _NTextareaState extends State<NTextarea> {
             style: TextStyle(
               fontSize: 12,
               color: hasError
-                  ? NTokens.error(context)
-                  : NTokens.textMuted(context),
+                  ? context.nui.colors.error
+                  : context.nui.colors.textMuted,
             ),
           ),
         ],

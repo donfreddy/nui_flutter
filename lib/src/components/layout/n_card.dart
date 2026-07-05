@@ -1,6 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
-import '../../theme/n_component_colors.dart';
 
 /// The visual style of an [NCard].
 enum NCardVariant {
@@ -57,7 +56,7 @@ class NCard extends StatelessWidget {
 
   /// Inner padding applied to [header], [child], and [footer] sections.
   ///
-  /// Defaults to `EdgeInsets.all(NTokens.paddingDefault)`.
+  /// Defaults to `EdgeInsets.all(16.0)`.
   final EdgeInsetsGeometry? padding;
 
   /// Called when the card is tapped. Wraps the card in an [InkWell] when set.
@@ -79,7 +78,7 @@ class NCard extends StatelessWidget {
   /// When `null`, neutral surface colors are used.
   final NCardColor? color;
 
-  /// Overrides the card's corner radius. Defaults to [NTokens.radiusDefault].
+  /// Overrides the card's corner radius. Defaults to [8.0].
   final BorderRadius? borderRadius;
 
   /// Creates an [NCard] with the default [NCardVariant.outline] style.
@@ -146,7 +145,7 @@ class NCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final defaultBorderRadius =
-        borderRadius ?? BorderRadius.circular(NTokens.radiusDefault);
+        borderRadius ?? BorderRadius.circular(8.0);
     final styles = _getStyles(context);
 
     Widget cardContent = Column(
@@ -155,7 +154,7 @@ class NCard extends StatelessWidget {
       children: [
         if (header != null) ...[
           Padding(
-            padding: padding ?? const EdgeInsets.all(NTokens.paddingDefault),
+            padding: padding ?? const EdgeInsets.all(16.0),
             child: DefaultTextStyle(
               style: TextStyle(color: styles.textColor),
               child: IconTheme(
@@ -166,7 +165,7 @@ class NCard extends StatelessWidget {
         ],
         if (child != null)
           Padding(
-            padding: padding ?? const EdgeInsets.all(NTokens.paddingDefault),
+            padding: padding ?? const EdgeInsets.all(16.0),
             child: DefaultTextStyle(
               style: TextStyle(color: styles.textColor),
               child: IconTheme(
@@ -176,7 +175,7 @@ class NCard extends StatelessWidget {
         if (footer != null) ...[
           if (styles.showDivider) _buildDivider(context),
           Padding(
-            padding: padding ?? const EdgeInsets.all(NTokens.paddingDefault),
+            padding: padding ?? const EdgeInsets.all(16.0),
             child: DefaultTextStyle(
               style: TextStyle(color: styles.textColor),
               child: IconTheme(
@@ -209,7 +208,7 @@ class NCard extends StatelessWidget {
 
   Widget _buildDivider(BuildContext context) {
     return Divider(
-        height: 1, thickness: 1, color: NTokens.borderDefault(context));
+        height: 1, thickness: 1, color: context.nui.colors.border);
   }
 
   _NCardStyles _getStyles(BuildContext context) {
@@ -219,24 +218,18 @@ class NCard extends StatelessWidget {
     return _defaultStyles(context);
   }
 
-  NComponentColor _cardComponentColor() {
-    return switch (color!) {
-      NCardColor.primary => NComponentColor.primary,
-      NCardColor.neutral => NComponentColor.neutral,
-      NCardColor.success => NComponentColor.success,
-      NCardColor.error => NComponentColor.error,
-      NCardColor.warning => NComponentColor.warning,
-    };
-  }
-
   _NCardStyles _coloredStyles(BuildContext context) {
-    final c = NComponentColors.resolve(context, _cardComponentColor(),
-        neutralSoftBg: (ctx) => NTokens.secondaryBg(ctx),
-        neutralBorder: (ctx) => NTokens.secondaryBorder(ctx),
-        neutralText: (ctx) => NTokens.secondaryText(ctx));
-    final bg = c.softBg;
-    final border = c.border;
-    final text = c.text;
+    final role = switch (color!) {
+      NCardColor.primary => NColorRole.primary,
+      NCardColor.neutral => NColorRole.neutral,
+      NCardColor.success => NColorRole.success,
+      NCardColor.error => NColorRole.error,
+      NCardColor.warning => NColorRole.warning,
+    };
+    final resolved = NVariantResolver.resolve(role, NVariant.soft, context.nui.colors);
+    final bg = resolved.background ?? context.nui.colors.bgElevated;
+    final border = resolved.border ?? context.nui.colors.border;
+    final text = resolved.foreground;
 
     switch (variant) {
       case NCardVariant.outline:
@@ -276,36 +269,36 @@ class NCard extends StatelessWidget {
     switch (variant) {
       case NCardVariant.outline:
         return _NCardStyles(
-          backgroundColor: NTokens.bgDefault(context),
-          textColor: NTokens.textDefault(context),
-          border: Border.all(color: NTokens.borderDefault(context), width: 1),
+          backgroundColor: context.nui.colors.bg,
+          textColor: context.nui.colors.text,
+          border: Border.all(color: context.nui.colors.border, width: 1),
           showDivider: true,
         );
       case NCardVariant.soft:
         return _NCardStyles(
-          backgroundColor: NTokens.bgElevated(context),
-          textColor: NTokens.textDefault(context),
+          backgroundColor: context.nui.colors.bgElevated,
+          textColor: context.nui.colors.text,
           border: null,
           showDivider: true,
         );
       case NCardVariant.subtle:
         return _NCardStyles(
-          backgroundColor: NTokens.bgElevated(context),
-          textColor: NTokens.textDefault(context),
-          border: Border.all(color: NTokens.borderDefault(context), width: 1),
+          backgroundColor: context.nui.colors.bgElevated,
+          textColor: context.nui.colors.text,
+          border: Border.all(color: context.nui.colors.border, width: 1),
           showDivider: true,
         );
       case NCardVariant.ghost:
         return _NCardStyles(
           backgroundColor: Colors.transparent,
-          textColor: NTokens.textDefault(context),
+          textColor: context.nui.colors.text,
           border: null,
           showDivider: true,
         );
       case NCardVariant.naked:
         return _NCardStyles(
           backgroundColor: Colors.transparent,
-          textColor: NTokens.textDefault(context),
+          textColor: context.nui.colors.text,
           border: null,
           showDivider: false,
         );
@@ -377,7 +370,7 @@ class NCardHeader extends StatelessWidget {
                     style: Theme.of(context)
                         .textTheme
                         .bodySmall
-                        ?.copyWith(color: NTokens.textMuted(context))),
+                        ?.copyWith(color: context.nui.colors.textMuted)),
               ],
             ],
           ),

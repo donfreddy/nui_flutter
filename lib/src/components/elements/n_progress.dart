@@ -1,6 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
-import '../../theme/n_component_colors.dart';
 
 /// The size of an [NProgress] bar, controlling its thickness.
 enum NProgressSize {
@@ -20,27 +19,6 @@ enum NProgressSize {
   xl,
 }
 
-/// The semantic color role applied to an [NProgress] indicator.
-enum NProgressColor {
-  /// Uses [NTokens.primary].
-  primary,
-
-  /// Uses [NTokens.success].
-  success,
-
-  /// Uses [NTokens.warning].
-  warning,
-
-  /// Uses [NTokens.error].
-  error,
-
-  /// Uses [NTokens.info].
-  info,
-
-  /// Uses a neutral color.
-  neutral,
-}
-
 /// A linear progress bar that displays the progress of a task.
 ///
 /// Supports determinate mode (when [value] is between 0 and 1) and
@@ -48,7 +26,7 @@ enum NProgressColor {
 /// between value changes.
 ///
 /// ```dart
-/// NProgress(value: 0.5, color: NProgressColor.primary)
+/// NProgress(value: 0.5, color: NColorRole.primary)
 /// ```
 class NProgress extends StatelessWidget {
   /// The current progress value between 0.0 and 1.0.
@@ -61,8 +39,8 @@ class NProgress extends StatelessWidget {
   final NProgressSize size;
 
   /// The semantic color of the filled indicator. Defaults to
-  /// [NProgressColor.primary].
-  final NProgressColor color;
+  /// [NColorRole.primary].
+  final NColorRole color;
 
   /// When true, renders the bar from right to left. Defaults to false.
   final bool inverted;
@@ -72,15 +50,16 @@ class NProgress extends StatelessWidget {
     super.key,
     this.value,
     this.size = NProgressSize.md,
-    this.color = NProgressColor.primary,
+    this.color = NColorRole.primary,
     this.inverted = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final thickness = _getThickness();
-    final c = NComponentColors.resolve(context, _componentColor());
-    final indicatorColor = c.main;
+    final indicatorColor = NVariantResolver.resolve(
+      color, NVariant.solid, context.nui.colors,
+    ).background!;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(thickness / 2),
@@ -93,17 +72,6 @@ class NProgress extends StatelessWidget {
                 value: value!, color: indicatorColor, inverted: inverted),
       ),
     );
-  }
-
-  NComponentColor _componentColor() {
-    return switch (color) {
-      NProgressColor.primary => NComponentColor.primary,
-      NProgressColor.success => NComponentColor.success,
-      NProgressColor.warning => NComponentColor.warning,
-      NProgressColor.error => NComponentColor.error,
-      NProgressColor.info => NComponentColor.info,
-      NProgressColor.neutral => NComponentColor.neutral,
-    };
   }
 
   double _getThickness() {
@@ -142,7 +110,7 @@ class _DeterminateBar extends StatelessWidget {
             Container(
               height: double.infinity,
               decoration: BoxDecoration(
-                color: NTokens.bgAccented(context),
+                color: context.nui.colors.bgAccented,
                 borderRadius: BorderRadius.circular(constraints.maxHeight / 2),
               ),
             ),
@@ -217,7 +185,7 @@ class _IndeterminateBarState extends State<_IndeterminateBar>
             Container(
               height: double.infinity,
               decoration: BoxDecoration(
-                color: NTokens.bgAccented(context),
+                color: context.nui.colors.bgAccented,
                 borderRadius: BorderRadius.circular(constraints.maxHeight / 2),
               ),
             ),

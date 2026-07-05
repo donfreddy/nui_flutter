@@ -1,7 +1,6 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:nui_flutter/src/components/button/n_icon_button.dart';
-import '../../theme/n_tokens.dart';
 
 /// A Material [AppBar] styled with NUI design tokens.
 ///
@@ -77,8 +76,8 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fg = foregroundColor ?? NTokens.textDefault(context);
-    final bg = backgroundColor ?? NTokens.bgDefault(context);
+    final fg = foregroundColor ?? context.nui.colors.text;
+    final bg = backgroundColor ?? context.nui.colors.bg;
 
     return AppBar(
       title: titleWidget ?? (title != null ? Text(title!) : null),

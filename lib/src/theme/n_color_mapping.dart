@@ -1,7 +1,6 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'n_color_palette.dart';
-import 'n_typography.dart';
 
 double _relativeLuminance(Color c) {
   final r = _linearize(c.r);
@@ -22,41 +21,41 @@ Color _readableOn(Color bg) {
       : Colors.white;
 }
 
-/// Builds a Material 3 [ColorScheme] derived from the provided [NColorPalette].
+/// Builds a Material 3 [ColorScheme] derived from the provided [NColors].
 ///
 /// This mapping ensures that standard Flutter components use the appropriate
 /// semantic tokens from the NUI palette. It automatically calculates legible
 /// foreground colors using relative luminance.
-ColorScheme buildColorScheme(NColorPalette palette, Brightness brightness) {
+ColorScheme buildColorScheme(NColors colors, Brightness brightness) {
   final factory =
       brightness == Brightness.light ? ColorScheme.light : ColorScheme.dark;
   return factory(
-    primary: palette.primary,
-    onPrimary: _readableOn(palette.primary),
-    secondary: palette.secondary,
-    onSecondary: _readableOn(palette.secondary),
-    tertiary: palette.info,
+    primary: colors.primary,
+    onPrimary: _readableOn(colors.primary),
+    secondary: colors.secondary,
+    onSecondary: _readableOn(colors.secondary),
+    tertiary: colors.info,
     surface:
-        brightness == Brightness.light ? palette.bgDefault : palette.bgElevated,
-    onSurface: palette.textDefault,
-    error: palette.error,
-    onError: _readableOn(palette.error),
-    surfaceContainerHighest: palette.bgMuted,
+        brightness == Brightness.light ? colors.bg : colors.bgElevated,
+    onSurface: colors.text,
+    error: colors.error,
+    onError: _readableOn(colors.error),
+    surfaceContainerHighest: colors.bgMuted,
   );
 }
 
 /// Builds a scaled [TextTheme] based on the NUI typography specifications.
 ///
-/// Applies the chosen [palette.textDefault] color and an optional custom
+/// Applies the chosen [colors.text] color and an optional custom
 /// [typography] font family. The [textScale] multiplier adjusts the size of
 /// all text styles proportionally.
-TextTheme buildTextTheme(NColorPalette palette, Brightness brightness,
+TextTheme buildTextTheme(NColors colors, Brightness brightness,
     {double textScale = 1.0, NTypography? typography}) {
   final base = typography?.resolveTextTheme(brightness) ??
       (brightness == Brightness.light
           ? ThemeData.light().textTheme
           : ThemeData.dark().textTheme);
-  final color = palette.textDefault;
+  final color = colors.text;
 
   return base
       .copyWith(

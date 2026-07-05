@@ -10,7 +10,7 @@
 ///
 /// // After:
 /// MaterialApp(
-///   theme: NTheme.lightTheme(palette: palette, textScale: 1.15),
+///   theme: NTheme.lightTheme(colors: palette, textScale: 1.15),
 /// )
 /// ```
 @Deprecated('Use NTheme.lightTheme(textScale: ...) instead of static mutable')

@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 ///
 /// ```dart
 /// NTheme.lightTheme(
-///   palette: myPalette,
+///   colors: myPalette,
 ///   extensions: [
 ///     NCardTheme(borderRadius: BorderRadius.circular(16)),
 ///   ],
@@ -17,12 +17,12 @@ import 'package:flutter/material.dart';
 class NCardTheme extends ThemeExtension<NCardTheme> {
   /// Overrides the default corner radius for all [NCard] instances.
   ///
-  /// When `null`, [NCard] falls back to [NTokens.radiusDefault].
+  /// When `null`, [NCard] falls back to [8.0].
   final BorderRadius? borderRadius;
 
   /// Overrides the default inner padding for all [NCard] sections.
   ///
-  /// When `null`, [NCard] uses `EdgeInsets.all(NTokens.paddingDefault)`.
+  /// When `null`, [NCard] uses `EdgeInsets.all(16.0)`.
   final EdgeInsetsGeometry? padding;
 
   /// Creates an [NCardTheme].

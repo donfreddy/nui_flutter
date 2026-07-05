@@ -21,7 +21,7 @@ import 'package:flutter/widgets.dart';
 /// BorderRadius.circular(r.md); // 12 dp
 /// ```
 ///
-/// Default [base] is `8.0` (matches original NTokens.radiusDefault).
+/// Default [base] is `8.0` (matches original 8.0).
 @immutable
 class NRadius extends ThemeExtension<NRadius> {
   /// Creates a radius scale from a single [base] value.

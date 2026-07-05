@@ -1,5 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
 
 /// The size of an [NEmpty] component.
 enum NEmptySize {
@@ -135,11 +135,11 @@ class NEmpty extends StatelessWidget {
   // --- Variant configuration ---
   Color _getBgColor(BuildContext context) {
     return switch (variant) {
-      NEmptyVariant.solid => NTokens.bgInverted(context),
-      NEmptyVariant.outline => NTokens.bgDefault(context),
-      NEmptyVariant.soft => NTokens.bgElevated(context).withValues(alpha: 0.5),
+      NEmptyVariant.solid => context.nui.colors.bgInverted,
+      NEmptyVariant.outline => context.nui.colors.bg,
+      NEmptyVariant.soft => context.nui.colors.bgElevated.withValues(alpha: 0.5),
       NEmptyVariant.subtle =>
-        NTokens.bgElevated(context).withValues(alpha: 0.5),
+        context.nui.colors.bgElevated.withValues(alpha: 0.5),
       NEmptyVariant.naked => Colors.transparent,
     };
   }
@@ -147,34 +147,34 @@ class NEmpty extends StatelessWidget {
   Border? _getBorder(BuildContext context) {
     return switch (variant) {
       NEmptyVariant.outline =>
-        Border.all(color: NTokens.borderDefault(context)),
-      NEmptyVariant.subtle => Border.all(color: NTokens.borderDefault(context)),
+        Border.all(color: context.nui.colors.border),
+      NEmptyVariant.subtle => Border.all(color: context.nui.colors.border),
       _ => null,
     };
   }
 
   Color _getTitleColor(BuildContext context) {
     return switch (variant) {
-      NEmptyVariant.solid => NTokens.textInverted(context),
-      _ => NTokens.textHighlighted(context),
+      NEmptyVariant.solid => context.nui.colors.textInverted,
+      _ => context.nui.colors.textHighlighted,
     };
   }
 
   Color _getDescriptionColor(BuildContext context) {
     return switch (variant) {
-      NEmptyVariant.solid => NTokens.textInverted(context)
+      NEmptyVariant.solid => context.nui.colors.textInverted
           .withValues(alpha: 0.7), // equivalent to text-dimmed
-      NEmptyVariant.soft => NTokens.textToned(context),
-      NEmptyVariant.subtle => NTokens.textToned(context),
-      NEmptyVariant.outline => NTokens.textMuted(context),
-      NEmptyVariant.naked => NTokens.textMuted(context),
+      NEmptyVariant.soft => context.nui.colors.textToned,
+      NEmptyVariant.subtle => context.nui.colors.textToned,
+      NEmptyVariant.outline => context.nui.colors.textMuted,
+      NEmptyVariant.naked => context.nui.colors.textMuted,
     };
   }
 
   Color _getIconColor(BuildContext context) {
     return switch (variant) {
-      NEmptyVariant.solid => NTokens.textInverted(context),
-      _ => NTokens.textMuted(context),
+      NEmptyVariant.solid => context.nui.colors.textInverted,
+      _ => context.nui.colors.textMuted,
     };
   }
 
@@ -185,7 +185,7 @@ class NEmpty extends StatelessWidget {
       decoration: BoxDecoration(
         color: _getBgColor(context),
         border: _getBorder(context),
-        borderRadius: BorderRadius.circular(NTokens.radiusLg),
+        borderRadius: BorderRadius.circular(12.0),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

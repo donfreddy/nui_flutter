@@ -1,10 +1,9 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import '../../theme/n_tokens.dart';
-import '../../theme/n_component_colors.dart';
 import '../../theme/components/n_input_theme.dart';
 
 /// The size of an [NInput], affecting padding and font size.
@@ -41,27 +40,6 @@ enum NInputVariant {
 
   /// Bare text field with no decoration.
   none,
-}
-
-/// The semantic color role applied to the focused/active border of an [NInput].
-enum NInputColor {
-  /// Uses [NTokens.primary] for the focus border.
-  primary,
-
-  /// Uses [NTokens.borderDefault] for the focus border.
-  neutral,
-
-  /// Uses [NTokens.success] for the focus border.
-  success,
-
-  /// Uses [NTokens.error] for the focus border.
-  error,
-
-  /// Uses [NTokens.warning] for the focus border.
-  warning,
-
-  /// Uses [NTokens.info] for the focus border.
-  info,
 }
 
 /// A full-featured text input component inspired by Nuxt UI's Input.
@@ -118,8 +96,8 @@ class NInput extends StatefulWidget {
   final NInputVariant variant;
 
   /// The semantic color role for the focus/active border.
-  /// Defaults to [NInputColor.primary].
-  final NInputColor color;
+  /// Defaults to [NColorRole.primary].
+  final NColorRole color;
 
   /// An optional widget placed at the start of the field (e.g., an icon).
   final Widget? leading;
@@ -213,7 +191,7 @@ class NInput extends StatefulWidget {
     this.initialValue,
     this.size = NInputSize.md,
     this.variant = NInputVariant.outline,
-    this.color = NInputColor.primary,
+    this.color = NColorRole.primary,
     this.leading,
     this.trailing,
     this.leadingText,
@@ -260,7 +238,7 @@ class NInput extends StatefulWidget {
     this.initialValue,
     this.size = NInputSize.lg,
     this.variant = NInputVariant.outline,
-    this.color = NInputColor.primary,
+    this.color = NColorRole.primary,
     this.leading,
     this.trailing,
     this.leadingText,
@@ -305,7 +283,7 @@ class NInput extends StatefulWidget {
     this.initialValue,
     this.size = NInputSize.md,
     this.variant = NInputVariant.outline,
-    this.color = NInputColor.primary,
+    this.color = NColorRole.primary,
     this.leading,
     this.trailing,
     this.trailingText,
@@ -348,7 +326,7 @@ class NInput extends StatefulWidget {
     this.initialValue,
     this.size = NInputSize.lg,
     this.variant = NInputVariant.outline,
-    this.color = NInputColor.primary,
+    this.color = NColorRole.primary,
     this.leading,
     this.trailing,
     this.leadingText,
@@ -467,43 +445,28 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
   }
 
   Color _getBackgroundColor(BuildContext context) {
-    if (widget.disabled) return NTokens.bgMuted(context);
+    if (widget.disabled) return context.nui.colors.bgMuted;
     switch (widget.variant) {
       case NInputVariant.outline:
       case NInputVariant.subtle:
-        return NTokens.bgDefault(context);
+        return context.nui.colors.bg;
       case NInputVariant.soft:
-        return NTokens.bgElevated(context).withValues(alpha: 0.5);
+        return context.nui.colors.bgElevated.withValues(alpha: 0.5);
       case NInputVariant.ghost:
       case NInputVariant.none:
         return Colors.transparent;
     }
   }
 
-  NComponentColor _getInputComponentColor() {
-    return switch (widget.color) {
-      NInputColor.primary => NComponentColor.primary,
-      NInputColor.neutral => NComponentColor.neutral,
-      NInputColor.success => NComponentColor.success,
-      NInputColor.error => NComponentColor.error,
-      NInputColor.warning => NComponentColor.warning,
-      NInputColor.info => NComponentColor.info,
-    };
-  }
-
   Color _getBorderColor(BuildContext context) {
     final hasError = widget.errorText != null && widget.errorText!.isNotEmpty;
-    if (hasError) return NTokens.error(context);
+    if (hasError) return context.nui.colors.error;
     if (_isFocused || widget.highlight) {
-      return NComponentColors.resolve(
-        context,
-        _getInputComponentColor(),
-        neutralMain: (ctx) => NTokens.borderDefault(ctx),
-      ).main;
+      return context.nui.colors.role(widget.color);
     }
     if (widget.variant == NInputVariant.outline ||
         widget.variant == NInputVariant.subtle) {
-      return NTokens.borderDefault(context);
+      return context.nui.colors.border;
     }
     return Colors.transparent;
   }
@@ -521,7 +484,7 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
         child: Icon(
           theme.loadingIcon ?? LucideIcons.loader,
           size: 16,
-          color: NTokens.textMuted(context),
+          color: context.nui.colors.textMuted,
         ),
       );
     }
@@ -534,7 +497,7 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
       children.add(
         Text(
           '${_controller.text.length}/${widget.maxLength}',
-          style: TextStyle(fontSize: 12, color: NTokens.textMuted(context)),
+          style: TextStyle(fontSize: 12, color: context.nui.colors.textMuted),
         ),
       );
     }
@@ -543,7 +506,7 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
         GestureDetector(
           onTap: _handleClear,
           child:
-              Icon(LucideIcons.x, size: 16, color: NTokens.textMuted(context)),
+              Icon(LucideIcons.x, size: 16, color: context.nui.colors.textMuted),
         ),
       );
     }
@@ -554,7 +517,7 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
           child: Icon(
             _obscureText ? LucideIcons.eye : LucideIcons.eyeOff,
             size: 18,
-            color: NTokens.textMuted(context),
+            color: context.nui.colors.textMuted,
           ),
         ),
       );
@@ -596,12 +559,12 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
                 style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: NTokens.textDefault(context)),
+                    color: context.nui.colors.text),
               ),
               if (widget.required)
                 Text(' *',
                     style:
-                        TextStyle(fontSize: 14, color: NTokens.error(context))),
+                        TextStyle(fontSize: 14, color: context.nui.colors.error)),
             ],
           ),
           const SizedBox(height: 6),
@@ -629,13 +592,13 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
             style: TextStyle(
               fontSize: fontSize,
               color: widget.disabled || widget.loading
-                  ? NTokens.textDisabled(context)
-                  : NTokens.textDefault(context),
+                  ? context.nui.colors.textMuted
+                  : context.nui.colors.text,
             ),
             decoration: InputDecoration(
               hintText: widget.placeholder,
               hintStyle: TextStyle(
-                  fontSize: fontSize, color: NTokens.textMuted(context)),
+                  fontSize: fontSize, color: context.nui.colors.textMuted),
               prefixIcon: leadingWidget != null
                   ? Padding(
                       padding: const EdgeInsets.only(left: 12, right: 8),
@@ -647,7 +610,7 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
                             widget.leadingText!,
                             style: TextStyle(
                                 fontSize: fontSize,
-                                color: NTokens.textMuted(context)),
+                                color: context.nui.colors.textMuted),
                           ),
                         )
                       : null),
@@ -664,7 +627,7 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
                             widget.trailingText!,
                             style: TextStyle(
                                 fontSize: fontSize,
-                                color: NTokens.textMuted(context)),
+                                color: context.nui.colors.textMuted),
                           ),
                         )
                       : null),
@@ -690,16 +653,16 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: borderRadius,
-                borderSide: BorderSide(color: NTokens.error(context), width: 1),
+                borderSide: BorderSide(color: context.nui.colors.error, width: 1),
               ),
               focusedErrorBorder: OutlineInputBorder(
                 borderRadius: borderRadius,
-                borderSide: BorderSide(color: NTokens.error(context), width: 2),
+                borderSide: BorderSide(color: context.nui.colors.error, width: 2),
               ),
               disabledBorder: OutlineInputBorder(
                 borderRadius: borderRadius,
                 borderSide:
-                    BorderSide(color: NTokens.borderMuted(context), width: 1),
+                    BorderSide(color: context.nui.colors.borderMuted, width: 1),
               ),
               counterText: '',
             ),
@@ -712,8 +675,8 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
             style: TextStyle(
               fontSize: 12,
               color: hasError
-                  ? NTokens.error(context)
-                  : NTokens.textMuted(context),
+                  ? context.nui.colors.error
+                  : context.nui.colors.textMuted,
             ),
           ),
         ],

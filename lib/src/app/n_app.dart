@@ -1,11 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../theme/n_color_palette.dart';
-import '../theme/n_color_mapping.dart';
-import '../theme/n_typography.dart';
-import '../tokens/n_radius.dart';
-import '../tokens/n_shadows.dart';
-import '../theme/components/n_button_theme.dart';
-import '../theme/components/n_input_theme.dart';
 import '../theme/components/n_card_theme.dart';
 
 /// A drop-in replacement for [MaterialApp] that wires the entire NUI design
@@ -21,11 +15,10 @@ import '../theme/components/n_card_theme.dart';
 ///
 /// ```dart
 /// NApp(
-///   palette: NColorPalette.light(
-///     primary: Color(0xFFF97316),
-///     secondary: Color(0xFF6B7280),
-///     success: Color(0xFF10B981),
-///     error: Color(0xFFEF4444),
+///   colors: NColors.light(
+///     roles: {
+///       NColorRole.primary: NColorScale.orange,
+///     },
 ///   ),
 ///   home: const HomeScreen(),
 /// )
@@ -35,8 +28,8 @@ import '../theme/components/n_card_theme.dart';
 ///
 /// ```dart
 /// NApp(
-///   palette: myPalette,
-///   darkPalette: myDarkPalette,
+///   colors: myColors,
+///   darkColors: myDarkColors,
 ///   radius: const NRadius(base: 12),
 ///   home: const HomeScreen(),
 /// )
@@ -47,8 +40,8 @@ import '../theme/components/n_card_theme.dart';
 /// You can still use [NTheme] directly:
 /// ```dart
 /// MaterialApp(
-///   theme: NTheme.lightTheme(palette: myPalette),
-///   darkTheme: NTheme.darkTheme(palette: myDarkPalette),
+///   theme: NTheme.lightTheme(colors: myColors),
+///   darkTheme: NTheme.darkTheme(colors: myDarkColors),
 /// )
 /// ```
 class NApp extends StatelessWidget {
@@ -56,8 +49,8 @@ class NApp extends StatelessWidget {
   const NApp({
     super.key,
     // ── NUI config ──────────────────────────────────────────────────────────
-    required this.palette,
-    this.darkPalette,
+    this.colors,
+    this.darkColors,
     this.radius = const NRadius(),
     this.textScale = 1.0,
     this.typography,
@@ -112,10 +105,10 @@ class NApp extends StatelessWidget {
   ///
   /// Use this variant with `go_router`, `auto_route`, etc.
   const NApp.router({
+    this.colors,
+    this.darkColors,
     super.key,
     // ── NUI config ──────────────────────────────────────────────────────────
-    required this.palette,
-    this.darkPalette,
     this.radius = const NRadius(),
     this.textScale = 1.0,
     this.typography,
@@ -168,15 +161,11 @@ class NApp extends StatelessWidget {
 
   // ── NUI design-system config ───────────────────────────────────────────────
 
-  /// The light-mode color palette. **Required.**
-  ///
-  /// Use `NColorPalette.light(primary: ..., secondary: ..., success: ..., error: ...)`.
-  final NColorPalette palette;
+  /// The NUI semantic colors for light mode.
+  final NColors? colors;
 
-  /// The dark-mode color palette.
-  ///
-  /// When `null`, the [palette] (light) is used for both modes.
-  final NColorPalette? darkPalette;
+  /// The NUI semantic colors for dark mode.
+  final NColors? darkColors;
 
   /// The corner-radius scale. Defaults to `NRadius(base: 8)`.
   final NRadius radius;
@@ -330,43 +319,31 @@ class NApp extends StatelessWidget {
   // Internal theme builder
   // ---------------------------------------------------------------------------
 
-  ThemeData _buildTheme(NColorPalette p, Brightness brightness) {
-    final bRadius = buttonRadius ?? radius.md;
-    final iRadius = inputRadius ?? radius.md;
-
-    final builtExtensions = <ThemeExtension<dynamic>>[
-      p,
-      radius,
-      brightness == Brightness.dark ? NShadows.dark() : NShadows.light(),
-      NButtonTheme(radius: bRadius),
-      NInputTheme(radius: iRadius),
-      const NCardTheme(),
-      if (typography != null) typography!,
-      ...extensions,
-    ];
-
-    return ThemeData(
-      useMaterial3: true,
-      brightness: brightness,
-      colorScheme: buildColorScheme(p, brightness),
-      scaffoldBackgroundColor: p.bgDefault,
-      cardColor: p.bgElevated,
-      textTheme: buildTextTheme(
-        p,
-        brightness,
+  ThemeData _buildTheme(NColors c, Brightness brightness) {
+    if (brightness == Brightness.light) {
+      return NTheme.lightTheme(
+        colors: c,
+        radius: radius.base,
         textScale: textScale,
         typography: typography,
-      ),
-      extensions: builtExtensions,
-    );
+        extensions: extensions,
+      );
+    } else {
+      return NTheme.darkTheme(
+        colors: c,
+        radius: radius.base,
+        textScale: textScale,
+        typography: typography,
+        extensions: extensions,
+      );
+    }
   }
 
-  /// Merges NUI extensions into a user-supplied [ThemeData].
-  ThemeData _mergeExtensions(ThemeData base, NColorPalette p, Brightness b) {
+  ThemeData _mergeExtensions(ThemeData base, NColors c, Brightness b) {
     final bRadius = buttonRadius ?? radius.md;
     final iRadius = inputRadius ?? radius.md;
     final nuiExtensions = <ThemeExtension<dynamic>>[
-      p,
+      c,
       radius,
       b == Brightness.dark ? NShadows.dark() : NShadows.light(),
       NButtonTheme(radius: bRadius),
@@ -384,15 +361,15 @@ class NApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lightPalette = palette;
-    final darkPalette = this.darkPalette ?? palette;
+    final lightColors = colors ?? NColors.light();
+    final darkColors = this.darkColors ?? colors ?? NColors.dark();
 
     final lightData = theme != null
-        ? _mergeExtensions(theme!, lightPalette, Brightness.light)
-        : _buildTheme(lightPalette, Brightness.light);
+        ? _mergeExtensions(theme!, lightColors, Brightness.light)
+        : _buildTheme(lightColors, Brightness.light);
     final darkData = darkTheme != null
-        ? _mergeExtensions(darkTheme!, darkPalette, Brightness.dark)
-        : _buildTheme(darkPalette, Brightness.dark);
+        ? _mergeExtensions(darkTheme!, darkColors, Brightness.dark)
+        : _buildTheme(darkColors, Brightness.dark);
 
     if (_router) {
       return MaterialApp.router(

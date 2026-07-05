@@ -1,5 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
 
 /// The visual style of an [NTabBar].
 enum NTabBarVariant {
@@ -110,8 +110,8 @@ class NTabItem extends StatelessWidget {
             icon,
             size: 16,
             color: selected
-                ? NTokens.primary(context)
-                : NTokens.textMuted(context),
+                ? context.nui.colors.primary
+                : context.nui.colors.textMuted,
           ),
           const SizedBox(width: 6),
         ],
@@ -121,8 +121,8 @@ class NTabItem extends StatelessWidget {
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: selected
-                ? NTokens.primary(context)
-                : NTokens.textMuted(context),
+                ? context.nui.colors.primary
+                : context.nui.colors.textMuted,
           ),
         ),
         if (count > 0) ...[
@@ -131,8 +131,8 @@ class NTabItem extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
               color: selected
-                  ? NTokens.primary(context).withValues(alpha: 0.1)
-                  : NTokens.bgMuted(context),
+                  ? context.nui.colors.primary.withValues(alpha: 0.1)
+                  : context.nui.colors.bgMuted,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
@@ -141,8 +141,8 @@ class NTabItem extends StatelessWidget {
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: selected
-                    ? NTokens.primary(context)
-                    : NTokens.textMuted(context),
+                    ? context.nui.colors.primary
+                    : context.nui.colors.textMuted,
               ),
             ),
           ),
@@ -214,7 +214,7 @@ class NTabBar extends StatelessWidget {
         border: variant == NTabBarVariant.underline
             ? Border(
                 bottom:
-                    BorderSide(color: NTokens.borderDefault(context), width: 1))
+                    BorderSide(color: context.nui.colors.border, width: 1))
             : null,
       ),
       child: scrollable
@@ -248,7 +248,7 @@ class NTabBar extends StatelessWidget {
                   ? Border(
                       bottom: BorderSide(
                         color: isSelected
-                            ? NTokens.primary(context)
+                            ? context.nui.colors.primary
                             : Colors.transparent,
                         width: 2,
                       ),
@@ -258,7 +258,7 @@ class NTabBar extends StatelessWidget {
                   ? BorderRadius.circular(tabHeight / 2)
                   : null,
               color: variant == NTabBarVariant.pill && isSelected
-                  ? NTokens.primary(context).withValues(alpha: 0.1)
+                  ? context.nui.colors.primary.withValues(alpha: 0.1)
                   : Colors.transparent,
             ),
             child: Center(

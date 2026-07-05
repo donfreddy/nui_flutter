@@ -1,5 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
 
 /// A placeholder widget that shows a pulsing animated rectangle while content
 /// is loading.
@@ -17,7 +17,7 @@ class NSkeleton extends StatefulWidget {
   /// The height of the skeleton. Defaults to 16.0.
   final double? height;
 
-  /// The corner radius of the skeleton. Defaults to [NTokens.radiusSm].
+  /// The corner radius of the skeleton. Defaults to [6.0].
   final double? borderRadius;
 
   /// Creates an [NSkeleton].
@@ -66,9 +66,9 @@ class _NSkeletonState extends State<NSkeleton>
             width: widget.width,
             height: widget.height,
             decoration: BoxDecoration(
-              color: NTokens.bgMuted(context),
+              color: context.nui.colors.bgMuted,
               borderRadius: BorderRadius.circular(
-                widget.borderRadius ?? NTokens.radiusSm,
+                widget.borderRadius ?? 6.0,
               ),
             ),
           ),

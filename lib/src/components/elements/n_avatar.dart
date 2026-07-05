@@ -1,7 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_color_palette.dart';
-import '../../theme/n_tokens.dart';
-import '../../theme/n_component_colors.dart';
 
 /// The semantic color role applied to an [NAvatar]'s background and initials.
 enum NAvatarColor {
@@ -26,7 +24,7 @@ enum NAvatarColor {
   /// Uses a neutral muted color.
   neutral,
 
-  /// Picks a color deterministically from [NColorPalette.avatarColors] based
+  /// Picks a color deterministically from [context.nui.colors.primary] based
   /// on the hash of [NAvatar.name]. Ensures the same name always shows the
   /// same color.
   random,
@@ -152,7 +150,7 @@ class NAvatar extends StatelessWidget {
     final avatarSize = _getSize();
     final fontSize = _getFontSize();
     final badgeSize = _getBadgeSize();
-    final colors = _getColors(context);
+    final resolved = _getColors(context);
     final opacity = isGhost ? 0.4 : 1.0;
 
     Widget avatarContent;
@@ -166,11 +164,11 @@ class NAvatar extends StatelessWidget {
           height: avatarSize,
           fit: BoxFit.cover,
           errorBuilder: (_, __, ___) =>
-              _buildFallback(colors, avatarSize, fontSize),
+              _buildFallback(resolved, avatarSize, fontSize),
         ),
       );
     } else {
-      avatarContent = _buildFallback(colors, avatarSize, fontSize);
+      avatarContent = _buildFallback(resolved, avatarSize, fontSize);
     }
 
     Widget avatar = Opacity(
@@ -179,10 +177,10 @@ class NAvatar extends StatelessWidget {
         width: avatarSize,
         height: avatarSize,
         decoration: BoxDecoration(
-          color: colors['background'],
+          color: resolved.background,
           shape: BoxShape.circle,
           border: hasRing
-              ? Border.all(color: NTokens.primary(context), width: 2)
+              ? Border.all(color: context.nui.colors.primary, width: 2)
               : null,
         ),
         child: Center(child: avatarContent),
@@ -203,17 +201,17 @@ class NAvatar extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                     decoration: BoxDecoration(
-                      color: chipColor ?? NTokens.success(context),
+                      color: chipColor ?? context.nui.colors.success,
                       borderRadius: BorderRadius.circular(6),
                       border: Border.all(
-                          color: NTokens.bgDefault(context), width: 2),
+                          color: context.nui.colors.bg, width: 2),
                     ),
                     child: Text(
                       chipText!,
                       style: TextStyle(
                         fontSize: 8,
                         fontWeight: FontWeight.w700,
-                        color: NTokens.textInverted(context),
+                        color: context.nui.colors.textInverted,
                       ),
                     ),
                   )
@@ -221,10 +219,10 @@ class NAvatar extends StatelessWidget {
                     width: badgeSize,
                     height: badgeSize,
                     decoration: BoxDecoration(
-                      color: chipColor ?? NTokens.success(context),
+                      color: chipColor ?? context.nui.colors.success,
                       shape: BoxShape.circle,
                       border: Border.all(
-                          color: NTokens.bgDefault(context), width: 2),
+                          color: context.nui.colors.bg, width: 2),
                     ),
                   ),
           ),
@@ -241,9 +239,9 @@ class NAvatar extends StatelessWidget {
   }
 
   Widget _buildFallback(
-      Map<String, Color> colors, double avatarSize, double fontSize) {
+      NResolvedColors colors, double avatarSize, double fontSize) {
     if (icon != null) {
-      return Icon(icon, size: avatarSize * 0.5, color: colors['foreground']);
+      return Icon(icon, size: avatarSize * 0.5, color: colors.foreground);
     }
     if (name != null && name!.isNotEmpty) {
       return Text(
@@ -251,44 +249,34 @@ class NAvatar extends StatelessWidget {
         style: TextStyle(
             fontSize: fontSize,
             fontWeight: FontWeight.w600,
-            color: colors['foreground']),
+            color: colors.foreground),
       );
     }
     return Icon(Icons.person,
-        size: avatarSize * 0.5, color: colors['foreground']);
+        size: avatarSize * 0.5, color: colors.foreground);
   }
 
-  NComponentColor? get _avatarComponentColor {
-    if (color == NAvatarColor.random) return null;
-    return switch (color) {
-      NAvatarColor.primary => NComponentColor.primary,
-      NAvatarColor.secondary => NComponentColor.secondary,
-      NAvatarColor.success => NComponentColor.success,
-      NAvatarColor.info => NComponentColor.info,
-      NAvatarColor.warning => NComponentColor.warning,
-      NAvatarColor.error => NComponentColor.error,
-      NAvatarColor.neutral => NComponentColor.neutral,
-      NAvatarColor.random => null,
-    };
-  }
-
-  Map<String, Color> _getColors(BuildContext context) {
+  NResolvedColors _getColors(BuildContext context) {
     if (color == NAvatarColor.random) {
-      const palette = NColorPalette.avatarColors;
+      final palette = [context.nui.colors.primary, context.nui.colors.secondary, context.nui.colors.success, context.nui.colors.warning];
       final index = name != null && name!.isNotEmpty
           ? name!.codeUnits.fold(0, (sum, c) => sum + c) % palette.length
           : 0;
       final bg = palette[index].withValues(alpha: 0.15);
-      return {'background': bg, 'foreground': palette[index]};
+      return NResolvedColors(foreground: palette[index], background: bg);
     }
 
-    final c = NComponentColors.resolve(context, _avatarComponentColor!,
-        neutralSoftBg: (ctx) => NTokens.bgMuted(ctx),
-        neutralForeground: (ctx) => NTokens.textMuted(ctx));
-    return {
-      'background': c.main.withValues(alpha: 0.15),
-      'foreground': c.main,
+    final role = switch (color) {
+      NAvatarColor.primary => NColorRole.primary,
+      NAvatarColor.secondary => NColorRole.secondary,
+      NAvatarColor.success => NColorRole.success,
+      NAvatarColor.info => NColorRole.info,
+      NAvatarColor.warning => NColorRole.warning,
+      NAvatarColor.error => NColorRole.error,
+      NAvatarColor.neutral => NColorRole.neutral,
+      NAvatarColor.random => null,
     };
+    return NVariantResolver.resolve(role!, NVariant.soft, context.nui.colors);
   }
 
   String _getInitials(String name) {
@@ -408,7 +396,7 @@ class NAvatarGroup extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border:
-                      Border.all(color: NTokens.bgDefault(context), width: 2),
+                      Border.all(color: context.nui.colors.bg, width: 2),
                 ),
                 child: NAvatar(
                   imageUrl: index < imageUrls.length ? imageUrls[index] : null,
@@ -427,10 +415,10 @@ class NAvatarGroup extends StatelessWidget {
                   width: avatarSize,
                   height: avatarSize,
                   decoration: BoxDecoration(
-                    color: NTokens.bgMuted(context),
+                    color: context.nui.colors.bgMuted,
                     shape: BoxShape.circle,
                     border:
-                        Border.all(color: NTokens.bgDefault(context), width: 2),
+                        Border.all(color: context.nui.colors.bg, width: 2),
                   ),
                   child: Center(
                     child: Text(
@@ -438,7 +426,7 @@ class NAvatarGroup extends StatelessWidget {
                       style: TextStyle(
                         fontSize: _getFontSize(),
                         fontWeight: FontWeight.w600,
-                        color: NTokens.textMuted(context),
+                        color: context.nui.colors.textMuted,
                       ),
                     ),
                   ),

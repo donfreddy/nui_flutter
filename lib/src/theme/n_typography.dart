@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 ///
 /// ```dart
 /// NTheme.lightTheme(
-///   palette: myPalette,
+///   colors: myPalette,
 ///   typography: NTypography(fontFamily: 'Inter'),
 /// )
 /// ```

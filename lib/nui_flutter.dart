@@ -12,17 +12,21 @@
 ///
 /// ```dart
 /// NApp(
-///   palette: NColorPalette.light(
-///     primary: Color(0xFFF97316),
-///     secondary: Color(0xFF6B7280),
-///     success: Color(0xFF10B981),
-///     error: Color(0xFFEF4444),
+///   colors: NColors.light(
+///     palette: {
+///       NColorRole.primary: NRoleColor(Color(0xFFF97316)),
+///       NColorRole.secondary: NRoleColor(Color(0xFF6B7280)),
+///       NColorRole.success: NRoleColor(Color(0xFF10B981)),
+///       NColorRole.error: NRoleColor(Color(0xFFEF4444)),
+///     },
 ///   ),
-///   darkPalette: NColorPalette.dark(
-///     primary: Color(0xFFF97316),
-///     secondary: Color(0xFF6B7280),
-///     success: Color(0xFF10B981),
-///     error: Color(0xFFEF4444),
+///   darkColors: NColors.dark(
+///     palette: {
+///       NColorRole.primary: NRoleColor(Color(0xFFF97316)),
+///       NColorRole.secondary: NRoleColor(Color(0xFF6B7280)),
+///       NColorRole.success: NRoleColor(Color(0xFF10B981)),
+///       NColorRole.error: NRoleColor(Color(0xFFEF4444)),
+///     },
 ///   ),
 ///   home: const HomeScreen(),
 /// )
@@ -32,8 +36,8 @@
 ///
 /// ```dart
 /// MaterialApp(
-///   theme: NTheme.lightTheme(palette: myLightPalette),
-///   darkTheme: NTheme.darkTheme(palette: myDarkPalette),
+///   theme: NTheme.lightTheme(colors: myLightColors),
+///   darkTheme: NTheme.darkTheme(colors: myDarkColors),
 /// )
 /// ```
 ///
@@ -41,15 +45,14 @@
 ///
 /// Read tokens anywhere inside a build method:
 /// ```dart
-/// // Idiomatic (new):
-/// context.nui.colors.primary
-/// context.nui.radius.md
-/// context.nui.shadows.sm
+/// // Before (verbose):
+/// final colors = Theme.of(context).extension<NColors>()!;
+/// final color = colors.primary;
 ///
-/// // Static accessors (legacy, still valid):
-/// NTokens.primary(context)
-/// NSpacing.s4
-/// NTokens.radiusDefault
+/// // After (idiomatic):
+/// final color = context.nui.colors.primary;
+/// final radius = context.nui.radius.md;
+/// final shadow = context.nui.shadows.sm;
 /// ```
 ///
 /// ## Seed-based theming (NColorScale)
@@ -82,8 +85,8 @@ export 'src/app/n_app.dart';
 // ---------------------------------------------------------------------------
 // Theme
 // ---------------------------------------------------------------------------
-export 'src/theme/n_color_palette.dart';
-export 'src/theme/n_component_colors.dart';
+export 'src/theme/n_colors.dart';
+export 'src/theme/n_variant_resolver.dart';
 export 'src/theme/n_spacing.dart';
 export 'src/theme/n_text_scale.dart';
 export 'src/theme/n_theme.dart';
@@ -99,6 +102,7 @@ export 'src/theme/components/n_input_theme.dart';
 // ---------------------------------------------------------------------------
 // Tokens
 // ---------------------------------------------------------------------------
+export 'src/tokens/n_color_roles.dart'; // NColorRole, NNeutralPalette
 export 'src/tokens/n_color_scale.dart'; // NColorScale.fromSeed()
 export 'src/tokens/n_radius.dart';      // NRadius
 export 'src/tokens/n_shadows.dart';     // NShadows

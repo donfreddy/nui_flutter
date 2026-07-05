@@ -1,14 +1,9 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'n_color_palette.dart';
 import 'n_color_mapping.dart';
-import 'n_typography.dart';
-import 'components/n_button_theme.dart';
-import 'components/n_input_theme.dart';
 import 'components/n_card_theme.dart';
-import '../tokens/n_radius.dart';
-import '../tokens/n_shadows.dart';
 
-/// Factory class for building a [ThemeData] from an [NColorPalette].
+/// Factory class for building a [ThemeData] from an [NColors].
 ///
 /// [NTheme] wires the palette into Flutter's Material 3 color system and
 /// registers the default [NButtonTheme] and [NInputTheme] extensions.
@@ -16,8 +11,8 @@ import '../tokens/n_shadows.dart';
 ///
 /// ```dart
 /// MaterialApp(
-///   theme: NTheme.lightTheme(palette: MyPalette.light()),
-///   darkTheme: NTheme.darkTheme(palette: MyPalette.dark()),
+///   theme: NTheme.lightTheme(colors: MyPalette.light()),
+///   darkTheme: NTheme.darkTheme(colors: MyPalette.dark()),
 /// );
 /// ```
 abstract class NTheme {
@@ -29,24 +24,25 @@ abstract class NTheme {
   /// [ThemeExtension] values. App-supplied extensions replace the defaults
   /// when they share the same [runtimeType].
   static ThemeData lightTheme({
-    required NColorPalette palette,
+    NColors? colors,
     double radius = 8.0,
     double textScale = 1.0,
     NTypography? typography,
     NRadius? radiusScale,
     Iterable<ThemeExtension<dynamic>> extensions = const [],
   }) {
+    final resolvedColors = colors ?? NColors.light();
     final nRadius = radiusScale ?? NRadius(base: radius);
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      colorScheme: buildColorScheme(palette, Brightness.light),
-      scaffoldBackgroundColor: palette.bgDefault,
-      cardColor: palette.bgElevated,
-      textTheme: buildTextTheme(palette, Brightness.light,
+      colorScheme: buildColorScheme(resolvedColors, Brightness.light),
+      scaffoldBackgroundColor: resolvedColors.bg,
+      cardColor: resolvedColors.bgElevated,
+      textTheme: buildTextTheme(resolvedColors, Brightness.light,
           textScale: textScale, typography: typography),
       extensions: [
-        palette,
+        resolvedColors,
         nRadius,
         NShadows.light(),
         NButtonTheme(radius: nRadius.md),
@@ -66,24 +62,25 @@ abstract class NTheme {
   /// [ThemeExtension] values. App-supplied extensions replace the defaults
   /// when they share the same [runtimeType].
   static ThemeData darkTheme({
-    required NColorPalette palette,
+    NColors? colors,
     double radius = 8.0,
     double textScale = 1.0,
     NTypography? typography,
     NRadius? radiusScale,
     Iterable<ThemeExtension<dynamic>> extensions = const [],
   }) {
+    final resolvedColors = colors ?? NColors.dark();
     final nRadius = radiusScale ?? NRadius(base: radius);
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      colorScheme: buildColorScheme(palette, Brightness.dark),
-      scaffoldBackgroundColor: palette.bgDefault,
-      cardColor: palette.bgElevated,
-      textTheme: buildTextTheme(palette, Brightness.dark,
+      colorScheme: buildColorScheme(resolvedColors, Brightness.dark),
+      scaffoldBackgroundColor: resolvedColors.bg,
+      cardColor: resolvedColors.bgElevated,
+      textTheme: buildTextTheme(resolvedColors, Brightness.dark,
           textScale: textScale, typography: typography),
       extensions: [
-        palette,
+        resolvedColors,
         nRadius,
         NShadows.dark(),
         NButtonTheme(radius: nRadius.md),

@@ -1,6 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
-import '../../theme/n_component_colors.dart';
 
 /// The size of an [NRadioGroup] item.
 enum NRadioSize {
@@ -20,29 +19,7 @@ enum NRadioSize {
   xl,
 }
 
-/// The semantic color role applied to an [NRadioGroup].
-enum NRadioColor {
-  /// Uses [NTokens.primary].
-  primary,
 
-  /// Uses [NTokens.secondary].
-  secondary,
-
-  /// Uses [NTokens.success].
-  success,
-
-  /// Uses [NTokens.warning].
-  warning,
-
-  /// Uses [NTokens.error].
-  error,
-
-  /// Uses [NTokens.info].
-  info,
-
-  /// Uses a neutral color.
-  neutral,
-}
 
 /// An item model used by [NRadioGroup] to render each option.
 ///
@@ -94,8 +71,8 @@ class NRadioGroup<T extends Object> extends StatelessWidget {
   /// The size of each radio indicator. Defaults to [NRadioSize.md].
   final NRadioSize size;
 
-  /// The semantic color role. Defaults to [NRadioColor.primary].
-  final NRadioColor color;
+  /// The semantic color role. Defaults to [NColorRole.primary].
+  final NColorRole color;
 
   /// Whether the group is non-interactive. Defaults to false.
   final bool disabled;
@@ -111,14 +88,14 @@ class NRadioGroup<T extends Object> extends StatelessWidget {
     this.onChanged,
     this.legend,
     this.size = NRadioSize.md,
-    this.color = NRadioColor.primary,
+    this.color = NColorRole.primary,
     this.disabled = false,
     this.orientation = Axis.vertical,
   });
 
   @override
   Widget build(BuildContext context) {
-    final c = NComponentColors.resolve(context, _componentColor());
+    final activeColor = context.nui.colors.role(color);
     final radioSize = _getRadioSize();
     final dotSize = _getDotSize();
     final fontSize = _getFontSize();
@@ -133,7 +110,7 @@ class NRadioGroup<T extends Object> extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: NTokens.textDefault(context),
+              color: context.nui.colors.text,
             ),
           ),
           const SizedBox(height: 8),
@@ -151,25 +128,13 @@ class NRadioGroup<T extends Object> extends StatelessWidget {
               radioSize: radioSize,
               dotSize: dotSize,
               fontSize: fontSize,
-              activeColor: c.main,
-              borderColor: NTokens.borderDefault(context),
+              activeColor: activeColor,
+              borderColor: context.nui.colors.border,
             );
           }).toList(),
         ),
       ],
     );
-  }
-
-  NComponentColor _componentColor() {
-    return switch (color) {
-      NRadioColor.primary => NComponentColor.primary,
-      NRadioColor.secondary => NComponentColor.secondary,
-      NRadioColor.success => NComponentColor.success,
-      NRadioColor.warning => NComponentColor.warning,
-      NRadioColor.error => NComponentColor.error,
-      NRadioColor.info => NComponentColor.info,
-      NRadioColor.neutral => NComponentColor.neutral,
-    };
   }
 
   double _getRadioSize() {
@@ -286,7 +251,7 @@ class _NRadioItem<T extends Object> extends StatelessWidget {
                   style: TextStyle(
                     fontSize: fontSize,
                     fontWeight: FontWeight.w500,
-                    color: NTokens.textDefault(context),
+                    color: context.nui.colors.text,
                   ),
                 ),
                 if (item.description != null) ...[
@@ -295,7 +260,7 @@ class _NRadioItem<T extends Object> extends StatelessWidget {
                     item.description!,
                     style: TextStyle(
                       fontSize: 12,
-                      color: NTokens.textMuted(context),
+                      color: context.nui.colors.textMuted,
                     ),
                   ),
                 ],

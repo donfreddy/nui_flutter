@@ -1,45 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
-import '../../theme/n_component_colors.dart';
-
-/// The semantic color role applied to an [NBadge].
-enum NBadgeColor {
-  /// Uses the primary brand color.
-  primary,
-
-  /// Uses the secondary accent color.
-  secondary,
-
-  /// Uses the success color.
-  success,
-
-  /// Uses the informational color.
-  info,
-
-  /// Uses the warning color.
-  warning,
-
-  /// Uses the error color.
-  error,
-
-  /// Uses a neutral muted color.
-  neutral,
-}
-
-/// The visual style of an [NBadge].
-enum NBadgeVariant {
-  /// Filled background using the badge color. The most prominent variant.
-  solid,
-
-  /// Lightly tinted background using a low-opacity version of the badge color.
-  soft,
-
-  /// Transparent background with a colored border.
-  outline,
-
-  /// Neutral muted background regardless of the chosen color.
-  subtle,
-}
 
 /// The size of an [NBadge], controlling padding, font size, and icon size.
 enum NBadgeSize {
@@ -61,24 +21,24 @@ enum NBadgeSize {
 
 /// A compact label used to display status, categories, or counts.
 ///
-/// Supports four [NBadgeVariant] styles, seven [NBadgeColor] semantic roles,
+/// Supports four [NVariant] styles, seven [NColorRole] semantic roles,
 /// and five [NBadgeSize] options. Optional [leading] and [trailing] widgets,
 /// an emoji prefix, a dot indicator, and a remove button are all composable.
 ///
 /// Use named constructors for common patterns:
 /// ```dart
-/// NBadge.dot(label: 'Online', color: NBadgeColor.success)
+/// NBadge.dot(label: 'Online', color: NColorRole.success)
 /// NBadge.emoji(emoji: 'flame', label: 'Hot')
 /// ```
 class NBadge extends StatelessWidget {
   /// The text label displayed inside the badge.
   final String label;
 
-  /// The semantic color role. Defaults to [NBadgeColor.primary].
-  final NBadgeColor color;
+  /// The semantic color role. Defaults to [NColorRole.primary].
+  final NColorRole color;
 
-  /// The visual style. Defaults to [NBadgeVariant.soft].
-  final NBadgeVariant variant;
+  /// The visual style. Defaults to [NVariant.soft].
+  final NVariant variant;
 
   /// The size of the badge. Defaults to [NBadgeSize.md].
   final NBadgeSize size;
@@ -107,8 +67,8 @@ class NBadge extends StatelessWidget {
   const NBadge({
     super.key,
     required this.label,
-    this.color = NBadgeColor.primary,
-    this.variant = NBadgeVariant.soft,
+    this.color = NColorRole.primary,
+    this.variant = NVariant.soft,
     this.size = NBadgeSize.md,
     this.leading,
     this.trailing,
@@ -125,8 +85,8 @@ class NBadge extends StatelessWidget {
     Key? key,
     required String emoji,
     required String label,
-    NBadgeColor color = NBadgeColor.success,
-    NBadgeVariant variant = NBadgeVariant.soft,
+    NColorRole color = NColorRole.success,
+    NVariant variant = NVariant.soft,
     NBadgeSize size = NBadgeSize.md,
   }) : this(
           key: key,
@@ -143,28 +103,28 @@ class NBadge extends StatelessWidget {
   const NBadge.dot({
     Key? key,
     required String label,
-    NBadgeColor color = NBadgeColor.success,
+    NColorRole color = NColorRole.success,
     NBadgeSize size = NBadgeSize.md,
   }) : this(
           key: key,
           label: label,
           color: color,
-          variant: NBadgeVariant.soft,
+          variant: NVariant.soft,
           size: size,
           dot: true,
         );
 
   @override
   Widget build(BuildContext context) {
-    final colors = _getColors(context);
+    final resolved = NVariantResolver.resolve(color, variant, context.nui.colors);
     final borderRadius = square ? 0.0 : 6.0;
 
     return Container(
       padding: _getPadding(),
       decoration: BoxDecoration(
-        color: colors['background'],
-        border: variant == NBadgeVariant.outline
-            ? Border.all(color: colors['border']!, width: 1)
+        color: resolved.background,
+        border: variant == NVariant.outline
+            ? Border.all(color: resolved.border!, width: 1)
             : null,
         borderRadius: BorderRadius.circular(borderRadius),
       ),
@@ -175,7 +135,7 @@ class NBadge extends StatelessWidget {
             Text(emoji!, style: TextStyle(fontSize: _getFontSize() + 2)),
             const SizedBox(width: 4),
           ],
-          if (dot) _buildDot(context, colors),
+          if (dot) _buildDot(context, resolved.foreground),
           if (dot) const SizedBox(width: 4),
           if (leading != null) ...[
             SizedBox(
@@ -187,7 +147,7 @@ class NBadge extends StatelessWidget {
             style: TextStyle(
               fontSize: _getFontSize(),
               fontWeight: FontWeight.w600,
-              color: colors['foreground'],
+              color: resolved.foreground,
               height: 1,
             ),
           ),
@@ -197,7 +157,7 @@ class NBadge extends StatelessWidget {
               GestureDetector(
                 onTap: onRemove,
                 child: Icon(Icons.close,
-                    size: _getIconSize(), color: colors['foreground']),
+                    size: _getIconSize(), color: resolved.foreground),
               )
             else
               SizedBox(
@@ -210,47 +170,13 @@ class NBadge extends StatelessWidget {
     );
   }
 
-  Widget _buildDot(BuildContext context, Map<String, Color> colors) {
+  Widget _buildDot(BuildContext context, Color foregroundColor) {
     return Container(
       width: 6,
       height: 6,
       decoration:
-          BoxDecoration(color: colors['foreground'], shape: BoxShape.circle),
+          BoxDecoration(color: foregroundColor, shape: BoxShape.circle),
     );
-  }
-
-  NComponentColor get _componentColor => NComponentColor.values[color.index];
-
-  Map<String, Color> _getColors(BuildContext context) {
-    final c = NComponentColors.resolve(context, _componentColor);
-    final semanticColor = c.main;
-
-    switch (variant) {
-      case NBadgeVariant.solid:
-        return {
-          'background': semanticColor,
-          'foreground': NTokens.textInverted(context),
-          'border': semanticColor
-        };
-      case NBadgeVariant.soft:
-        return {
-          'background': semanticColor.withValues(alpha: 0.15),
-          'foreground': semanticColor,
-          'border': semanticColor.withValues(alpha: 0.3)
-        };
-      case NBadgeVariant.outline:
-        return {
-          'background': Colors.transparent,
-          'foreground': semanticColor,
-          'border': semanticColor.withValues(alpha: 0.5)
-        };
-      case NBadgeVariant.subtle:
-        return {
-          'background': NTokens.bgMuted(context),
-          'foreground': NTokens.textMuted(context),
-          'border': NTokens.borderMuted(context)
-        };
-    }
   }
 
   double _getFontSize() {

@@ -36,7 +36,7 @@ class NPressScale extends StatefulWidget {
     this.onLongPress,
     this.scale = 0.97,
     this.pressedOpacity = 0.90,
-    this.haptic = true,
+    this.haptic = false,
     this.duration = const Duration(milliseconds: 110),
     this.curve = Curves.easeOut,
     this.enabled = true,
@@ -60,7 +60,7 @@ class NPressScale extends StatefulWidget {
   /// Defaults to `0.90`.
   final double pressedOpacity;
 
-  /// Fire a light haptic tick on press-down. Defaults to `true`.
+  /// Fire a light haptic tick on press-down. Defaults to `false`.
   /// No-op on platforms without haptics.
   final bool haptic;
 

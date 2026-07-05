@@ -1,29 +1,6 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
-import '../../theme/n_component_colors.dart';
-import '../../theme/n_spacing.dart';
-
-/// The semantic color role applied to an [NToast].
-enum NToastColor {
-  /// Uses the primary brand color.
-  primary,
-
-  /// Uses the success color. Suitable for positive feedback.
-  success,
-
-  /// Uses the warning color. Suitable for cautionary messages.
-  warning,
-
-  /// Uses the error color. Suitable for failure or destructive feedback.
-  error,
-
-  /// Uses the info color. Suitable for neutral notices.
-  info,
-
-  /// Uses a neutral surface color.
-  neutral,
-}
 
 /// The layout orientation of an [NToast] icon and message content.
 enum NToastOrientation {
@@ -54,7 +31,7 @@ enum NToastPosition {
 ///   context,
 ///   title: 'Payment sent',
 ///   description: 'Your transfer was successful.',
-///   color: NToastColor.success,
+///   color: NColorRole.success,
 /// )
 /// ```
 class NToast extends StatelessWidget {
@@ -71,8 +48,11 @@ class NToast extends StatelessWidget {
   /// Defaults to true.
   final bool showIcon;
 
-  /// The semantic color role. Defaults to [NToastColor.primary].
-  final NToastColor color;
+  /// The semantic color role. Defaults to [NColorRole.primary].
+  final NColorRole color;
+
+  /// The visual variant. Defaults to [NVariant.subtle].
+  final NVariant variant;
 
   /// The position of the toast on the screen.
   /// Defaults to [NToastPosition.bottom].
@@ -112,7 +92,8 @@ class NToast extends StatelessWidget {
     this.avatar,
     this.actions,
     this.progressAnimation,
-    this.color = NToastColor.primary,
+    this.color = NColorRole.primary,
+    this.variant = NVariant.subtle,
     this.position = NToastPosition.bottom,
     this.orientation = NToastOrientation.horizontal,
     this.closable = true,
@@ -135,7 +116,8 @@ class NToast extends StatelessWidget {
     IconData? icon,
     Widget? avatar,
     List<Widget>? actions,
-    NToastColor color = NToastColor.primary,
+    NColorRole color = NColorRole.primary,
+    NVariant variant = NVariant.subtle,
     NToastPosition position = NToastPosition.bottom,
     NToastOrientation orientation = NToastOrientation.vertical,
     bool closable = true,
@@ -157,6 +139,7 @@ class NToast extends StatelessWidget {
         avatar: avatar,
         actions: actions,
         color: color,
+        variant: variant,
         position: position,
         orientation: orientation,
         closable: closable,
@@ -179,16 +162,16 @@ class NToast extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = _getColors(context);
+    final resolved = _getColors(context);
     final defaultIcon = _getDefaultIcon();
 
     final toast = GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: colors['background'],
-          borderRadius: BorderRadius.circular(NTokens.radiusDefault),
-          border: Border.all(color: colors['border']!),
+          color: resolved.background,
+          borderRadius: context.nui.radius.radiusMd,
+          border: Border.all(color: resolved.border!),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.1),
@@ -198,7 +181,7 @@ class NToast extends StatelessWidget {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(NTokens.radiusDefault),
+          borderRadius: context.nui.radius.radiusMd,
           child: IntrinsicHeight(
             child: Stack(
               children: [
@@ -217,7 +200,7 @@ class NToast extends StatelessWidget {
                         Icon(
                           icon ?? defaultIcon,
                           size: 20,
-                          color: colors['icon'],
+                          color: resolved.foreground,
                         ),
                         NSpacing.horizontal(NSpacing.s2),
                       ],
@@ -232,7 +215,7 @@ class NToast extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: colors['text'],
+                                  color: resolved.foreground,
                                 ),
                               ),
                             if (description != null) ...[
@@ -241,7 +224,7 @@ class NToast extends StatelessWidget {
                                 description!,
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: colors['text']!.withValues(alpha: 0.9),
+                                  color: resolved.foreground.withValues(alpha: 0.9),
                                 ),
                               ),
                             ],
@@ -282,7 +265,7 @@ class NToast extends StatelessWidget {
                             child: Icon(
                               Icons.close,
                               size: 18,
-                              color: colors['text']!.withValues(alpha: 0.6),
+                              color: resolved.foreground.withValues(alpha: 0.6),
                             ),
                           ),
                         ),
@@ -302,7 +285,7 @@ class NToast extends StatelessWidget {
                           value: progressAnimation!.value,
                           minHeight: 3,
                           backgroundColor: Colors.transparent,
-                          color: colors['icon'],
+                          color: resolved.foreground,
                         );
                       },
                     ),
@@ -324,48 +307,31 @@ class NToast extends StatelessWidget {
     );
   }
 
-  NComponentColor? get _componentColor {
-    final map = {
-      NToastColor.primary: NComponentColor.primary,
-      NToastColor.success: NComponentColor.success,
-      NToastColor.warning: NComponentColor.warning,
-      NToastColor.error: NComponentColor.error,
-      NToastColor.info: NComponentColor.info,
-    };
-    return map[color];
-  }
-
-  Map<String, Color> _getColors(BuildContext context) {
-    if (_componentColor != null) {
-      final c = NComponentColors.resolve(context, _componentColor!);
-      return {
-        'background': c.softBg,
-        'border': c.border,
-        'text': c.text,
-        'icon': c.main,
-      };
+  NResolvedColors _getColors(BuildContext context) {
+    if (color == NColorRole.neutral) {
+      return NResolvedColors(
+        background: context.nui.colors.bgElevated,
+        border: context.nui.colors.border,
+        foreground: context.nui.colors.text,
+      );
     }
-    return {
-      'background': NTokens.bgElevated(context),
-      'border': NTokens.borderDefault(context),
-      'text': NTokens.textDefault(context),
-      'icon': NTokens.textMuted(context),
-    };
+    return NVariantResolver.resolve(color, variant, context.nui.colors);
   }
 
   IconData? _getDefaultIcon() {
     switch (color) {
-      case NToastColor.info:
+      case NColorRole.info:
         return Icons.info_outline;
-      case NToastColor.success:
+      case NColorRole.success:
         return Icons.check_circle_outline;
-      case NToastColor.warning:
+      case NColorRole.warning:
         return Icons.warning_amber_outlined;
-      case NToastColor.error:
+      case NColorRole.error:
         return Icons.error_outline;
-      case NToastColor.primary:
+      case NColorRole.primary:
         return Icons.lightbulb_outline;
-      case NToastColor.neutral:
+      case NColorRole.neutral:
+      case NColorRole.secondary:
         return null;
     }
   }
@@ -434,7 +400,8 @@ class _NToastOverlay extends StatefulWidget {
   final IconData? icon;
   final Widget? avatar;
   final List<Widget>? actions;
-  final NToastColor color;
+  final NColorRole color;
+  final NVariant variant;
   final NToastPosition position;
   final NToastOrientation orientation;
   final bool closable;
@@ -453,6 +420,7 @@ class _NToastOverlay extends StatefulWidget {
     this.avatar,
     this.actions,
     required this.color,
+    required this.variant,
     required this.position,
     required this.orientation,
     required this.closable,
@@ -618,6 +586,7 @@ class _NToastOverlayState extends State<_NToastOverlay>
       avatar: widget.avatar,
       actions: widget.actions,
       color: widget.color,
+      variant: widget.variant,
       position: widget.position,
       orientation: widget.orientation,
       closable: widget.closable,

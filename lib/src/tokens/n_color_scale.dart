@@ -214,9 +214,20 @@ class NColorScale {
   static final NColorScale sky =
       NColorScale.fromSeed(const Color(0xFF0EA5E9));
 
-  /// Amber for warnings.
-  static final NColorScale amber =
-      NColorScale.fromSeed(const Color(0xFFF59E0B));
+  /// A predefined amber scale.
+  static final amber = NColorScale.fromSeed(const Color(0xFFF59E0B));
+
+  /// A predefined cool gray (slate) scale.
+  static final slate = NColorScale.fromSeed(const Color(0xFF64748B));
+
+  /// A predefined neutral-cool gray (zinc) scale.
+  static final zinc = NColorScale.fromSeed(const Color(0xFF71717A));
+
+  /// A predefined true gray (neutral) scale.
+  static final neutral = NColorScale.fromSeed(const Color(0xFF737373));
+
+  /// A predefined warm gray (stone) scale.
+  static final stone = NColorScale.fromSeed(const Color(0xFF78716C));
 
   /// Red for errors.
   static final NColorScale red =

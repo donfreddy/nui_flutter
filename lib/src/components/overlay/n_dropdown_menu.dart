@@ -1,21 +1,9 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
-import '../../theme/n_component_colors.dart';
 
 // ---------------------------------------------------------------------------
 // Enums & Data classes
 // ---------------------------------------------------------------------------
-
-/// The semantic color role applied to an [NDropdownMenuItem].
-enum NDropdownMenuColor {
-  primary,
-  secondary,
-  success,
-  info,
-  warning,
-  error,
-  neutral,
-}
 
 /// A single item in an [NDropdownMenu].
 class NDropdownMenuItem {
@@ -31,9 +19,9 @@ class NDropdownMenuItem {
   /// A list of keyboard shortcut keys shown on the right (e.g. ['⌘', 'K']).
   final List<String>? kbds;
 
-  /// The color role of the item. Use [NDropdownMenuColor.error] for destructive
+  /// The color role of the item. Use [NColorRole.error] for destructive
   /// actions to tint the label and icon in red.
-  final NDropdownMenuColor? color;
+  final NColorRole? color;
 
   /// When `true`, this item cannot be tapped and appears faded.
   final bool disabled;
@@ -73,7 +61,7 @@ class NDropdownMenuItem {
 ///       NDropdownMenuItem(
 ///         label: 'Logout',
 ///         icon: LucideIcons.logOut,
-///         color: NDropdownMenuColor.error,
+///         color: NColorRole.error,
 ///         kbds: ['⇧', '⌘', 'Q'],
 ///         onSelect: () => signOut(),
 ///       ),
@@ -254,9 +242,9 @@ class _MenuPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: NTokens.bgElevated(context),
-        borderRadius: BorderRadius.circular(NTokens.radiusDefault),
-        border: Border.all(color: NTokens.borderDefault(context)),
+        color: context.nui.colors.bgElevated,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: context.nui.colors.border),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.08),
@@ -273,7 +261,7 @@ class _MenuPanel extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(NTokens.radiusDefault),
+        borderRadius: BorderRadius.circular(8.0),
         child: IntrinsicWidth(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -288,7 +276,7 @@ class _MenuPanel extends StatelessWidget {
                       child: Divider(
                         height: 1,
                         thickness: 1,
-                        color: NTokens.borderMuted(context),
+                        color: context.nui.colors.borderMuted,
                       ),
                     ),
                   ...items[i]
@@ -322,20 +310,8 @@ class _MenuItemState extends State<_MenuItem> {
 
   NDropdownMenuItem get item => widget.item;
 
-  NComponentColor _componentColor() {
-    return switch (item.color) {
-      null || NDropdownMenuColor.neutral => NComponentColor.neutral,
-      NDropdownMenuColor.primary => NComponentColor.primary,
-      NDropdownMenuColor.secondary => NComponentColor.secondary,
-      NDropdownMenuColor.success => NComponentColor.success,
-      NDropdownMenuColor.info => NComponentColor.info,
-      NDropdownMenuColor.warning => NComponentColor.warning,
-      NDropdownMenuColor.error => NComponentColor.error,
-    };
-  }
-
   bool get _isSemantic =>
-      item.color != null && item.color != NDropdownMenuColor.neutral;
+      item.color != null && item.color != NColorRole.neutral;
 
   @override
   Widget build(BuildContext context) {
@@ -356,22 +332,20 @@ class _MenuItemState extends State<_MenuItem> {
   }
 
   Widget _buildRow(BuildContext context, {required bool isHovered}) {
-    final colors = _isSemantic
-        ? NComponentColors.resolve(context, _componentColor())
+    final resolved = _isSemantic
+        ? NVariantResolver.resolve(item.color!, NVariant.soft, context.nui.colors)
         : null;
 
     final textColor = item.disabled
-        ? NTokens.textDisabled(context)
-        : colors?.text ?? NTokens.textDefault(context);
+        ? context.nui.colors.textMuted
+        : resolved?.foreground ?? context.nui.colors.text;
 
     final iconColor = item.disabled
-        ? NTokens.textDisabled(context)
-        : _isSemantic
-            ? (colors?.main ?? NTokens.textMuted(context))
-            : NTokens.textMuted(context);
+        ? context.nui.colors.textMuted
+        : resolved?.foreground ?? context.nui.colors.textMuted;
 
     final bgColor = isHovered
-        ? (colors?.softBg ?? NTokens.bgMuted(context))
+        ? (resolved?.background ?? context.nui.colors.bgMuted)
         : Colors.transparent;
 
     return AnimatedContainer(
@@ -429,12 +403,12 @@ class _KbdBadge extends StatelessWidget {
       margin: const EdgeInsets.only(left: 3),
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
       decoration: BoxDecoration(
-        color: NTokens.bgMuted(context),
+        color: context.nui.colors.bgMuted,
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: NTokens.borderDefault(context)),
+        border: Border.all(color: context.nui.colors.border),
         boxShadow: [
           BoxShadow(
-            color: NTokens.borderDefault(context).withValues(alpha: 0.5),
+            color: context.nui.colors.border.withValues(alpha: 0.5),
             offset: const Offset(0, 1),
             blurRadius: 0,
           ),
@@ -445,7 +419,7 @@ class _KbdBadge extends StatelessWidget {
         style: TextStyle(
           fontSize: 10.5,
           fontWeight: FontWeight.w600,
-          color: NTokens.textMuted(context),
+          color: context.nui.colors.textMuted,
           letterSpacing: 0.3,
         ),
       ),

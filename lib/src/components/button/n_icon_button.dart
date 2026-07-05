@@ -1,48 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
-import '../../theme/n_component_colors.dart';
-
-/// The visual style of an [NIconButton].
-enum NIconButtonVariant {
-  /// Filled background using the button color.
-  solid,
-
-  /// Lightly tinted background using a low-opacity version of the button color.
-  soft,
-
-  /// Lightly tinted background with a colored border.
-  subtle,
-
-  /// Transparent background with a colored border.
-  outline,
-
-  /// Fully transparent background and no border.
-  ghost,
-}
-
-/// The semantic color role applied to an [NIconButton].
-enum NIconButtonColor {
-  /// Uses the primary brand color.
-  primary,
-
-  /// Uses the secondary accent color.
-  secondary,
-
-  /// Uses the success color.
-  success,
-
-  /// Uses the informational color.
-  info,
-
-  /// Uses the warning color.
-  warning,
-
-  /// Uses the error color.
-  error,
-
-  /// Uses a neutral muted color.
-  neutral,
-}
 
 /// The size of an [NIconButton], controlling padding, icon size, and corner radius.
 enum NIconButtonSize {
@@ -65,8 +22,8 @@ enum NIconButtonSize {
 /// NIconButton(
 ///   icon: LucideIcons.bell,
 ///   onPressed: _openNotifications,
-///   variant: NIconButtonVariant.soft,
-///   color: NIconButtonColor.primary,
+///   variant: NVariant.soft,
+///   color: NColorRole.primary,
 /// )
 /// ```
 class NIconButton extends StatelessWidget {
@@ -77,11 +34,11 @@ class NIconButton extends StatelessWidget {
   /// Set to `null` or set [disabled] to `true` to prevent interaction.
   final VoidCallback? onPressed;
 
-  /// The visual style. Defaults to [NIconButtonVariant.soft].
-  final NIconButtonVariant variant;
+  /// The visual style. Defaults to [NVariant.soft].
+  final NVariant variant;
 
-  /// The semantic color role. Defaults to [NIconButtonColor.neutral].
-  final NIconButtonColor color;
+  /// The semantic color role. Defaults to [NColorRole.neutral].
+  final NColorRole color;
 
   /// The size of the button. Defaults to [NIconButtonSize.md].
   final NIconButtonSize size;
@@ -112,8 +69,8 @@ class NIconButton extends StatelessWidget {
     super.key,
     required this.icon,
     this.onPressed,
-    this.variant = NIconButtonVariant.subtle,
-    this.color = NIconButtonColor.neutral,
+    this.variant = NVariant.subtle,
+    this.color = NColorRole.neutral,
     this.size = NIconButtonSize.md,
     this.disabled = false,
     this.tooltip,
@@ -131,8 +88,8 @@ class NIconButton extends StatelessWidget {
     super.key,
     required this.icon,
     this.onPressed,
-    this.variant = NIconButtonVariant.soft,
-    this.color = NIconButtonColor.neutral,
+    this.variant = NVariant.soft,
+    this.color = NColorRole.neutral,
     this.disabled = false,
     this.tooltip,
     this.iconColor,
@@ -149,8 +106,8 @@ class NIconButton extends StatelessWidget {
     super.key,
     required this.icon,
     this.onPressed,
-    this.variant = NIconButtonVariant.subtle,
-    this.color = NIconButtonColor.neutral,
+    this.variant = NVariant.subtle,
+    this.color = NColorRole.neutral,
     this.disabled = false,
     this.tooltip,
     this.iconColor,
@@ -162,90 +119,49 @@ class NIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = _getColors(context);
+    final resolved = NVariantResolver.resolve(color, variant, context.nui.colors);
     final iconSize = _getIconSize();
     final pad = padding ?? _getPadding();
     final radius = borderRadius ?? _getBorderRadius();
 
-    final resolvedIconColor = iconColor ?? colors['foreground'];
-    final resolvedBg = backgroundColor ?? colors['background'];
-    final resolvedBorder = borderColor ?? colors['border'];
+    final resolvedIconColor = iconColor ?? resolved.foreground;
+    final resolvedBg = backgroundColor ?? resolved.background;
+    final resolvedBorder = borderColor ?? resolved.border;
+    final isDisabled = disabled || onPressed == null;
 
-    final button = Material(
-      color: resolvedBg,
-      borderRadius: BorderRadius.circular(radius),
-      child: InkWell(
-        onTap: disabled ? null : onPressed,
+    final button = Container(
+      padding: pad,
+      decoration: BoxDecoration(
+        color: resolvedBg,
         borderRadius: BorderRadius.circular(radius),
-        child: Container(
-          padding: pad,
-          decoration: BoxDecoration(
-            border: resolvedBorder != null
-                ? Border.all(color: resolvedBorder, width: 1)
-                : null,
-            borderRadius: BorderRadius.circular(radius),
-          ),
-          child: Semantics(
-            button: true,
-            enabled: !disabled,
-            child: Icon(
-              icon,
-              color: disabled
-                  ? resolvedIconColor?.withValues(alpha: 0.5)
-                  : resolvedIconColor,
-              size: iconSize,
-            ),
-          ),
+        border: resolvedBorder != null
+            ? Border.all(color: resolvedBorder, width: 1)
+            : null,
+      ),
+      child: Semantics(
+        button: true,
+        enabled: !isDisabled,
+        child: Icon(
+          icon,
+          color: isDisabled
+              ? resolvedIconColor.withValues(alpha: 0.5)
+              : resolvedIconColor,
+          size: iconSize,
         ),
       ),
     );
 
+    final pressButton = NPressScale(
+      onTap: isDisabled ? null : onPressed,
+      enabled: !isDisabled,
+      child: button,
+    );
+
     if (tooltip != null) {
-      return Tooltip(message: tooltip!, child: button);
+      return Tooltip(message: tooltip!, child: pressButton);
     }
 
-    return button;
-  }
-
-  NComponentColor get _componentColor => NComponentColor.values[color.index];
-
-  Map<String, Color?> _getColors(BuildContext context) {
-    final c = NComponentColors.resolve(context, _componentColor,
-        neutralMain: (ctx) => NTokens.textMuted(ctx));
-    final semanticColor = c.main;
-
-    switch (variant) {
-      case NIconButtonVariant.solid:
-        return {
-          'background': semanticColor,
-          'foreground': NTokens.textInverted(context),
-          'border': null
-        };
-      case NIconButtonVariant.soft:
-        return {
-          'background': semanticColor.withValues(alpha: 0.1),
-          'foreground': semanticColor,
-          'border': null
-        };
-      case NIconButtonVariant.subtle:
-        return {
-          'background': semanticColor.withValues(alpha: 0.1),
-          'foreground': semanticColor,
-          'border': semanticColor.withValues(alpha: 0.3)
-        };
-      case NIconButtonVariant.outline:
-        return {
-          'background': Colors.transparent,
-          'foreground': semanticColor,
-          'border': semanticColor.withValues(alpha: 0.3)
-        };
-      case NIconButtonVariant.ghost:
-        return {
-          'background': Colors.transparent,
-          'foreground': semanticColor,
-          'border': null
-        };
-    }
+    return pressButton;
   }
 
   double _getIconSize() {

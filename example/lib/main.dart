@@ -19,23 +19,27 @@ class _NuiFlutterExampleAppState extends State<NuiFlutterExampleApp> {
   @override
   Widget build(BuildContext context) {
     final palette = _dark
-        ? NColorPalette.dark(
-            primary: const Color(0xFFF97316),
-            secondary: const Color(0xFF6B7280),
-            success: const Color(0xFF10B981),
-            error: const Color(0xFFEF4444),
+        ? NColors.dark(
+            palette: {
+              NColorRole.primary: const NRoleColor(Color(0xFFF97316)),
+              NColorRole.secondary: const NRoleColor(Color(0xFF6B7280)),
+              NColorRole.success: const NRoleColor(Color(0xFF10B981)),
+              NColorRole.error: const NRoleColor(Color(0xFFEF4444)),
+            },
           )
-        : NColorPalette.light(
-            primary: const Color(0xFFF97316),
-            secondary: const Color(0xFF6B7280),
-            success: const Color(0xFF10B981),
-            error: const Color(0xFFEF4444),
+        : NColors.light(
+            palette: {
+              NColorRole.primary: const NRoleColor(Color(0xFFF97316)),
+              NColorRole.secondary: const NRoleColor(Color(0xFF6B7280)),
+              NColorRole.success: const NRoleColor(Color(0xFF10B981)),
+              NColorRole.error: const NRoleColor(Color(0xFFEF4444)),
+            },
           );
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: NTheme.lightTheme(palette: palette),
-      darkTheme: NTheme.darkTheme(palette: palette),
+      theme: NTheme.lightTheme(colors: palette),
+      darkTheme: NTheme.darkTheme(colors: palette),
       themeMode: _dark ? ThemeMode.dark : ThemeMode.light,
       home: _HomePage(onToggleTheme: () => setState(() => _dark = !_dark)),
     );
@@ -183,12 +187,12 @@ class _ButtonsDemo extends StatelessWidget {
         _variantLabel('solid'),
         Wrap(spacing: 8, runSpacing: 8, children: [
           NButton(label: 'Primary'),
-          NButton(label: 'Secondary', color: NButtonColor.secondary),
-          NButton(label: 'Success', color: NButtonColor.success),
-          NButton(label: 'Warning', color: NButtonColor.warning),
-          NButton(label: 'Error', color: NButtonColor.error),
-          NButton(label: 'Info', color: NButtonColor.info),
-          NButton(label: 'Neutral', color: NButtonColor.neutral),
+          NButton(label: 'Secondary', color: NColorRole.secondary),
+          NButton(label: 'Success', color: NColorRole.success),
+          NButton(label: 'Warning', color: NColorRole.warning),
+          NButton(label: 'Error', color: NColorRole.error),
+          NButton(label: 'Info', color: NColorRole.info),
+          NButton(label: 'Neutral', color: NColorRole.neutral),
         ]),
         SizedBox(height: 12),
         _variantLabel('outline / ghost / destructive'),
@@ -347,34 +351,34 @@ class _AlertsDemo extends StatelessWidget {
         NAlert(
             title: 'Success',
             description: 'Operation completed successfully.',
-            color: NAlertColor.success),
+            color: NColorRole.success),
         SizedBox(height: 8),
         NAlert(
             title: 'Warning',
             description: 'Please check your input.',
-            color: NAlertColor.warning),
+            color: NColorRole.warning),
         SizedBox(height: 8),
         NAlert(
             title: 'Error',
             description: 'Something went wrong.',
-            color: NAlertColor.error,
+            color: NColorRole.error,
             closable: true),
         SizedBox(height: 8),
         _variantLabelForAlert('variants'),
         NAlert(
             title: 'Outline',
-            color: NAlertColor.primary,
-            variant: NAlertVariant.outline),
+            color: NColorRole.primary,
+            variant: NVariant.outline),
         SizedBox(height: 8),
         NAlert(
             title: 'Soft',
-            color: NAlertColor.secondary,
-            variant: NAlertVariant.soft),
+            color: NColorRole.secondary,
+            variant: NVariant.soft),
         SizedBox(height: 8),
         NAlert(
             title: 'Subtle',
-            color: NAlertColor.info,
-            variant: NAlertVariant.subtle),
+            color: NColorRole.info,
+            variant: NVariant.subtle),
       ],
     );
   }
@@ -400,49 +404,49 @@ class _ToastsDemo extends StatelessWidget {
       children: [
         NButton(
           label: 'Success',
-          color: NButtonColor.success,
+          color: NColorRole.success,
           onPressed: () {
             NToast.show(
               context,
               title: 'Payment sent',
               description: 'Your transfer was successful.',
-              color: NToastColor.success,
+              color: NColorRole.success,
             );
           },
         ),
         NButton(
           label: 'Warning',
-          color: NButtonColor.warning,
+          color: NColorRole.warning,
           onPressed: () {
             NToast.show(
               context,
               title: 'Check details',
               description: 'Some information may need your attention.',
-              color: NToastColor.warning,
+              color: NColorRole.warning,
             );
           },
         ),
         NButton(
           label: 'Error',
-          color: NButtonColor.error,
+          color: NColorRole.error,
           onPressed: () {
             NToast.show(
               context,
               title: 'Transfer failed',
               description: 'Please try again in a moment.',
-              color: NToastColor.error,
+              color: NColorRole.error,
             );
           },
         ),
         NButton(
           label: 'Info',
-          color: NButtonColor.info,
+          color: NColorRole.info,
           onPressed: () {
             NToast.show(
               context,
               title: 'New update',
               description: 'Your dashboard has refreshed.',
-              color: NToastColor.info,
+              color: NColorRole.info,
               icon: LucideIcons.bell,
               dragToClose: true,
               pauseOnTouch: true,
@@ -456,7 +460,7 @@ class _ToastsDemo extends StatelessWidget {
               context,
               title: 'Saved draft',
               description: 'This toast stays until you close it.',
-              color: NToastColor.neutral,
+              color: NColorRole.neutral,
               duration: Duration.zero,
             );
           },
@@ -482,7 +486,7 @@ class _ToastsDemo extends StatelessWidget {
               title: 'Update available',
               description: 'A new software version is ready to install.',
               icon: LucideIcons.downloadCloud,
-              color: NToastColor.primary,
+              color: NColorRole.primary,
               orientation: NToastOrientation.vertical,
               actions: [
                 NButton(
@@ -493,7 +497,7 @@ class _ToastsDemo extends StatelessWidget {
                 NButton.ghost(
                   label: 'Later',
                   size: NButtonSize.sm,
-                  color: NButtonColor.neutral,
+                  color: NColorRole.neutral,
                   onPressed: () {},
                 ),
               ],
@@ -507,7 +511,7 @@ class _ToastsDemo extends StatelessWidget {
                 context,
                 title:
                     'Le propriétaire accepte les nouveaux co-abonnés automatiquement',
-                color: NToastColor.error,
+                color: NColorRole.error,
                 //showIcon: false,
                 closable: false,
                 dragToClose: true,
@@ -530,21 +534,21 @@ class _BadgesDemo extends StatelessWidget {
       children: [
         _variantLabelForBadge('solid · soft · outline · subtle'),
         Wrap(spacing: 8, runSpacing: 8, children: [
-          NBadge(label: 'Solid', variant: NBadgeVariant.solid),
-          NBadge(label: 'Soft', variant: NBadgeVariant.soft),
-          NBadge(label: 'Outline', variant: NBadgeVariant.outline),
-          NBadge(label: 'Subtle', variant: NBadgeVariant.subtle),
+          NBadge(label: 'Solid', variant: NVariant.solid),
+          NBadge(label: 'Soft', variant: NVariant.soft),
+          NBadge(label: 'Outline', variant: NVariant.outline),
+          NBadge(label: 'Subtle', variant: NVariant.subtle),
         ]),
         SizedBox(height: 12),
         _variantLabelForBadge('colors'),
         Wrap(spacing: 8, runSpacing: 8, children: [
-          NBadge(label: 'Primary', color: NBadgeColor.primary),
-          NBadge(label: 'Secondary', color: NBadgeColor.secondary),
-          NBadge(label: 'Success', color: NBadgeColor.success),
-          NBadge(label: 'Warning', color: NBadgeColor.warning),
-          NBadge(label: 'Error', color: NBadgeColor.error),
-          NBadge(label: 'Info', color: NBadgeColor.info),
-          NBadge(label: 'Neutral', color: NBadgeColor.neutral),
+          NBadge(label: 'Primary', color: NColorRole.primary),
+          NBadge(label: 'Secondary', color: NColorRole.secondary),
+          NBadge(label: 'Success', color: NColorRole.success),
+          NBadge(label: 'Warning', color: NColorRole.warning),
+          NBadge(label: 'Error', color: NColorRole.error),
+          NBadge(label: 'Info', color: NColorRole.info),
+          NBadge(label: 'Neutral', color: NColorRole.neutral),
         ]),
         SizedBox(height: 12),
         _variantLabelForBadge('emoji · dot · removable'),
@@ -588,8 +592,8 @@ class _ChipsDemoState extends State<_ChipsDemo> {
             setState(() => _selected = !_selected);
           }),
       NChip(label: 'Leading', leading: Icon(LucideIcons.filter, size: 14)),
-      NChip(label: 'Soft', variant: NChipVariant.soft),
-      NChip(label: 'Outline', variant: NChipVariant.outline),
+      NChip(label: 'Soft', variant: NVariant.soft),
+      NChip(label: 'Outline', variant: NVariant.outline),
     ]);
   }
 }
@@ -716,7 +720,7 @@ class _DropdownMenuDemo extends StatelessWidget {
               NDropdownMenuItem(
                 label: 'Logout',
                 icon: LucideIcons.logOut,
-                color: NDropdownMenuColor.error,
+                color: NColorRole.error,
                 kbds: ['⇧', '⌘', 'Q'],
                 onSelect: () {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -729,7 +733,7 @@ class _DropdownMenuDemo extends StatelessWidget {
           child: NButton.outline(
             label: 'Open',
             leading: const Icon(LucideIcons.menu, size: 16),
-            color: NButtonColor.neutral,
+            color: NColorRole.neutral,
             onPressed: () {},
           ),
         ),
@@ -792,15 +796,15 @@ class _IconButtonsDemo extends StatelessWidget {
           NIconButton(icon: LucideIcons.bell, onPressed: () {}),
           NIconButton(
               icon: LucideIcons.bell,
-              variant: NIconButtonVariant.solid,
+              variant: NVariant.solid,
               onPressed: () {}),
           NIconButton(
               icon: LucideIcons.bell,
-              variant: NIconButtonVariant.outline,
+              variant: NVariant.outline,
               onPressed: () {}),
           NIconButton(
               icon: LucideIcons.bell,
-              variant: NIconButtonVariant.ghost,
+              variant: NVariant.ghost,
               onPressed: () {}),
         ]),
         SizedBox(height: 12),
@@ -808,19 +812,19 @@ class _IconButtonsDemo extends StatelessWidget {
         Wrap(spacing: 8, runSpacing: 8, children: [
           NIconButton(
               icon: LucideIcons.heart,
-              color: NIconButtonColor.primary,
+              color: NColorRole.primary,
               onPressed: () {}),
           NIconButton(
               icon: LucideIcons.heart,
-              color: NIconButtonColor.success,
+              color: NColorRole.success,
               onPressed: () {}),
           NIconButton(
               icon: LucideIcons.heart,
-              color: NIconButtonColor.warning,
+              color: NColorRole.warning,
               onPressed: () {}),
           NIconButton(
               icon: LucideIcons.heart,
-              color: NIconButtonColor.error,
+              color: NColorRole.error,
               onPressed: () {}),
         ]),
         SizedBox(height: 12),
@@ -873,7 +877,7 @@ class _EmptyDemo extends StatelessWidget {
             NButton.outline(
               label: 'Clear filters',
               onPressed: () {},
-              color: NButtonColor.neutral,
+              color: NColorRole.neutral,
             ),
           ],
         ),

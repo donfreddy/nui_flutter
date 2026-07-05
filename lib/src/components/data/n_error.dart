@@ -1,5 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
 
 /// A pre-built full-screen error page component.
 ///
@@ -80,7 +80,7 @@ class NError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = NTokens.primary(context);
+    final primaryColor = context.nui.colors.primary;
 
     return Center(
       child: Padding(
@@ -119,7 +119,7 @@ class NError extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.w800,
-                  color: NTokens.textHighlighted(context),
+                  color: context.nui.colors.textHighlighted,
                   height: 1.2,
                 ),
                 textAlign: TextAlign.center,
@@ -133,7 +133,7 @@ class NError extends StatelessWidget {
                 message!,
                 style: TextStyle(
                   fontSize: 15,
-                  color: NTokens.textMuted(context),
+                  color: context.nui.colors.textMuted,
                   height: 1.5,
                 ),
                 textAlign: TextAlign.center,
@@ -217,7 +217,7 @@ class _ClearButtonState extends State<_ClearButton> {
           decoration: BoxDecoration(
             color:
                 _hovered ? widget.color.withValues(alpha: 0.88) : widget.color,
-            borderRadius: BorderRadius.circular(NTokens.radiusDefault),
+            borderRadius: BorderRadius.circular(8.0),
             boxShadow: [
               BoxShadow(
                 color: widget.color.withValues(alpha: 0.25),

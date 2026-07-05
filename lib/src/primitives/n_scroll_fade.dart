@@ -1,5 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:nui_flutter/src/theme/n_tokens.dart';
 
 /// A primitive widget that wraps a scrollable widget and overlays gradient fade effects at edges.
 ///
@@ -97,7 +97,7 @@ class _NScrollFadeState extends State<NScrollFade> {
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = widget.color ?? NTokens.bgDefault(context);
+    final bgColor = widget.color ?? context.nui.colors.bg;
 
     return Stack(
       fit: StackFit.expand,

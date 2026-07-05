@@ -1,18 +1,16 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import 'n_color_palette.dart';
-import '../tokens/n_radius.dart';
-import '../tokens/n_shadows.dart';
 
 /// Convenience extension on [BuildContext] for accessing the NUI design system.
 ///
-/// Instead of calling `Theme.of(context).extension<NColorPalette>()` directly,
+/// Instead of calling `Theme.of(context).extension<NColors>()` directly,
 /// use `context.nui` to get a typed [NuiThemeData] bundle that exposes the
 /// palette, radius scale, and shadow set in one place.
 ///
 /// ```dart
 /// // Before (verbose):
-/// final palette = Theme.of(context).extension<NColorPalette>()!;
-/// final color = palette.primary;
+/// final colors = Theme.of(context).extension<NColors>()!;
+/// final color = colors.primary;
 ///
 /// // After (idiomatic):
 /// final color = context.nui.colors.primary;
@@ -22,7 +20,7 @@ import '../tokens/n_shadows.dart';
 extension NuiContext on BuildContext {
   /// Returns the [NuiThemeData] for this context.
   ///
-  /// Throws a [FlutterError] if [NColorPalette] is not registered via [NTheme]
+  /// Throws a [FlutterError] if [NColors] is not registered via [NTheme]
   /// or [NApp]. Wrap your [MaterialApp] with [NApp] or pass [NTheme.lightTheme]
   /// to [MaterialApp.theme].
   NuiThemeData get nui => NuiThemeData.of(this);
@@ -33,7 +31,7 @@ extension NuiContext on BuildContext {
 
 /// A typed bundle of NUI design tokens readable from a [BuildContext].
 ///
-/// Accessed via `context.nui`. Provides the current [NColorPalette], [NRadius]
+/// Accessed via `context.nui`. Provides the current [NColors], [NRadius]
 /// scale, and [NShadows] set without needing to call multiple `Theme.of`
 /// look-ups yourself.
 ///
@@ -48,7 +46,7 @@ class NuiThemeData {
   });
 
   /// The full semantic color palette for the current brightness.
-  final NColorPalette colors;
+  final NColors colors;
 
   /// The active radius scale.
   final NRadius radius;
@@ -62,14 +60,14 @@ class NuiThemeData {
 
   /// Reads the [NuiThemeData] from [context].
   ///
-  /// Throws if [NColorPalette] is not registered.
+  /// Throws if [NColors] is not registered.
   static NuiThemeData of(BuildContext context) {
-    final palette = Theme.of(context).extension<NColorPalette>();
-    if (palette == null) {
+    final colors = Theme.of(context).extension<NColors>();
+    if (colors == null) {
       throw FlutterError(
         'NuiThemeData not found in this BuildContext.\n'
         'Make sure you wrap your app with NApp(...) or use\n'
-        '  theme: NTheme.lightTheme(palette: myPalette)\n'
+        '  theme: NTheme.lightTheme()\n'
         'in your MaterialApp.',
       );
     }
@@ -80,7 +78,7 @@ class NuiThemeData {
         (isDark ? NShadows.dark() : NShadows.light());
 
     return NuiThemeData._(
-      colors: palette,
+      colors: colors,
       radius: radius,
       shadows: shadows,
     );
@@ -88,15 +86,15 @@ class NuiThemeData {
 
   /// Reads the [NuiThemeData] from [context], returning `null` if not found.
   static NuiThemeData? maybeOf(BuildContext context) {
-    final palette = Theme.of(context).extension<NColorPalette>();
-    if (palette == null) return null;
+    final colors = Theme.of(context).extension<NColors>();
+    if (colors == null) return null;
     final radius = Theme.of(context).extension<NRadius>() ?? const NRadius();
     final isDark =
         Theme.of(context).brightness == Brightness.dark;
     final shadows = Theme.of(context).extension<NShadows>() ??
         (isDark ? NShadows.dark() : NShadows.light());
     return NuiThemeData._(
-      colors: palette,
+      colors: colors,
       radius: radius,
       shadows: shadows,
     );

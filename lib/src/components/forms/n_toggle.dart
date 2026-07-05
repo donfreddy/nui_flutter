@@ -1,30 +1,7 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
-import '../../theme/n_component_colors.dart';
 
-/// The semantic color role applied to an [NToggle] in the on state.
-enum NToggleColor {
-  /// Uses the primary brand color.
-  primary,
 
-  /// Uses the secondary accent color.
-  secondary,
-
-  /// Uses the success color.
-  success,
-
-  /// Uses the informational color.
-  info,
-
-  /// Uses the warning color.
-  warning,
-
-  /// Uses the error color.
-  error,
-
-  /// Uses a neutral color.
-  neutral,
-}
 
 /// The size of an [NToggle], controlling its width, height, and thumb diameter.
 enum NToggleSize {
@@ -67,8 +44,8 @@ class NToggle extends StatelessWidget {
   final ValueChanged<bool>? onChanged;
 
   /// The semantic color role used for the active (on) background.
-  /// Defaults to [NToggleColor.primary].
-  final NToggleColor color;
+  /// Defaults to [NColorRole.primary].
+  final NColorRole color;
 
   /// The size of the toggle. Defaults to [NToggleSize.md].
   final NToggleSize size;
@@ -97,7 +74,7 @@ class NToggle extends StatelessWidget {
     super.key,
     required this.value,
     this.onChanged,
-    this.color = NToggleColor.primary,
+    this.color = NColorRole.primary,
     this.size = NToggleSize.md,
     this.disabled = false,
     this.loading = false,
@@ -130,8 +107,8 @@ class NToggle extends StatelessWidget {
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: disabled
-                          ? NTokens.textDisabled(context)
-                          : NTokens.textDefault(context),
+                          ? context.nui.colors.textMuted
+                          : context.nui.colors.text,
                     ),
                   ),
                 ),
@@ -145,7 +122,7 @@ class NToggle extends StatelessWidget {
               child: Text(
                 helperText!,
                 style:
-                    TextStyle(fontSize: 12, color: NTokens.textMuted(context)),
+                    TextStyle(fontSize: 12, color: context.nui.colors.textMuted),
               ),
             ),
           ],
@@ -163,11 +140,11 @@ class NToggle extends StatelessWidget {
 
     Color backgroundColor;
     if (disabled) {
-      backgroundColor = NTokens.borderMuted(context);
+      backgroundColor = context.nui.colors.borderMuted;
     } else if (value) {
       backgroundColor = activeColor;
     } else {
-      backgroundColor = NTokens.borderDefault(context);
+      backgroundColor = context.nui.colors.border;
     }
 
     return Semantics(
@@ -221,10 +198,7 @@ class NToggle extends StatelessWidget {
   }
 
   Color _getActiveColor(BuildContext context) {
-    return NComponentColors.resolve(
-      context,
-      NComponentColor.values[color.index],
-    ).main;
+    return context.nui.colors.role(color);
   }
 
   double _getWidth() {

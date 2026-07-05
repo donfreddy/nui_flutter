@@ -1,6 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
-import '../../theme/n_component_colors.dart';
 
 /// The size of an [NCheckbox].
 enum NCheckboxSize {
@@ -20,29 +19,7 @@ enum NCheckboxSize {
   xl,
 }
 
-/// The semantic color role applied to an [NCheckbox].
-enum NCheckboxColor {
-  /// Uses [NTokens.primary].
-  primary,
 
-  /// Uses [NTokens.secondary].
-  secondary,
-
-  /// Uses [NTokens.success].
-  success,
-
-  /// Uses [NTokens.warning].
-  warning,
-
-  /// Uses [NTokens.error].
-  error,
-
-  /// Uses [NTokens.info].
-  info,
-
-  /// Uses a neutral color.
-  neutral,
-}
 
 /// A checkbox input element with optional label and description.
 ///
@@ -76,8 +53,8 @@ class NCheckbox extends StatelessWidget {
   /// The size of the checkbox. Defaults to [NCheckboxSize.md].
   final NCheckboxSize size;
 
-  /// The semantic color role. Defaults to [NCheckboxColor.primary].
-  final NCheckboxColor color;
+  /// The semantic color role. Defaults to [NColorRole.primary].
+  final NColorRole color;
 
   /// Whether the checkbox is non-interactive. Defaults to false.
   final bool disabled;
@@ -90,7 +67,7 @@ class NCheckbox extends StatelessWidget {
     this.label,
     this.description,
     this.size = NCheckboxSize.md,
-    this.color = NCheckboxColor.primary,
+    this.color = NColorRole.primary,
     this.disabled = false,
   });
 
@@ -100,7 +77,7 @@ class NCheckbox extends StatelessWidget {
     final iconSize = _getIconSize();
     final fontSize = _getFontSize();
     final descriptionSize = _getDescriptionSize();
-    final c = NComponentColors.resolve(context, _componentColor());
+    final activeColor = context.nui.colors.role(color);
     final isActive = onChanged != null && !disabled;
 
     return GestureDetector(
@@ -126,11 +103,11 @@ class NCheckbox extends StatelessWidget {
                 width: checkboxSize,
                 height: checkboxSize,
                 decoration: BoxDecoration(
-                  color: value == true ? c.main : Colors.transparent,
+                  color: value == true ? activeColor : Colors.transparent,
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
                     color:
-                        value == true ? c.main : NTokens.borderDefault(context),
+                        value == true ? activeColor : context.nui.colors.border,
                     width: 1.5,
                   ),
                 ),
@@ -138,14 +115,14 @@ class NCheckbox extends StatelessWidget {
                     ? Icon(
                         Icons.check,
                         size: iconSize,
-                        color: NTokens.textInverted(context),
+                        color: context.nui.colors.textInverted,
                       )
                     : (value == null
                         ? Center(
                             child: Container(
                               width: iconSize,
                               height: 2,
-                              color: c.main,
+                              color: activeColor,
                             ),
                           )
                         : null),
@@ -164,7 +141,7 @@ class NCheckbox extends StatelessWidget {
                         style: TextStyle(
                           fontSize: fontSize,
                           fontWeight: FontWeight.w500,
-                          color: NTokens.textDefault(context),
+                          color: context.nui.colors.text,
                         ),
                       ),
                     if (description != null) ...[
@@ -173,7 +150,7 @@ class NCheckbox extends StatelessWidget {
                         description!,
                         style: TextStyle(
                           fontSize: descriptionSize,
-                          color: NTokens.textMuted(context),
+                          color: context.nui.colors.textMuted,
                         ),
                       ),
                     ],
@@ -185,18 +162,6 @@ class NCheckbox extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  NComponentColor _componentColor() {
-    return switch (color) {
-      NCheckboxColor.primary => NComponentColor.primary,
-      NCheckboxColor.secondary => NComponentColor.secondary,
-      NCheckboxColor.success => NComponentColor.success,
-      NCheckboxColor.warning => NComponentColor.warning,
-      NCheckboxColor.error => NComponentColor.error,
-      NCheckboxColor.info => NComponentColor.info,
-      NCheckboxColor.neutral => NComponentColor.neutral,
-    };
   }
 
   double _getSize() {

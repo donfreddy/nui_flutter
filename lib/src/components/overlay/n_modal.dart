@@ -1,6 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
-import '../../theme/n_spacing.dart';
 
 /// A dialog window that displays a message or requests user input.
 ///
@@ -112,8 +111,8 @@ class NModal extends StatelessWidget {
   Widget _buildContent(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: NTokens.bgElevated(context),
-        borderRadius: BorderRadius.circular(NTokens.radiusLg),
+        color: context.nui.colors.bgElevated,
+        borderRadius: BorderRadius.circular(12.0),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -130,7 +129,7 @@ class NModal extends StatelessWidget {
                 NSpacing.s4,
               ),
               child: DefaultTextStyle(
-                style: TextStyle(color: NTokens.textDefault(context)),
+                style: TextStyle(color: context.nui.colors.text),
                 child: body!,
               ),
             ),
@@ -139,11 +138,11 @@ class NModal extends StatelessWidget {
               padding: EdgeInsets.all(NSpacing.s4),
               decoration: BoxDecoration(
                 border: Border(
-                  top: BorderSide(color: NTokens.borderDefault(context)),
+                  top: BorderSide(color: context.nui.colors.border),
                 ),
               ),
               child: DefaultTextStyle(
-                style: TextStyle(color: NTokens.textDefault(context)),
+                style: TextStyle(color: context.nui.colors.text),
                 child: footer!,
               ),
             ),
@@ -174,7 +173,7 @@ class NModal extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: NTokens.textHighlighted(context),
+                      color: context.nui.colors.textHighlighted,
                     ),
                   ),
                 if (description != null) ...[
@@ -183,7 +182,7 @@ class NModal extends StatelessWidget {
                     description!,
                     style: TextStyle(
                       fontSize: 14,
-                      color: NTokens.textMuted(context),
+                      color: context.nui.colors.textMuted,
                     ),
                   ),
                 ],
@@ -193,7 +192,7 @@ class NModal extends StatelessWidget {
           if (showClose)
             IconButton(
               icon: Icon(Icons.close,
-                  size: 20, color: NTokens.textMuted(context)),
+                  size: 20, color: context.nui.colors.textMuted),
               onPressed: onClose ?? () => Navigator.of(context).pop(),
               splashRadius: 20,
             ),
@@ -236,7 +235,7 @@ class _NModalDialog extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   height: 1.5,
-                  color: NTokens.textDefault(context),
+                  color: context.nui.colors.text,
                 ),
               ),
             )
@@ -290,21 +289,21 @@ class _NModalActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bgColor =
-        destructive ? NTokens.error(context) : NTokens.primary(context);
+        destructive ? context.nui.colors.error : context.nui.colors.primary;
     return GestureDetector(
       onTap: onPressed,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.circular(NTokens.radiusDefault),
+          borderRadius: BorderRadius.circular(8.0),
         ),
         child: Text(
           label,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: NTokens.textInverted(context),
+            color: context.nui.colors.textInverted,
           ),
         ),
       ),

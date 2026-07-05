@@ -1,6 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
-import '../../theme/n_component_colors.dart';
 
 /// The size of an [NSelectMenu], affecting padding and font size.
 enum NSelectMenuSize {
@@ -42,30 +41,6 @@ enum NSelectMenuItemType {
 
   /// A horizontal rule separating item groups.
   separator,
-}
-
-/// The semantic color role applied to the focused border of an [NSelectMenu].
-enum NSelectMenuColor {
-  /// Uses the primary brand color.
-  primary,
-
-  /// Uses the secondary accent color.
-  secondary,
-
-  /// Uses the success color.
-  success,
-
-  /// Uses the informational color.
-  info,
-
-  /// Uses the warning color.
-  warning,
-
-  /// Uses the error color.
-  error,
-
-  /// Uses a neutral color.
-  neutral,
 }
 
 /// A single entry in the list rendered by an [NSelectMenu].
@@ -220,8 +195,8 @@ class NSelectMenu<T> extends StatefulWidget {
   /// The visual style of the trigger field. Defaults to [NSelectMenuVariant.outline].
   final NSelectMenuVariant variant;
 
-  /// The semantic color role applied to the focused border. Defaults to [NSelectMenuColor.neutral].
-  final NSelectMenuColor color;
+  /// The semantic color role applied to the focused border. Defaults to [NColorRole.neutral].
+  final NColorRole color;
 
   /// When `true`, multiple items can be selected simultaneously.
   /// Use [values] and [onChangedMultiple] in multi-select mode.
@@ -248,7 +223,7 @@ class NSelectMenu<T> extends StatefulWidget {
     this.clearable = true,
     this.size = NSelectMenuSize.md,
     this.variant = NSelectMenuVariant.outline,
-    this.color = NSelectMenuColor.neutral,
+    this.color = NColorRole.neutral,
     this.multiple = false,
   });
 
@@ -388,30 +363,14 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
       widget.variant == NSelectMenuVariant.outline ||
       widget.variant == NSelectMenuVariant.subtle;
 
-  NComponentColor _dropdownComponentColor() {
-    return switch (widget.color) {
-      NSelectMenuColor.primary => NComponentColor.primary,
-      NSelectMenuColor.secondary => NComponentColor.secondary,
-      NSelectMenuColor.neutral => NComponentColor.neutral,
-      NSelectMenuColor.success => NComponentColor.success,
-      NSelectMenuColor.error => NComponentColor.error,
-      NSelectMenuColor.warning => NComponentColor.warning,
-      NSelectMenuColor.info => NComponentColor.info,
-    };
-  }
-
   Color _getBorderColor() {
     if (!_showBorder()) return Colors.transparent;
     final hasError = widget.errorText != null && widget.errorText!.isNotEmpty;
-    if (hasError) return NTokens.error(context);
+    if (hasError) return context.nui.colors.error;
     if (_isOpen) {
-      return NComponentColors.resolve(
-        context,
-        _dropdownComponentColor(),
-        neutralMain: (ctx) => NTokens.borderDefault(ctx),
-      ).main;
+      return context.nui.colors.role(widget.color);
     }
-    return NTokens.borderDefault(context);
+    return context.nui.colors.border;
   }
 
   String _getDisplayText() {
@@ -442,12 +401,12 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
         child: CircularProgressIndicator(
             strokeWidth: 2,
             valueColor:
-                AlwaysStoppedAnimation<Color>(NTokens.textMuted(context))),
+                AlwaysStoppedAnimation<Color>(context.nui.colors.textMuted)),
       );
     }
     if (widget.leadingIcon != null) {
       return Icon(widget.leadingIcon,
-          size: 18, color: NTokens.textMuted(context));
+          size: 18, color: context.nui.colors.textMuted);
     }
     if (!widget.multiple && widget.value != null) {
       final selectedItem = widget.items.cast<NSelectMenuItem<T>?>().firstWhere(
@@ -458,7 +417,7 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
       if (selectedItem?.avatar != null) return selectedItem!.avatar;
       if (selectedItem?.icon != null) {
         return Icon(selectedItem!.icon,
-            size: 18, color: NTokens.textMuted(context));
+            size: 18, color: context.nui.colors.textMuted);
       }
     }
     return null;
@@ -485,11 +444,11 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
                   style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: NTokens.textDefault(context))),
+                      color: context.nui.colors.text)),
               if (widget.required)
                 Text(' *',
                     style:
-                        TextStyle(fontSize: 14, color: NTokens.error(context))),
+                        TextStyle(fontSize: 14, color: context.nui.colors.error)),
             ],
           ),
           const SizedBox(height: 6),
@@ -504,9 +463,9 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
                   vertical: _getVerticalPadding()),
               decoration: BoxDecoration(
                 color: widget.disabled
-                    ? NTokens.bgMuted(context)
-                    : NTokens.bgDefault(context),
-                borderRadius: BorderRadius.circular(NTokens.radiusDefault),
+                    ? context.nui.colors.bgMuted
+                    : context.nui.colors.bg,
+                borderRadius: BorderRadius.circular(8.0),
                 border: Border.all(
                     color: _getBorderColor(),
                     width: _isOpen || hasError ? 2 : 1),
@@ -523,8 +482,8 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
                       style: TextStyle(
                           fontSize: _getFontSize(),
                           color: hasValue
-                              ? NTokens.textDefault(context)
-                              : NTokens.textMuted(context)),
+                              ? context.nui.colors.text
+                              : context.nui.colors.textMuted),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -533,7 +492,7 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
                     GestureDetector(
                         onTap: _handleClear,
                         child: Icon(Icons.close,
-                            size: 16, color: NTokens.textMuted(context))),
+                            size: 16, color: context.nui.colors.textMuted)),
                   ],
                   const SizedBox(width: 8),
                   Icon(
@@ -541,7 +500,7 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
                           ? Icons.keyboard_arrow_up
                           : Icons.keyboard_arrow_down,
                       size: 20,
-                      color: NTokens.textMuted(context)),
+                      color: context.nui.colors.textMuted),
                 ],
               ),
             ),
@@ -554,8 +513,8 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
             style: TextStyle(
                 fontSize: 12,
                 color: hasError
-                    ? NTokens.error(context)
-                    : NTokens.textMuted(context)),
+                    ? context.nui.colors.error
+                    : context.nui.colors.textMuted),
           ),
         ],
       ],
@@ -629,9 +588,9 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
     return Container(
       constraints: const BoxConstraints(maxHeight: 300),
       decoration: BoxDecoration(
-        color: NTokens.bgElevated(context),
-        borderRadius: BorderRadius.circular(NTokens.radiusDefault),
-        border: Border.all(color: NTokens.borderDefault(context)),
+        color: context.nui.colors.bgElevated,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: context.nui.colors.border),
         boxShadow: [
           BoxShadow(
               color: Colors.black.withValues(alpha: 0.1),
@@ -651,34 +610,34 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                 decoration: InputDecoration(
                   hintText: widget.searchPlaceholder,
                   hintStyle: TextStyle(
-                      color: NTokens.textMuted(context), fontSize: 14),
+                      color: context.nui.colors.textMuted, fontSize: 14),
                   prefixIcon: Icon(Icons.search,
-                      size: 20, color: NTokens.textMuted(context)),
+                      size: 20, color: context.nui.colors.textMuted),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(NTokens.radiusSm),
+                    borderRadius: BorderRadius.circular(6.0),
                     borderSide:
-                        BorderSide(color: NTokens.borderDefault(context)),
+                        BorderSide(color: context.nui.colors.border),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(NTokens.radiusSm),
+                    borderRadius: BorderRadius.circular(6.0),
                     borderSide:
-                        BorderSide(color: NTokens.borderDefault(context)),
+                        BorderSide(color: context.nui.colors.border),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(NTokens.radiusSm),
+                    borderRadius: BorderRadius.circular(6.0),
                     borderSide:
-                        BorderSide(color: NTokens.primary(context), width: 2),
+                        BorderSide(color: context.nui.colors.primary, width: 2),
                   ),
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   isDense: true,
                 ),
                 style: TextStyle(
-                    fontSize: 14, color: NTokens.textDefault(context)),
+                    fontSize: 14, color: context.nui.colors.text),
               ),
             ),
             Divider(
-                height: 1, thickness: 1, color: NTokens.borderMuted(context)),
+                height: 1, thickness: 1, color: context.nui.colors.borderMuted),
           ],
           Flexible(
             child: ListView.builder(
@@ -693,7 +652,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                     child: Divider(
                         height: 1,
                         thickness: 1,
-                        color: NTokens.borderMuted(context)),
+                        color: context.nui.colors.borderMuted),
                   );
                 }
                 if (item.type == NSelectMenuItemType.label) {
@@ -705,7 +664,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                       style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: NTokens.textMuted(context),
+                          color: context.nui.colors.textMuted,
                           letterSpacing: 0.5),
                     ),
                   );
@@ -721,7 +680,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 10),
                       color: isSelected
-                          ? NTokens.bgMuted(context)
+                          ? context.nui.colors.bgMuted
                           : Colors.transparent,
                       child: Row(
                         children: [
@@ -732,8 +691,8 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                             Icon(item.icon,
                                 size: 18,
                                 color: item.disabled
-                                    ? NTokens.textDisabled(context)
-                                    : NTokens.textMuted(context)),
+                                    ? context.nui.colors.textMuted
+                                    : context.nui.colors.textMuted),
                             const SizedBox(width: 8),
                           ],
                           Expanded(
@@ -746,8 +705,8 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: item.disabled
-                                        ? NTokens.textDisabled(context)
-                                        : NTokens.textDefault(context),
+                                        ? context.nui.colors.textMuted
+                                        : context.nui.colors.text,
                                     fontWeight: isSelected
                                         ? FontWeight.w500
                                         : FontWeight.w400,
@@ -757,7 +716,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                                   Text(item.description!,
                                       style: TextStyle(
                                           fontSize: 12,
-                                          color: NTokens.textMuted(context))),
+                                          color: context.nui.colors.textMuted)),
                               ],
                             ),
                           ),
@@ -768,7 +727,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                           if (isSelected) ...[
                             const SizedBox(width: 8),
                             Icon(Icons.check,
-                                size: 18, color: NTokens.primary(context)),
+                                size: 18, color: context.nui.colors.primary),
                           ],
                         ],
                       ),

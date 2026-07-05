@@ -1,45 +1,5 @@
+import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../../theme/n_tokens.dart';
-import '../../theme/n_component_colors.dart';
-
-/// The visual style of an [NAlert].
-enum NAlertVariant {
-  /// Filled background using the alert color. The most visually prominent variant.
-  solid,
-
-  /// Transparent background with a colored border.
-  outline,
-
-  /// Lightly tinted background using a low-opacity version of the alert color.
-  soft,
-
-  /// Lightly tinted background with a colored border.
-  subtle,
-}
-
-/// The semantic color role applied to an [NAlert].
-enum NAlertColor {
-  /// Uses the primary brand color.
-  primary,
-
-  /// Uses the secondary accent color.
-  secondary,
-
-  /// Uses the success color. Suitable for positive feedback messages.
-  success,
-
-  /// Uses the informational color. Suitable for neutral notices.
-  info,
-
-  /// Uses the warning color. Suitable for cautionary messages.
-  warning,
-
-  /// Uses the error color. Suitable for failure or destructive feedback.
-  error,
-
-  /// Uses a neutral color.
-  neutral,
-}
 
 /// The layout orientation of an [NAlert]'s icon and content.
 enum NAlertOrientation {
@@ -52,14 +12,14 @@ enum NAlertOrientation {
 
 /// An inline alert banner for displaying contextual feedback.
 ///
-/// Supports four [NAlertVariant] styles and seven [NAlertColor] semantic roles.
+/// Supports four [NVariant] styles and seven [NColorRole] semantic roles.
 /// An icon, title, description, custom child, close button, and action widgets
 /// can all be composed freely.
 ///
 /// ```dart
 /// NAlert(
-///   color: NAlertColor.success,
-///   variant: NAlertVariant.soft,
+///   color: NColorRole.success,
+///   variant: NVariant.soft,
 ///   title: 'Payment sent',
 ///   description: 'Your transfer of 5 000 FCFA was processed successfully.',
 /// )
@@ -76,11 +36,11 @@ class NAlert extends StatelessWidget {
   /// Useful when you need more than simple text inside the alert body.
   final Widget? child;
 
-  /// The semantic color role. Defaults to [NAlertColor.primary].
-  final NAlertColor color;
+  /// The semantic color role. Defaults to [NColorRole.primary].
+  final NColorRole color;
 
-  /// The visual style. Defaults to [NAlertVariant.solid].
-  final NAlertVariant variant;
+  /// The visual style. Defaults to [NVariant.solid].
+  final NVariant variant;
 
   /// The layout orientation of the icon relative to the content.
   /// Defaults to [NAlertOrientation.vertical].
@@ -111,8 +71,8 @@ class NAlert extends StatelessWidget {
     this.title,
     this.description,
     this.child,
-    this.color = NAlertColor.primary,
-    this.variant = NAlertVariant.solid,
+    this.color = NColorRole.primary,
+    this.variant = NVariant.solid,
     this.orientation = NAlertOrientation.vertical,
     this.icon,
     this.showIcon = true,
@@ -124,26 +84,26 @@ class NAlert extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = _getColors(context);
+    final resolved = NVariantResolver.resolve(color, variant, context.nui.colors);
     final defaultIcon = _getDefaultIcon();
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colors['background'],
-        borderRadius: BorderRadius.circular(8),
+        color: resolved.background,
+        borderRadius: context.nui.radius.radiusMd,
         border:
-            variant == NAlertVariant.outline || variant == NAlertVariant.subtle
+            variant == NVariant.outline || variant == NVariant.subtle
                 ? Border.all(
-                    color: colors['border']!,
-                    width: variant == NAlertVariant.outline ? 1.5 : 1)
+                    color: resolved.border!,
+                    width: variant == NVariant.outline ? 1.5 : 1)
                 : null,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (showIcon) ...[
-            Icon(icon ?? defaultIcon, color: colors['icon'], size: 20),
+            Icon(icon ?? defaultIcon, color: resolved.foreground, size: 20),
             const SizedBox(width: 12),
           ],
           Expanded(
@@ -157,7 +117,7 @@ class NAlert extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: colors['text']),
+                        color: resolved.foreground),
                   ),
                 if (description != null) ...[
                   if (title != null) const SizedBox(height: 4),
@@ -165,7 +125,7 @@ class NAlert extends StatelessWidget {
                     description!,
                     style: TextStyle(
                         fontSize: 13,
-                        color: colors['text']!.withValues(alpha: 0.9)),
+                        color: resolved.foreground.withValues(alpha: 0.9)),
                     textAlign: centerDesc ? TextAlign.center : null,
                   ),
                 ],
@@ -175,7 +135,7 @@ class NAlert extends StatelessWidget {
                   DefaultTextStyle(
                     style: TextStyle(
                         fontSize: 13,
-                        color: colors['text']!.withValues(alpha: 0.9)),
+                        color: resolved.foreground.withValues(alpha: 0.9)),
                     child: child!,
                   ),
                 ],
@@ -191,7 +151,7 @@ class NAlert extends StatelessWidget {
             GestureDetector(
               onTap: onClose,
               child: Icon(Icons.close,
-                  size: 18, color: colors['text']!.withValues(alpha: 0.6)),
+                  size: 18, color: resolved.foreground.withValues(alpha: 0.6)),
             ),
           ],
         ],
@@ -199,62 +159,21 @@ class NAlert extends StatelessWidget {
     );
   }
 
-  NComponentColor get _componentColor => NComponentColor.values[color.index];
-
-  Map<String, Color> _getColors(BuildContext context) {
-    final c = NComponentColors.resolve(context, _componentColor);
-    final baseColor = c.main;
-    final softBg = baseColor.withValues(alpha: 0.1);
-    final borderColor = baseColor.withValues(alpha: 0.3);
-    final textColor = baseColor;
-
-    switch (variant) {
-      case NAlertVariant.solid:
-        return {
-          'background': baseColor,
-          'border': baseColor,
-          'text': NTokens.textInverted(context),
-          'icon': NTokens.textInverted(context)
-        };
-      case NAlertVariant.outline:
-        return {
-          'background': Colors.transparent,
-          'border': borderColor,
-          'text': textColor,
-          'icon': textColor
-        };
-      case NAlertVariant.soft:
-        return {
-          'background': softBg,
-          'border': softBg,
-          'text': textColor,
-          'icon': textColor
-        };
-      case NAlertVariant.subtle:
-        return {
-          'background': softBg,
-          'border': borderColor,
-          'text': textColor,
-          'icon': textColor
-        };
-    }
-  }
-
   IconData _getDefaultIcon() {
     switch (color) {
-      case NAlertColor.info:
+      case NColorRole.info:
         return Icons.info_outline;
-      case NAlertColor.success:
+      case NColorRole.success:
         return Icons.check_circle_outline;
-      case NAlertColor.warning:
+      case NColorRole.warning:
         return Icons.warning_amber_outlined;
-      case NAlertColor.error:
+      case NColorRole.error:
         return Icons.error_outline;
-      case NAlertColor.primary:
+      case NColorRole.primary:
         return Icons.lightbulb_outline;
-      case NAlertColor.secondary:
+      case NColorRole.secondary:
         return Icons.stars_outlined;
-      case NAlertColor.neutral:
+      case NColorRole.neutral:
         return Icons.info_outline;
     }
   }

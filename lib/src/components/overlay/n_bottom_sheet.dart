@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:nui_flutter/nui_flutter.dart';
-import '../../theme/n_tokens.dart';
-
-/// The semantic color role applied to the handle of an [NBottomSheet].
-///
-/// Currently reserved for future styling; the handle color is not
-/// differentiated by color role in the current implementation.
-enum NBottomSheetColor { primary, neutral, success, error, warning, info }
 
 /// A styled bottom sheet widget rendered inside [showModalBottomSheet].
 ///
@@ -47,8 +40,8 @@ class NBottomSheet extends StatelessWidget {
   /// the title row. Tapping it calls [Navigator.of(context).pop()].
   final bool showCloseButton;
 
-  /// The semantic color role for the sheet. Defaults to [NBottomSheetColor.neutral].
-  final NBottomSheetColor color;
+  /// The semantic color role for the sheet. Defaults to [NColorRole.neutral].
+  final NColorRole color;
 
   /// Custom padding for the body content
   final EdgeInsetsGeometry? contentPadding;
@@ -64,7 +57,7 @@ class NBottomSheet extends StatelessWidget {
     this.footer,
     this.showHandle = true,
     this.showCloseButton = true,
-    this.color = NBottomSheetColor.neutral,
+    this.color = NColorRole.neutral,
     this.contentPadding,
   });
 
@@ -83,7 +76,7 @@ class NBottomSheet extends StatelessWidget {
     Widget? footer,
     bool showHandle = true,
     bool showCloseButton = true,
-    NBottomSheetColor color = NBottomSheetColor.neutral,
+    NColorRole color = NColorRole.neutral,
     EdgeInsetsGeometry? contentPadding,
   }) {
     return showModalBottomSheet<T>(
@@ -107,7 +100,7 @@ class NBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: NTokens.bgElevated(context),
+        color: context.nui.colors.bgElevated,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: Column(
@@ -120,7 +113,7 @@ class NBottomSheet extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: NTokens.borderDefault(context),
+                  color: context.nui.colors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -141,7 +134,7 @@ class NBottomSheet extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
-                              color: NTokens.textDefault(context),
+                              color: context.nui.colors.text,
                             ),
                           ),
                         if (subtitle != null) ...[
@@ -150,7 +143,7 @@ class NBottomSheet extends StatelessWidget {
                             subtitle!,
                             style: TextStyle(
                               fontSize: 13,
-                              color: NTokens.textMuted(context),
+                              color: context.nui.colors.textMuted,
                             ),
                           ),
                         ],
@@ -160,7 +153,7 @@ class NBottomSheet extends StatelessWidget {
                   if (showCloseButton)
                     NIconButton(
                       icon: LucideIcons.x,
-                      variant: NIconButtonVariant.ghost,
+                      variant: NVariant.ghost,
                       size: NIconButtonSize.sm,
                       onPressed: () => Navigator.of(context).pop(),
                     )
@@ -278,13 +271,13 @@ class NBottomSheetActionList extends StatelessWidget {
           leading: action.icon != null
               ? Icon(
                   action.icon,
-                  color: action.isDestructive ? NTokens.error(context) : NTokens.textDefault(context),
+                  color: action.isDestructive ? context.nui.colors.error : context.nui.colors.text,
                 )
               : null,
           title: Text(
             action.label,
             style: TextStyle(
-              color: action.isDestructive ? NTokens.error(context) : NTokens.textDefault(context),
+              color: action.isDestructive ? context.nui.colors.error : context.nui.colors.text,
               fontWeight: FontWeight.w500,
             ),
           ),

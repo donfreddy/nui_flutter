@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 ///
 /// ```dart
 /// NTheme.lightTheme(
-///   palette: myPalette,
+///   colors: myPalette,
 ///   extensions: [
 ///     NButtonTheme(radius: 4.0, loadingIcon: LucideIcons.loaderCircle),
 ///   ],
