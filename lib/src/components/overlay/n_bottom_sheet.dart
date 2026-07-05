@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:nui_flutter/nui_flutter.dart';
 import '../../theme/n_tokens.dart';
-import '../../theme/n_spacing.dart';
 
 /// The semantic color role applied to the handle of an [NBottomSheet].
 ///
@@ -50,6 +50,9 @@ class NBottomSheet extends StatelessWidget {
   /// The semantic color role for the sheet. Defaults to [NBottomSheetColor.neutral].
   final NBottomSheetColor color;
 
+  /// Custom padding for the body content
+  final EdgeInsetsGeometry? contentPadding;
+
   /// Creates an [NBottomSheet].
   ///
   /// Prefer [NBottomSheet.show] for typical usage.
@@ -62,6 +65,7 @@ class NBottomSheet extends StatelessWidget {
     this.showHandle = true,
     this.showCloseButton = true,
     this.color = NBottomSheetColor.neutral,
+    this.contentPadding,
   });
 
   /// Displays an [NBottomSheet] modally using [showModalBottomSheet].
@@ -80,6 +84,7 @@ class NBottomSheet extends StatelessWidget {
     bool showHandle = true,
     bool showCloseButton = true,
     NBottomSheetColor color = NBottomSheetColor.neutral,
+    EdgeInsetsGeometry? contentPadding,
   }) {
     return showModalBottomSheet<T>(
       context: context,
@@ -92,6 +97,7 @@ class NBottomSheet extends StatelessWidget {
         showHandle: showHandle,
         showCloseButton: showCloseButton,
         color: color,
+        contentPadding: contentPadding,
         child: child,
       ),
     );
@@ -109,9 +115,9 @@ class NBottomSheet extends StatelessWidget {
         children: [
           if (showHandle)
             Padding(
-              padding: const EdgeInsets.only(top: 8, bottom: 4),
+              padding: const EdgeInsets.only(top: 12, bottom: 8),
               child: Container(
-                width: 36,
+                width: 40,
                 height: 4,
                 decoration: BoxDecoration(
                   color: NTokens.borderDefault(context),
@@ -121,8 +127,7 @@ class NBottomSheet extends StatelessWidget {
             ),
           if (title != null || showCloseButton)
             Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: NSpacing.s4, vertical: NSpacing.s2),
+              padding: EdgeInsets.symmetric(horizontal: NSpacing.s4, vertical: NSpacing.s2),
               child: Row(
                 children: [
                   Expanded(
@@ -153,23 +158,25 @@ class NBottomSheet extends StatelessWidget {
                     ),
                   ),
                   if (showCloseButton)
-                    GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: Icon(LucideIcons.x,
-                          size: 20, color: NTokens.textMuted(context)),
-                    ),
+                    NIconButton(
+                      icon: LucideIcons.x,
+                      variant: NIconButtonVariant.ghost,
+                      size: NIconButtonSize.sm,
+                      onPressed: () => Navigator.of(context).pop(),
+                    )
                 ],
               ),
             ),
           Flexible(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.fromLTRB(
-                NSpacing.s4,
-                0,
-                NSpacing.s4,
-                NSpacing.s4,
-              ),
+              padding: contentPadding ??
+                  EdgeInsets.fromLTRB(
+                    NSpacing.s4,
+                    0,
+                    NSpacing.s4,
+                    NSpacing.s4,
+                  ),
               child: child!,
             ),
           ),
@@ -183,9 +190,7 @@ class NBottomSheet extends StatelessWidget {
               ),
               child: footer,
             ),
-          if (footer == null)
-            SizedBox(
-                height: MediaQuery.of(context).padding.bottom + NSpacing.s2),
+          if (footer == null) SizedBox(height: MediaQuery.of(context).padding.bottom + NSpacing.s2),
         ],
       ),
     );
@@ -273,17 +278,13 @@ class NBottomSheetActionList extends StatelessWidget {
           leading: action.icon != null
               ? Icon(
                   action.icon,
-                  color: action.isDestructive
-                      ? NTokens.error(context)
-                      : NTokens.textDefault(context),
+                  color: action.isDestructive ? NTokens.error(context) : NTokens.textDefault(context),
                 )
               : null,
           title: Text(
             action.label,
             style: TextStyle(
-              color: action.isDestructive
-                  ? NTokens.error(context)
-                  : NTokens.textDefault(context),
+              color: action.isDestructive ? NTokens.error(context) : NTokens.textDefault(context),
               fontWeight: FontWeight.w500,
             ),
           ),

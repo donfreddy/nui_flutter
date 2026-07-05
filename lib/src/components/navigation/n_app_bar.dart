@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:nui_flutter/src/components/button/n_icon_button.dart';
 import '../../theme/n_tokens.dart';
 
 /// A Material [AppBar] styled with NUI design tokens.
@@ -88,8 +89,8 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       leading: leading ??
           (showBack
-              ? IconButton(
-                  icon: Icon(LucideIcons.arrowLeft, color: fg),
+              ? NIconButton(
+                  icon: LucideIcons.arrowLeft,
                   onPressed: onBack ?? () => Navigator.of(context).pop(),
                 )
               : null),
