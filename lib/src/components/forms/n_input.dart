@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
-import 'n_input_theme.dart';
+import '../../theme/components/n_input_theme.dart';
 
 /// The size of an [NInput], affecting padding and font size.
 enum NInputSize {

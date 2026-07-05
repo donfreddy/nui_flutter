@@ -4,9 +4,9 @@ import '../theme/n_color_mapping.dart';
 import '../theme/n_typography.dart';
 import '../tokens/n_radius.dart';
 import '../tokens/n_shadows.dart';
-import '../components/button/n_button_theme.dart';
-import '../components/forms/n_input_theme.dart';
-import '../components/layout/n_card_theme.dart';
+import '../theme/components/n_button_theme.dart';
+import '../theme/components/n_input_theme.dart';
+import '../theme/components/n_card_theme.dart';
 
 /// A drop-in replacement for [MaterialApp] that wires the entire NUI design
 /// system in one place.

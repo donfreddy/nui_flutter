@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nui_flutter/src/theme/n_tokens.dart';
 
-/// Wraps a scrollable widget and overlays gradient fade effects at edges.
+/// A primitive widget that wraps a scrollable widget and overlays gradient fade effects at edges.
 ///
 /// The [scrollController] MUST be the same controller passed to the inner
 /// scrollable (ListView, CustomScrollView, etc.) so the listener can track

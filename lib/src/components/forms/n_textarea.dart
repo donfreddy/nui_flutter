@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_component_colors.dart';
 import '../../theme/n_spacing.dart';
-import 'n_input_theme.dart';
+import '../../theme/components/n_input_theme.dart';
 
 /// The size of an [NTextarea], affecting padding and font size.
 enum NTextareaSize {

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'n_color_palette.dart';
 import 'n_color_mapping.dart';
 import 'n_typography.dart';
-import '../components/button/n_button_theme.dart';
-import '../components/forms/n_input_theme.dart';
-import '../components/layout/n_card_theme.dart';
+import 'components/n_button_theme.dart';
+import 'components/n_input_theme.dart';
+import 'components/n_card_theme.dart';
 import '../tokens/n_radius.dart';
 import '../tokens/n_shadows.dart';
 

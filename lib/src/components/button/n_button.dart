@@ -5,7 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../theme/n_tokens.dart';
 import '../../theme/n_spacing.dart';
 import '../../theme/n_component_colors.dart';
-import 'n_button_theme.dart';
+import '../../theme/components/n_button_theme.dart';
 
 /// The visual style of an [NButton].
 enum NButtonVariant {

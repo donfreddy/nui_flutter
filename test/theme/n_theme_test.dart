@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nui_flutter/src/components/button/n_button_theme.dart';
-import 'package:nui_flutter/src/components/forms/n_input_theme.dart';
+import 'package:nui_flutter/src/theme/components/n_button_theme.dart';
+import 'package:nui_flutter/src/theme/components/n_input_theme.dart';
 import 'package:nui_flutter/src/theme/n_color_palette.dart';
 import 'package:nui_flutter/src/theme/n_theme.dart';
 

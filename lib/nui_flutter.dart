@@ -101,6 +101,13 @@ export 'src/tokens/n_shadows.dart';     // NShadows
 // Primitives
 // ---------------------------------------------------------------------------
 export 'src/primitives/n_press_scale.dart'; // NPressScale
+export 'src/primitives/n_scroll_fade.dart'; // NScrollFade
+
+// ---------------------------------------------------------------------------
+// Theme Extensions
+// ---------------------------------------------------------------------------
+export 'src/theme/components/n_button_theme.dart';
+export 'src/theme/components/n_input_theme.dart';
 
 // ---------------------------------------------------------------------------
 // Raw components (unstyled building blocks)
@@ -116,14 +123,12 @@ export 'src/raw_components/n_raw_dismissible.dart';
 // Components: Button
 // ---------------------------------------------------------------------------
 export 'src/components/button/n_button.dart';
-export 'src/components/button/n_button_theme.dart';
 export 'src/components/button/n_icon_button.dart';
 
 // ---------------------------------------------------------------------------
 // Components: Forms
 // ---------------------------------------------------------------------------
 export 'src/components/forms/n_input.dart';
-export 'src/components/forms/n_input_theme.dart';
 export 'src/components/forms/n_checkbox.dart';
 export 'src/components/forms/n_radio_group.dart';
 export 'src/components/forms/n_textarea.dart';
@@ -158,11 +163,6 @@ export 'src/components/overlay/n_bottom_sheet.dart';
 export 'src/components/overlay/n_dropdown_menu.dart';
 export 'src/components/overlay/n_modal.dart';
 export 'src/components/overlay/n_toast.dart';
-
-// ---------------------------------------------------------------------------
-// Components: Widgets
-// ---------------------------------------------------------------------------
-export 'src/components/widgets/n_scroll_fade.dart';
 
 // ---------------------------------------------------------------------------
 // Components: Navigation
