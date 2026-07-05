@@ -7,11 +7,11 @@ Built on top of Flutter's `ThemeExtension` API for clean multi-brand support, fu
 ## Features
 
 - **25+ production-ready components** covering buttons, inputs, cards, avatars, badges, alerts, toggles, dropdowns, tab bars, bottom sheets, modals, toasts, progress bars, skeletons, checkboxes, radio groups, textareas, and more
-- **Semantic color tokens** via `NColorPalette` and `NTokens` for consistent, brand-aware theming
+- **Semantic color tokens** via `NColors` for consistent, brand-aware theming
 - **Full dark mode** with `NTheme.lightTheme` and `NTheme.darkTheme` factories
-- **Multi-brand support** by passing a custom `NColorPalette` per app with no shared state
-- **Nuxt UI variant system** ported to Flutter: `solid`, `outline`, `soft`, `subtle`, `ghost`, `link`
-- **Lucide icons** built-in via `lucide_icons_flutter`
+- **Multi-brand support** by passing a custom palette per app with no shared state
+- **Nuxt UI variant system** ported to Flutter: `NVariant` enum (`solid`, `outline`, `soft`, `subtle`, `ghost`, `link`) + `NVariantSupport` per-component validation + `NVariantResolver` for concrete color resolution
+- **Lucide icons** self-hosted via `NIcons`, no external icon dependency
 - **Accessibility-first** with `Semantics` wrappers on all interactive components
 
 ## Installation
@@ -51,26 +51,30 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'My App',
-      theme: NTheme.lightTheme(palette: _lightPalette),
-      darkTheme: NTheme.darkTheme(palette: _darkPalette),
+      theme: NTheme.lightTheme(colors: _lightColors),
+      darkTheme: NTheme.darkTheme(colors: _darkColors),
       themeMode: ThemeMode.system,
       home: const HomeScreen(),
     );
   }
 }
 
-final _lightPalette = NColorPalette.light(
-  primary: const Color(0xFFF97316),
-  secondary: const Color(0xFF6B7280),
-  success: const Color(0xFF10B981),
-  error: const Color(0xFFEF4444),
+final _lightColors = NColors.light(
+  palette: {
+    NColorRole.primary: NRoleColor(Color(0xFFF97316)),
+    NColorRole.secondary: NRoleColor(Color(0xFF6B7280)),
+    NColorRole.success: NRoleColor(Color(0xFF10B981)),
+    NColorRole.error: NRoleColor(Color(0xFFEF4444)),
+  },
 );
 
-final _darkPalette = NColorPalette.dark(
-  primary: const Color(0xFFF97316),
-  secondary: const Color(0xFF6B7280),
-  success: const Color(0xFF10B981),
-  error: const Color(0xFFEF4444),
+final _darkColors = NColors.dark(
+  palette: {
+    NColorRole.primary: NRoleColor(Color(0xFFF97316)),
+    NColorRole.secondary: NRoleColor(Color(0xFF6B7280)),
+    NColorRole.success: NRoleColor(Color(0xFF10B981)),
+    NColorRole.error: NRoleColor(Color(0xFFEF4444)),
+  },
 );
 ```
 
@@ -83,7 +87,7 @@ import 'package:nui_flutter/nui_flutter.dart';
 NButton(
   label: 'Send money',
   onPressed: () {},
-  color: NButtonColor.primary,
+  color: NColorRole.primary,
 )
 
 // Input
@@ -109,71 +113,27 @@ NCard(
 
 ### Color palette
 
-`NColorPalette` defines all semantic color tokens for an app. It is registered as a `ThemeExtension` in `ThemeData` via `NTheme`.
+`NColors` defines all semantic color tokens for an app. It is registered as a `ThemeExtension` in `ThemeData` via `NTheme`.
 
 ```dart
-NColorPalette.light(
-  // Required brand colors
-  primary: Color(0xFFF97316),
-  secondary: Color(0xFF6B7280),
-  success: Color(0xFF10B981),
-  error: Color(0xFFEF4444),
-
-  // Optional overrides (all have defaults)
-  warning: Color(0xFFF59E0B),
-  info: Color(0xFF3B82F6),
-  bgDefault: Color(0xFFFFFFFF),
-  textDefault: Color(0xFF18181B),
-  // ...
+NColors.light(
+  palette: {
+    NColorRole.primary: NRoleColor(Color(0xFFF97316)),
+    NColorRole.secondary: NRoleColor(Color(0xFF6B7280)),
+    NColorRole.success: NRoleColor(Color(0xFF10B981)),
+    NColorRole.error: NRoleColor(Color(0xFFEF4444)),
+  },
 )
 ```
 
 ### Accessing tokens at runtime
 
-Use `NTokens` static accessors anywhere inside `build`:
+Use `context.nui` inside any `build` method:
 
 ```dart
-Container(
-  color: NTokens.primaryBg(context),
-  child: Text(
-    'Hello',
-    style: TextStyle(color: NTokens.primaryText(context)),
-  ),
-)
-```
-
-### Spacing
-
-Use `NSpacing` for consistent 4 dp grid spacing:
-
-```dart
-Padding(
-  padding: EdgeInsets.all(NSpacing.s4),  // 16 dp
-  child: Column(
-    children: [
-      child1,
-      NSpacing.vertical(NSpacing.s2),    // 8 dp gap
-      child2,
-    ],
-  ),
-)
-```
-
-### Text scale
-
-Adjust the global text scale at startup or in response to user preferences by passing `textScale` to `NTheme`:
-
-```dart
-NTheme.lightTheme(
-  palette: myPalette,
-  textScale: 1.15,  // 115%
-)
-```
-
-For dynamic runtime changes, use `NTextScale` (deprecated — kept for migration only):
-
-```dart
-NTextScale.setScale(NTextScale.large);  // 115% (deprecated)
+final colors = context.nui.colors;
+final radius = context.nui.radius.md;
+final shadow = context.nui.shadows.sm;
 ```
 
 ### Custom component themes
@@ -182,7 +142,7 @@ Override button or input defaults by passing extra extensions to `NTheme`:
 
 ```dart
 NTheme.lightTheme(
-  palette: myPalette,
+  colors: myColors,
   extensions: [
     const NButtonTheme(radius: 4.0),
     const NInputTheme(radius: 4.0),
@@ -190,17 +150,28 @@ NTheme.lightTheme(
 )
 ```
 
+### Variant system
+
+The variant system is split across two files:
+
+| File | Location | Contents |
+|------|----------|----------|
+| `n_variant.dart` | `lib/src/tokens/` | `NVariant` enum + `NVariantSupport` (per-component allowed-variant sets) |
+| `n_variant_resolver.dart` | `lib/src/theme/` | `NVariantResolver.resolve(NColorRole, NVariant, NColors)` → `NResolvedColors` |
+
+Components validate their variant at development time via `NVariantSupport`, then delegate color resolution to `NVariantResolver` at runtime.
+
 ## Component catalog
 
 ### Buttons
 
 ```dart
 NButton(label: 'Primary', onPressed: () {})
-NButton(label: 'Success', color: NButtonColor.success, onPressed: () {})
-NButton(label: 'Outline', variant: NButtonVariant.outline, onPressed: () {})
-NButton(label: 'Soft', variant: NButtonVariant.soft, onPressed: () {})
-NButton(label: 'Ghost', variant: NButtonVariant.ghost, onPressed: () {})
-NButton(label: 'Link', variant: NButtonVariant.link, onPressed: () {})
+NButton(label: 'Success', color: NColorRole.success, onPressed: () {})
+NButton(label: 'Outline', variant: NVariant.outline, onPressed: () {})
+NButton(label: 'Soft', variant: NVariant.soft, onPressed: () {})
+NButton(label: 'Ghost', variant: NVariant.ghost, onPressed: () {})
+NButton(label: 'Link', variant: NVariant.link, onPressed: () {})
 NButton(label: 'Loading', loading: true, onPressed: () {})
 NButton(label: 'Disabled', disabled: true, onPressed: () {})
 NButton(label: 'Full width', block: true, onPressed: () {})
@@ -212,7 +183,7 @@ NButton.destructive(label: 'Delete account', onPressed: _delete)
 ```dart
 NInput(label: 'Email', placeholder: 'you@example.com')
 NInput(label: 'Password', obscureText: true, passwordToggle: true)
-NInput(label: 'Search', leading: const Icon(LucideIcons.search), clearable: true)
+NInput(label: 'Search', leading: const Icon(NIcons.search), clearable: true)
 NInput(label: 'Bio', maxLines: 4, minLines: 3)
 NInput.amount(label: 'Amount', trailingText: 'FCFA')
 NInput.phone(label: 'Phone')
@@ -225,7 +196,7 @@ NInput.otp(controller: _ctrl, onSubmitted: _verify)
 NCard(child: const Text('Outline card'))
 NCard.soft(child: const Text('Soft card'))
 NCard.subtle(child: const Text('Subtle card'))
-NCard(variant: NCardVariant.outline, color: NCardColor.success, child: ...)
+NCard(variant: NVariant.outline, color: NColorRole.success, child: ...)
 NCard(onTap: () {}, child: const Text('Tappable card'))
 ```
 
@@ -234,7 +205,7 @@ NCard(onTap: () {}, child: const Text('Tappable card'))
 ```dart
 NAvatar(name: 'John Doe')
 NAvatar(imageUrl: 'https://example.com/photo.jpg')
-NAvatar(name: 'JD', size: NAvatarSize.lg)
+NAvatar(name: 'JD', size: NAvatarSize.lg) // NAvatarSize enum
 
 NAvatarGroup(
   avatars: [
@@ -249,17 +220,17 @@ NAvatarGroup(
 ### Alerts
 
 ```dart
-NAlert(title: 'Success', description: 'Payment sent.', color: NAlertColor.success)
-NAlert(title: 'Warning', description: 'Low balance.', color: NAlertColor.warning, variant: NAlertVariant.soft)
-NAlert(title: 'Error', description: 'Transfer failed.', color: NAlertColor.error, variant: NAlertVariant.outline)
+NAlert(title: 'Success', description: 'Payment sent.', color: NColorRole.success)
+NAlert(title: 'Warning', description: 'Low balance.', color: NColorRole.warning, variant: NVariant.soft)
+NAlert(title: 'Error', description: 'Transfer failed.', color: NColorRole.error, variant: NVariant.outline)
 ```
 
 ### Badges and chips
 
 ```dart
 NBadge(label: 'New')
-NBadge(label: 'Active', color: NBadgeColor.success, variant: NBadgeVariant.soft)
-NBadge.dot(color: NBadgeColor.error)
+NBadge(label: 'Active', color: NColorRole.success, variant: NVariant.soft)
+NBadge.dot(color: NColorRole.error)
 
 NChip(label: 'Category', selected: true, onPressed: () {})
 NChipGroup(
@@ -301,7 +272,7 @@ NDropdown<String>(
 NAppBar(
   title: 'Wallet',
   showBack: true,
-  actions: [NIconButton(icon: LucideIcons.bell, onPressed: () {})],
+  actions: [NIconButton(icon: NIcons.bell, onPressed: () {})],
 )
 
 // Tab bar
@@ -332,8 +303,8 @@ NBottomSheetActionList.show(
   context: context,
   title: 'Options',
   actions: [
-    NBottomSheetAction(label: 'Edit', icon: LucideIcons.pencil, onTap: _edit),
-    NBottomSheetAction(label: 'Delete', icon: LucideIcons.trash2, isDestructive: true, onTap: _delete),
+NBottomSheetAction(label: 'Edit', icon: NIcons.pencil, onTap: _edit),
+NBottomSheetAction(label: 'Delete', icon: NIcons.trash2, isDestructive: true, onTap: _delete),
   ],
 );
 ```
@@ -341,8 +312,8 @@ NBottomSheetActionList.show(
 ### Icon button
 
 ```dart
-NIconButton(icon: LucideIcons.share2, onPressed: () {})
-NIconButton(icon: LucideIcons.trash2, color: NIconButtonColor.error, variant: NIconButtonVariant.soft, onPressed: () {})
+NIconButton(icon: NIcons.share2, onPressed: () {})
+NIconButton(icon: NIcons.trash2, color: NColorRole.error, variant: NVariant.soft, onPressed: () {})
 ```
 
 ### Checkbox
@@ -422,14 +393,14 @@ NToast.show(
   context,
   title: 'Payment sent',
   description: 'Your transfer was successful.',
-  color: NToastColor.success,
+  color: NColorRole.success,
 );
 
 // Persistent toast
 NToast.show(
   context,
   title: 'Uploading...',
-  color: NToastColor.info,
+  color: NColorRole.info,
   duration: Duration.zero,
 );
 ```
@@ -437,10 +408,10 @@ NToast.show(
 ### Progress
 
 ```dart
-NProgress(value: 0.5)                                  // Determinate
-NProgress(value: 0.75, color: NProgressColor.success)  // Colored
-NProgress()                                             // Indeterminate
-NProgress(value: null, size: NProgressSize.lg)          // Larger size
+NProgress(value: 0.5)                                      // Determinate
+NProgress(value: 0.75, color: NColorRole.success)          // Colored
+NProgress()                                                 // Indeterminate
+NProgress(value: null, size: NProgressSize.lg)              // Larger size
 ```
 
 ### Skeleton
@@ -455,15 +426,12 @@ NSkeleton(height: 200)               // Card placeholder (full width)
 
 | Token group | Example accessor | Description |
 |-------------|-----------------|-------------|
-| Base colors | `NTokens.primary(context)` | Primary brand color |
-| Backgrounds | `NTokens.bgDefault(context)` | Page background |
-| Text | `NTokens.textMuted(context)` | Low-emphasis text |
-| Borders | `NTokens.borderDefault(context)` | Default border |
-| Semantic bg | `NTokens.primaryBg(context)` | Tinted primary background |
-| Semantic border | `NTokens.errorBorder(context)` | Tinted error border |
-| Semantic text | `NTokens.successText(context)` | Text on success surfaces |
-| Spacing | `NSpacing.s4` | 16 dp |
-| Radius | `NTokens.radiusDefault` | 8 dp |
+| Colors | `context.nui.colors.primary` | Primary brand color |
+| Backgrounds | `context.nui.colors.bgDefault` | Page background |
+| Text | `context.nui.colors.textMuted` | Low-emphasis text |
+| Borders | `context.nui.colors.borderDefault` | Default border |
+| Shadows | `context.nui.shadows.sm` | Small shadow |
+| Radius | `context.nui.radius.md` | Medium radius |
 
 ## Comparison with Nuxt UI
 
@@ -488,14 +456,16 @@ NSkeleton(height: 200)               // Card placeholder (full width)
 | `USkeleton` | `NSkeleton` |
 | `UEmpty` | `NEmptyState` |
 | `UModal` / `UDrawer` (mobile) | `NBottomSheet` |
-| CSS variables | `NColorPalette` + `NTokens` |
-| Tailwind variants | `NButtonVariant`, `NCardVariant`, etc. |
+| CSS variables | `NColors` + `context.nui` |
+| Tailwind variants | `NVariant` enum |
 
 ## Dependencies
 
-| Package | Role |
-|---------|------|
-| [`lucide_icons_flutter`](https://pub.dev/packages/lucide_icons_flutter) | Icon set (Lucide icon library) |
+nui_flutter has **no third-party dependencies**. The Lucide icon font is self-hosted at `assets/fonts/lucide.ttf` and exposed via the `NIcons` class.
+
+| Asset | Role |
+|-------|------|
+| `assets/fonts/lucide.ttf` | Self-hosted Lucide icon font (~67 KB, 1986 glyphs) |
 
 ## License
 
