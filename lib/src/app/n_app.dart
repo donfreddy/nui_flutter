@@ -17,7 +17,7 @@ import '../theme/components/n_card_theme.dart';
 /// NApp(
 ///   colors: NColors.light(
 ///     roles: {
-///       NColorRole.primary: NColorScale.orange,
+///       NColorRole.primary: NColorScale.fromSeed(Color(0xFFF97316)),
 ///     },
 ///   ),
 ///   home: const HomeScreen(),

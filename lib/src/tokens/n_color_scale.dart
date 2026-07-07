@@ -36,8 +36,7 @@ class NColorScale {
   ///
   /// [shades] must contain exactly 11 colors in ascending order:
   /// [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].
-  const NColorScale(this.shades)
-      : assert(shades.length == 11, 'NColorScale requires exactly 11 shades');
+  const NColorScale(this.shades);
 
   /// The 11 resolved colors indexed as: 0→50, 1→100, …, 10→950.
   final List<Color> shades;
@@ -199,48 +198,21 @@ class NColorScale {
   Color get textDark => s300;
 
   // ---------------------------------------------------------------------------
-  // Well-known built-in palettes
+  // Signature palette (Nuxt UI green)
   // ---------------------------------------------------------------------------
+  //
+  // Tailwind-named palettes (slate, zinc, red, blue, amber, …) live in
+  // [NTailwindScales] and are pixel-perfect conversions of the official
+  // Tailwind v4 OKLCH values (see `tool/gen_tailwind_colors.dart`).
+  // Use [NColorScale.fromSeed] for custom brand colors outside the Tailwind
+  // set; the resulting ramp won't match Tailwind exactly but is perceptually
+  // uniform (Oklab interpolation).
 
-  /// Nuxt UI signature green (#00DC82 → 500).
-  static final NColorScale green =
-      NColorScale.fromSeed(const Color(0xFF00DC82)); 
-      
-  /// Emerald for success states.
-  static final NColorScale emerald =
-      NColorScale.fromSeed(const Color(0xFF10B981));
-
-  /// Neutral blue for secondary actions.
-  static final NColorScale blue = NColorScale.fromSeed(const Color(0xFF3B82F6));
-
-  /// Sky blue for info states.
-  static final NColorScale sky = NColorScale.fromSeed(const Color(0xFF0EA5E9));
-
-  /// A predefined amber scale.
-  static final amber = NColorScale.fromSeed(const Color(0xFFF59E0B));
-
-  /// A predefined cool gray (slate) scale.
-  static final slate = NColorScale.fromSeed(const Color(0xFF64748B));
-
-  /// A predefined neutral-cool gray (zinc) scale.
-  static final zinc = NColorScale.fromSeed(const Color(0xFF71717A));
-
-  /// A predefined true gray (neutral) scale.
-  static final neutral = NColorScale.fromSeed(const Color(0xFF737373));
-
-  /// A predefined warm gray (stone) scale.
-  static final stone = NColorScale.fromSeed(const Color(0xFF78716C));
-
-  /// Red for errors.
-  static final NColorScale red = NColorScale.fromSeed(const Color(0xFFEF4444));
-
-  /// Orange: default nui_flutter primary brand.
-  static final NColorScale orange =
-      NColorScale.fromSeed(const Color(0xFFF97316));
-
-  /// Violet / purple.
-  static final NColorScale violet =
-      NColorScale.fromSeed(const Color(0xFFA855F7));
+  /// Nuxt UI signature green (#00DC82 → 500), kept as the default `primary`.
+  ///
+  /// For the official Tailwind green palette use [NTailwindScales.green].
+  static final NColorScale nuxtGreen =
+      NColorScale.fromSeed(const Color(0xFF00DC82));
 
   // ---------------------------------------------------------------------------
   // Equality / hashCode
