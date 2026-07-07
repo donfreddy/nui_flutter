@@ -204,7 +204,11 @@ class NColorScale {
 
   /// Nuxt UI signature green (#00DC82 → 500).
   static final NColorScale green =
-      NColorScale.fromSeed(const Color(0xFF00DC82));
+      NColorScale.fromSeed(const Color(0xFF00DC82)); 
+      
+  /// Emerald for success states.
+  static final NColorScale emerald =
+      NColorScale.fromSeed(const Color(0xFF10B981));
 
   /// Neutral blue for secondary actions.
   static final NColorScale blue = NColorScale.fromSeed(const Color(0xFF3B82F6));
@@ -236,7 +240,7 @@ class NColorScale {
 
   /// Violet / purple.
   static final NColorScale violet =
-      NColorScale.fromSeed(const Color(0xFF7C3AED));
+      NColorScale.fromSeed(const Color(0xFFA855F7));
 
   // ---------------------------------------------------------------------------
   // Equality / hashCode

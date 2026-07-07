@@ -342,21 +342,23 @@ class NApp extends StatelessWidget {
   ThemeData _mergeExtensions(ThemeData base, NColors c, Brightness b) {
     final bRadius = buttonRadius ?? radius.md;
     final iRadius = inputRadius ?? radius.md;
-    final nuiExtensions = <ThemeExtension<dynamic>>[
-      c,
-      radius,
-      b == Brightness.dark ? NShadows.dark() : NShadows.light(),
-      NButtonTheme(radius: bRadius),
-      NInputTheme(radius: iRadius),
-      const NCardTheme(),
-      if (typography != null) typography!,
-      ...extensions,
-    ];
-    final merged = {
+    final shadows = b == Brightness.dark ? NShadows.dark() : NShadows.light();
+    final buttonTheme = NButtonTheme(radius: bRadius);
+    final inputTheme = NInputTheme(radius: iRadius);
+    const cardTheme = NCardTheme();
+
+    final Map<Object, ThemeExtension<dynamic>> merged = {
       for (final e in base.extensions.values) e.runtimeType: e,
-      for (final e in nuiExtensions) e.runtimeType: e,
-    }.values.toList();
-    return base.copyWith(extensions: merged);
+      c.runtimeType: c,
+      radius.runtimeType: radius,
+      shadows.runtimeType: shadows,
+      buttonTheme.runtimeType: buttonTheme,
+      inputTheme.runtimeType: inputTheme,
+      cardTheme.runtimeType: cardTheme,
+      if (typography != null) typography!.runtimeType: typography!,
+      for (final e in extensions) e.runtimeType: e,
+    };
+    return base.copyWith(extensions: merged.values.toList());
   }
 
   @override
