@@ -33,6 +33,18 @@ abstract class NTheme {
   }) {
     final resolvedColors = colors ?? NColors.light();
     final nRadius = radiusScale ?? NRadius(base: radius);
+    final Map<Object, ThemeExtension<dynamic>> extMap = {
+      resolvedColors.runtimeType: resolvedColors,
+      nRadius.runtimeType: nRadius,
+      NShadows.light().runtimeType: NShadows.light(),
+      NButtonTheme(radius: nRadius.md).runtimeType:
+          NButtonTheme(radius: nRadius.md),
+      NInputTheme(radius: nRadius.md).runtimeType:
+          NInputTheme(radius: nRadius.md),
+      const NCardTheme().runtimeType: const NCardTheme(),
+      if (typography != null) typography.runtimeType: typography,
+      for (final e in extensions) e.runtimeType: e,
+    };
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
@@ -41,16 +53,7 @@ abstract class NTheme {
       cardColor: resolvedColors.bgElevated,
       textTheme: buildTextTheme(resolvedColors, Brightness.light,
           textScale: textScale, typography: typography),
-      extensions: [
-        resolvedColors,
-        nRadius,
-        NShadows.light(),
-        NButtonTheme(radius: nRadius.md),
-        NInputTheme(radius: nRadius.md),
-        const NCardTheme(),
-        if (typography != null) typography,
-        ...extensions,
-      ],
+      extensions: extMap.values.toList(),
     );
   }
 
@@ -71,6 +74,18 @@ abstract class NTheme {
   }) {
     final resolvedColors = colors ?? NColors.dark();
     final nRadius = radiusScale ?? NRadius(base: radius);
+    final Map<Object, ThemeExtension<dynamic>> extMap = {
+      resolvedColors.runtimeType: resolvedColors,
+      nRadius.runtimeType: nRadius,
+      NShadows.dark().runtimeType: NShadows.dark(),
+      NButtonTheme(radius: nRadius.md).runtimeType:
+          NButtonTheme(radius: nRadius.md),
+      NInputTheme(radius: nRadius.md).runtimeType:
+          NInputTheme(radius: nRadius.md),
+      const NCardTheme().runtimeType: const NCardTheme(),
+      if (typography != null) typography.runtimeType: typography,
+      for (final e in extensions) e.runtimeType: e,
+    };
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
@@ -79,16 +94,7 @@ abstract class NTheme {
       cardColor: resolvedColors.bgElevated,
       textTheme: buildTextTheme(resolvedColors, Brightness.dark,
           textScale: textScale, typography: typography),
-      extensions: [
-        resolvedColors,
-        nRadius,
-        NShadows.dark(),
-        NButtonTheme(radius: nRadius.md),
-        NInputTheme(radius: nRadius.md),
-        const NCardTheme(),
-        if (typography != null) typography,
-        ...extensions,
-      ],
+      extensions: extMap.values.toList(),
     );
   }
 }
