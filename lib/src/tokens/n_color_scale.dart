@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 /// A full 11-step color scale (50 → 950) generated from a single seed color.
@@ -74,14 +75,13 @@ class NColorScale {
       0.10, // 950 (very dark shade)
     ];
 
-    Color mixWith(Color a, Color b, double t) => Color.lerp(a, b, t)!;
     const white = Color(0xFFFFFFFF);
     const black = Color(0xFF000000);
 
     final generated = <Color>[
-      for (final t in lighterMix) mixWith(white, seed, t),
+      for (final t in lighterMix) _mixOklab(white, seed, t),
       seed, // shade 500
-      for (final t in darkerMix) mixWith(seed, black, 1 - t),
+      for (final t in darkerMix) _mixOklab(seed, black, 1 - t),
     ];
 
     // Apply overrides
@@ -257,6 +257,80 @@ class NColorScale {
 
   @override
   String toString() => 'NColorScale(seed≈${s500.toARGB32().toRadixString(16)})';
+}
+
+// ---------------------------------------------------------------------------
+// Oklab interpolation for perceptually uniform colour ramps
+// (Björn Ottosson's Oklab – https://bottosson.github.io/posts/oklab/)
+// ---------------------------------------------------------------------------
+
+/// Linearises a single sRGB channel [c] in [0..1].
+double _srgbToLinear(double c) =>
+    c <= 0.04045 ? c / 12.92 : math.pow((c + 0.055) / 1.055, 2.4).toDouble();
+
+/// Converts a linear channel back to sRGB.
+double _linearToSrgb(double c) =>
+    c <= 0.0031308 ? 12.92 * c : 1.055 * math.pow(c, 1.0 / 2.4) - 0.055;
+
+/// Converts a Flutter [Color] (assumed sRGB) into Oklab components.
+(List<double> lms, double L, double a, double b) _toOklab(Color color) {
+  final r = _srgbToLinear(color.r);
+  final g = _srgbToLinear(color.g);
+  final bl = _srgbToLinear(color.b);
+
+  // Linear sRGB → LMS (Oklab matrix)
+  final l = 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * bl;
+  final m = 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * bl;
+  final s = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * bl;
+
+  final lC = math.pow(l, 1.0 / 3.0);
+  final mC = math.pow(m, 1.0 / 3.0);
+  final sC = math.pow(s, 1.0 / 3.0);
+
+  return (
+    [l, m, s],
+    0.2104542553 * lC + 0.7936177850 * mC - 0.0040720468 * sC,
+    1.9779984951 * lC - 2.4285922050 * mC + 0.4505937099 * sC,
+    0.0259040371 * lC + 0.7827717662 * mC - 0.8086757660 * sC,
+  );
+}
+
+/// Converts Oklab components back to a Flutter [Color].
+Color _fromOklab(double L, double a, double b, double alpha) {
+  // Oklab → LMS'
+  final lP = L + 0.3963377774 * a + 0.2158037573 * b;
+  final mP = L - 0.1055613458 * a - 0.0638541728 * b;
+  final sP = L - 0.0894841775 * a - 1.2914855480 * b;
+
+  // LMS' → LMS (cube)
+  final l = lP * lP * lP;
+  final m = mP * mP * mP;
+  final s = sP * sP * sP;
+
+  // LMS → Linear sRGB
+  final r = 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
+  final g = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
+  final bl = -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s;
+
+  return Color.from(
+    alpha: alpha,
+    red: _linearToSrgb(r),
+    green: _linearToSrgb(g),
+    blue: _linearToSrgb(bl),
+  );
+}
+
+/// Linearly interpolates between two [Color]s in Oklab space.
+Color _mixOklab(Color a, Color b, double t) {
+  final (_, la, aa, ba) = _toOklab(a);
+  final (_, lb, ab, bb) = _toOklab(b);
+  final alpha = a.a + (b.a - a.a) * t;
+  return _fromOklab(
+    la + (lb - la) * t,
+    aa + (ab - aa) * t,
+    ba + (bb - ba) * t,
+    alpha,
+  );
 }
 
 /// Minimal list-equality helper (avoids adding `collection` dep).

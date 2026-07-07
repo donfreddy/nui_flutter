@@ -26,22 +26,19 @@ class NResolvedColors {
   final Color? border;
 }
 
-/// Utility for calculating contrast colors.
+/// Utility for calculating a legible foreground on a solid background.
 Color _nOnColor(Color background) {
-  // Simple brightness calculation to determine contrast color.
-  // Using relative luminance based on WCAG.
   final luminance =
       (0.299 * background.r + 0.587 * background.g + 0.114 * background.b);
   return luminance > 0.5 ? const Color(0xFF000000) : const Color(0xFFFFFFFF);
 }
 
-/// Utility for creating tints (opacity over white/black based on context).
-/// In Flutter, simple opacity works best for tints.
-Color _nOpacity(Color base, double opacity) {
-  return base.withValues(alpha: opacity);
-}
-
-/// Resolves `(role, variant)` to concrete colors against an [NColors] set.
+/// Resolves `(role, variant)` to concrete colours against an [NColors] set.
+///
+/// For role-colored components the resolution uses the role's 11-step
+/// [NColorScale] so that the resulting shades mirror Tailwind's hand-tuned
+/// palettes (e.g. soft → scale.s100 bg + scale.s700 text). For the neutral
+/// role the resolution uses the surface-hierarchy tokens directly.
 abstract final class NVariantResolver {
   /// Resolves the paint for [role] and [variant] under [colors].
   static NResolvedColors resolve(
@@ -50,9 +47,7 @@ abstract final class NVariantResolver {
     NColors colors,
   ) {
     final isNeutral = role == NColorRole.neutral;
-    final base = isNeutral ? colors.textHighlighted : colors.role(role);
-    final onSolid = _nOnColor(base);
-    Color tint(double pct) => _nOpacity(base, pct / 100);
+    final scale = colors.scaleFor(role);
 
     switch (variant) {
       case NVariant.outline:
@@ -61,14 +56,14 @@ abstract final class NVariantResolver {
                 foreground: colors.text,
                 border: colors.borderAccented,
               )
-            : NResolvedColors(foreground: base, border: tint(50));
+            : NResolvedColors(foreground: scale.s500, border: scale.s300);
       case NVariant.soft:
         return isNeutral
             ? NResolvedColors(
                 foreground: colors.textHighlighted,
                 background: colors.bgElevated,
               )
-            : NResolvedColors(foreground: base, background: tint(12));
+            : NResolvedColors(foreground: scale.s700, background: scale.s100);
       case NVariant.subtle:
         return isNeutral
             ? NResolvedColors(
@@ -77,17 +72,17 @@ abstract final class NVariantResolver {
                 border: colors.borderAccented,
               )
             : NResolvedColors(
-                foreground: base,
-                background: tint(12),
-                border: tint(28),
+                foreground: scale.s700,
+                background: scale.s100,
+                border: scale.s300,
               );
       case NVariant.ghost:
         return NResolvedColors(
-          foreground: isNeutral ? colors.text : base,
+          foreground: isNeutral ? colors.text : scale.s500,
         );
       case NVariant.link:
         return NResolvedColors(
-          foreground: isNeutral ? colors.textMuted : base,
+          foreground: isNeutral ? colors.textMuted : scale.s500,
         );
       case NVariant.solid:
         return isNeutral
@@ -95,7 +90,10 @@ abstract final class NVariantResolver {
                 foreground: colors.textInverted,
                 background: colors.bgInverted,
               )
-            : NResolvedColors(foreground: onSolid, background: base);
+            : NResolvedColors(
+                foreground: _nOnColor(scale.s500),
+                background: scale.s500,
+              );
     }
   }
 }

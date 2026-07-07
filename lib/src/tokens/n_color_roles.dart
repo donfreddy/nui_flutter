@@ -17,6 +17,7 @@ enum NColorRole {
   warning,
   error,
   neutral,
+
 }
 
 /// The switchable neutral palette.

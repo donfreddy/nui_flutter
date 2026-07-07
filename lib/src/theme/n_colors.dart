@@ -116,7 +116,7 @@ class NColors extends ThemeExtension<NColors> {
         NColorRole.warning => warning,
         NColorRole.error => error,
         NColorRole.neutral => textHighlighted,
-      };
+    };
 
   /// Returns the full scale for a role.
   NColorScale scaleFor(NColorRole r) =>

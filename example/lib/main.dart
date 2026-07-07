@@ -314,12 +314,12 @@ class _CardsDemo extends StatelessWidget {
         ),
         SizedBox(height: 12),
         NCard.soft(
-          color: NCardColor.primary,
+          color: NColorRole.primary,
           child: Text('Soft card with primary color'),
         ),
         SizedBox(height: 12),
         NCard.subtle(
-          color: NCardColor.success,
+          color: NColorRole.success,
           header: NCardHeader(
               title: 'Success',
               leading: Icon(Icons.check_circle, color: Colors.green)),

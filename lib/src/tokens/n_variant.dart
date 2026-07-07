@@ -55,6 +55,15 @@ abstract final class NVariantSupport {
     NVariant.outline,
   };
 
+  /// Cards support solid, outline, soft, subtle, and ghost.
+  static const Set<NVariant> card = {
+    NVariant.solid,
+    NVariant.outline,
+    NVariant.soft,
+    NVariant.subtle,
+    NVariant.ghost,
+  };
+
   /// Progress bars typically only use solid or soft.
   static const Set<NVariant> progress = {
     NVariant.solid,
