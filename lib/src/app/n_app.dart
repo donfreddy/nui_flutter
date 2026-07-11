@@ -1,6 +1,5 @@
 import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
-import '../theme/components/n_card_theme.dart';
 
 /// A drop-in replacement for [MaterialApp] that wires the entire NUI design
 /// system in one place.
@@ -323,7 +322,7 @@ class NApp extends StatelessWidget {
     if (brightness == Brightness.light) {
       return NTheme.lightTheme(
         colors: c,
-        radius: radius.base,
+        radiusScale: radius,
         textScale: textScale,
         typography: typography,
         extensions: extensions,
@@ -331,7 +330,7 @@ class NApp extends StatelessWidget {
     } else {
       return NTheme.darkTheme(
         colors: c,
-        radius: radius.base,
+        radiusScale: radius,
         textScale: textScale,
         typography: typography,
         extensions: extensions,
@@ -346,12 +345,14 @@ class NApp extends StatelessWidget {
     final buttonTheme = NButtonTheme(radius: bRadius);
     final inputTheme = NInputTheme(radius: iRadius);
     const cardTheme = NCardTheme();
+    const spacing = NSpacing.standard;
 
     final Map<Object, ThemeExtension<dynamic>> merged = {
       for (final e in base.extensions.values) e.runtimeType: e,
       c.runtimeType: c,
       radius.runtimeType: radius,
       shadows.runtimeType: shadows,
+      spacing.runtimeType: spacing,
       buttonTheme.runtimeType: buttonTheme,
       inputTheme.runtimeType: inputTheme,
       cardTheme.runtimeType: cardTheme,

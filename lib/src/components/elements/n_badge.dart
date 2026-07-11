@@ -118,7 +118,7 @@ class NBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final resolved =
         NVariantResolver.resolve(color, variant, context.nui.colors);
-    final borderRadius = square ? 0.0 : 6.0;
+    final borderRadius = square ? 0.0 : context.nui.radius.sm;
 
     return Container(
       padding: _getPadding(),
@@ -157,7 +157,7 @@ class NBadge extends StatelessWidget {
             if (onRemove != null)
               GestureDetector(
                 onTap: onRemove,
-                child: Icon(Icons.close,
+                child: Icon(NIcons.x,
                     size: _getIconSize(), color: resolved.foreground),
               )
             else
@@ -210,17 +210,18 @@ class NBadge extends StatelessWidget {
   }
 
   EdgeInsetsGeometry _getPadding() {
+    const sp = NSpacing.standard;
     switch (size) {
       case NBadgeSize.xs:
-        return const EdgeInsets.symmetric(horizontal: 6, vertical: 2);
+        return EdgeInsets.symmetric(horizontal: sp.s1_5, vertical: sp.s0_5);
       case NBadgeSize.sm:
-        return const EdgeInsets.symmetric(horizontal: 8, vertical: 3);
+        return EdgeInsets.symmetric(horizontal: sp.s2, vertical: sp.s1);
       case NBadgeSize.md:
-        return const EdgeInsets.symmetric(horizontal: 10, vertical: 4);
+        return EdgeInsets.symmetric(horizontal: sp.s2_5, vertical: sp.s1);
       case NBadgeSize.lg:
-        return const EdgeInsets.symmetric(horizontal: 12, vertical: 5);
+        return EdgeInsets.symmetric(horizontal: sp.s3, vertical: sp.s1);
       case NBadgeSize.xl:
-        return const EdgeInsets.symmetric(horizontal: 14, vertical: 6);
+        return EdgeInsets.symmetric(horizontal: sp.s3_5, vertical: sp.s1_5);
     }
   }
 }

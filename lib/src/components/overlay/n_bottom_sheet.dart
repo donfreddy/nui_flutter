@@ -120,7 +120,7 @@ class NBottomSheet extends StatelessWidget {
           if (title != null || showCloseButton)
             Padding(
               padding: EdgeInsets.symmetric(
-                  horizontal: NSpacing.s4, vertical: NSpacing.s2),
+                  horizontal: context.nui.spacing.s4, vertical: context.nui.spacing.s2),
               child: Row(
                 children: [
                   Expanded(
@@ -165,10 +165,10 @@ class NBottomSheet extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               padding: contentPadding ??
                   EdgeInsets.fromLTRB(
-                    NSpacing.s4,
+                    context.nui.spacing.s4,
                     0,
-                    NSpacing.s4,
-                    NSpacing.s4,
+                    context.nui.spacing.s4,
+                    context.nui.spacing.s4,
                   ),
               child: child!,
             ),
@@ -176,16 +176,16 @@ class NBottomSheet extends StatelessWidget {
           if (footer != null)
             Padding(
               padding: EdgeInsets.fromLTRB(
-                NSpacing.s4,
-                NSpacing.s2,
-                NSpacing.s4,
-                MediaQuery.of(context).padding.bottom + NSpacing.s4,
+                context.nui.spacing.s4,
+                context.nui.spacing.s2,
+                context.nui.spacing.s4,
+                MediaQuery.of(context).padding.bottom + context.nui.spacing.s4,
               ),
               child: footer,
             ),
           if (footer == null)
             SizedBox(
-                height: MediaQuery.of(context).padding.bottom + NSpacing.s2),
+                height: MediaQuery.of(context).padding.bottom + context.nui.spacing.s2),
         ],
       ),
     );

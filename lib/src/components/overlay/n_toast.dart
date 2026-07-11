@@ -194,7 +194,7 @@ class NToast extends StatelessWidget {
                     children: [
                       if (avatar != null) ...[
                         avatar!,
-                        NSpacing.horizontal(NSpacing.s2),
+                        NSpacing.horizontal(NSpacing.standard.s2),
                       ] else if (icon != null ||
                           (showIcon && defaultIcon != null)) ...[
                         Icon(
@@ -202,7 +202,7 @@ class NToast extends StatelessWidget {
                           size: 20,
                           color: resolved.foreground,
                         ),
-                        NSpacing.horizontal(NSpacing.s2),
+                        NSpacing.horizontal(NSpacing.standard.s2),
                       ],
                       Expanded(
                         child: Column(

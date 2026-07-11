@@ -48,6 +48,7 @@ abstract final class NVariantResolver {
   ) {
     final isNeutral = role == NColorRole.neutral;
     final scale = colors.scaleFor(role);
+    final isDark = colors.brightness == Brightness.dark;
 
     switch (variant) {
       case NVariant.outline:
@@ -56,14 +57,20 @@ abstract final class NVariantResolver {
                 foreground: colors.text,
                 border: colors.borderAccented,
               )
-            : NResolvedColors(foreground: scale.s500, border: scale.s300);
+            : NResolvedColors(
+                foreground: isDark ? scale.textDark : scale.s500,
+                border: isDark ? scale.borderDark : scale.borderLight,
+              );
       case NVariant.soft:
         return isNeutral
             ? NResolvedColors(
                 foreground: colors.textHighlighted,
                 background: colors.bgElevated,
               )
-            : NResolvedColors(foreground: scale.s700, background: scale.s100);
+            : NResolvedColors(
+                foreground: isDark ? scale.textDark : scale.textLight,
+                background: isDark ? scale.softBgDark : scale.softBgLight,
+              );
       case NVariant.subtle:
         return isNeutral
             ? NResolvedColors(
@@ -72,17 +79,22 @@ abstract final class NVariantResolver {
                 border: colors.borderAccented,
               )
             : NResolvedColors(
-                foreground: scale.s700,
-                background: scale.s100,
-                border: scale.s300,
+                foreground: isDark ? scale.textDark : scale.textLight,
+                background:
+                    isDark ? scale.softBgDark : scale.softBgLight,
+                border: isDark ? scale.borderDark : scale.borderLight,
               );
       case NVariant.ghost:
         return NResolvedColors(
-          foreground: isNeutral ? colors.text : scale.s500,
+          foreground: isNeutral
+              ? colors.text
+              : (isDark ? scale.textDark : scale.s500),
         );
       case NVariant.link:
         return NResolvedColors(
-          foreground: isNeutral ? colors.textMuted : scale.s500,
+          foreground: isNeutral
+              ? colors.textMuted
+              : (isDark ? scale.textDark : scale.s500),
         );
       case NVariant.solid:
         return isNeutral
@@ -91,8 +103,10 @@ abstract final class NVariantResolver {
                 background: colors.bgInverted,
               )
             : NResolvedColors(
-                foreground: _nOnColor(scale.s500),
-                background: scale.s500,
+                foreground: _nOnColor(
+                    isDark ? scale.solidDark : scale.solidLight),
+                background:
+                    isDark ? scale.solidDark : scale.solidLight,
               );
     }
   }

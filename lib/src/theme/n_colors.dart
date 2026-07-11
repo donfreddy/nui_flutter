@@ -268,10 +268,16 @@ class NColors extends ThemeExtension<NColors> {
   NColors lerp(ThemeExtension<NColors>? other, double t) {
     if (other is! NColors) return this;
     Color c(Color x, Color y) => Color.lerp(x, y, t)!;
+    final lerpedScales = <NColorRole, NColorScale>{};
+    for (final role in roleScales.keys) {
+      final a = roleScales[role]!;
+      final b = other.roleScales[role];
+      lerpedScales[role] = b != null ? NColorScale.lerp(a, b, t) : a;
+    }
     return NColors(
       brightness: t < 0.5 ? brightness : other.brightness,
       neutral: t < 0.5 ? neutral : other.neutral,
-      roleScales: t < 0.5 ? roleScales : other.roleScales,
+      roleScales: lerpedScales,
       primary: c(primary, other.primary),
       secondary: c(secondary, other.secondary),
       success: c(success, other.success),
@@ -294,5 +300,72 @@ class NColors extends ThemeExtension<NColors> {
       borderAccented: c(borderAccented, other.borderAccented),
       borderInverted: c(borderInverted, other.borderInverted),
     );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is NColors &&
+          other.brightness == brightness &&
+          other.neutral == neutral &&
+          _mapEquals(other.roleScales, roleScales) &&
+          other.primary == primary &&
+          other.secondary == secondary &&
+          other.success == success &&
+          other.info == info &&
+          other.warning == warning &&
+          other.error == error &&
+          other.textDimmed == textDimmed &&
+          other.textMuted == textMuted &&
+          other.textToned == textToned &&
+          other.text == text &&
+          other.textHighlighted == textHighlighted &&
+          other.textInverted == textInverted &&
+          other.bg == bg &&
+          other.bgMuted == bgMuted &&
+          other.bgElevated == bgElevated &&
+          other.bgAccented == bgAccented &&
+          other.bgInverted == bgInverted &&
+          other.border == border &&
+          other.borderMuted == borderMuted &&
+          other.borderAccented == borderAccented &&
+          other.borderInverted == borderInverted;
+
+  @override
+  int get hashCode => Object.hash(
+        brightness,
+        neutral,
+        primary,
+        secondary,
+        success,
+        info,
+        warning,
+        error,
+        Object.hashAll([
+          textDimmed,
+          textMuted,
+          textToned,
+          text,
+          textHighlighted,
+          textInverted,
+          bg,
+          bgMuted,
+          bgElevated,
+          bgAccented,
+          bgInverted,
+          border,
+          borderMuted,
+          borderAccented,
+          borderInverted,
+        ]),
+        Object.hashAll(roleScales.entries.map((e) => Object.hash(e.key, e.value))),
+      );
+
+  static bool _mapEquals(Map<NColorRole, NColorScale> a, Map<NColorRole, NColorScale> b) {
+    if (a.length != b.length) return false;
+    for (final key in a.keys) {
+      if (!b.containsKey(key) || a[key] != b[key]) return false;
+    }
+    return true;
   }
 }

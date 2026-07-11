@@ -1,7 +1,6 @@
 import 'package:nui_flutter/nui_flutter.dart';
 import 'package:flutter/material.dart';
 import 'n_color_mapping.dart';
-import 'components/n_card_theme.dart';
 
 /// Factory class for building a [ThemeData] from an [NColors].
 ///
@@ -36,6 +35,7 @@ abstract class NTheme {
     final Map<Object, ThemeExtension<dynamic>> extMap = {
       resolvedColors.runtimeType: resolvedColors,
       nRadius.runtimeType: nRadius,
+      NSpacing.standard.runtimeType: NSpacing.standard,
       NShadows.light().runtimeType: NShadows.light(),
       NButtonTheme(radius: nRadius.md).runtimeType:
           NButtonTheme(radius: nRadius.md),
@@ -77,6 +77,7 @@ abstract class NTheme {
     final Map<Object, ThemeExtension<dynamic>> extMap = {
       resolvedColors.runtimeType: resolvedColors,
       nRadius.runtimeType: nRadius,
+      NSpacing.standard.runtimeType: NSpacing.standard,
       NShadows.dark().runtimeType: NShadows.dark(),
       NButtonTheme(radius: nRadius.md).runtimeType:
           NButtonTheme(radius: nRadius.md),

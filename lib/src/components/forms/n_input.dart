@@ -428,17 +428,18 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
   }
 
   EdgeInsetsGeometry _getContentPadding() {
+    const sp = NSpacing.standard;
     switch (widget.size) {
       case NInputSize.xs:
-        return const EdgeInsets.symmetric(horizontal: 10, vertical: 6);
+        return EdgeInsets.symmetric(horizontal: sp.s2_5, vertical: sp.s1_5);
       case NInputSize.sm:
-        return const EdgeInsets.symmetric(horizontal: 12, vertical: 8);
+        return EdgeInsets.symmetric(horizontal: sp.s3, vertical: sp.s2);
       case NInputSize.md:
-        return const EdgeInsets.symmetric(horizontal: 14, vertical: 10);
+        return EdgeInsets.symmetric(horizontal: sp.s3_5, vertical: sp.s2_5);
       case NInputSize.lg:
-        return const EdgeInsets.symmetric(horizontal: 16, vertical: 12);
+        return EdgeInsets.symmetric(horizontal: sp.s4, vertical: sp.s3);
       case NInputSize.xl:
-        return const EdgeInsets.symmetric(horizontal: 18, vertical: 14);
+        return EdgeInsets.symmetric(horizontal: sp.s4, vertical: sp.s3_5);
     }
   }
 

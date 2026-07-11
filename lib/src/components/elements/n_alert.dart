@@ -89,7 +89,7 @@ class NAlert extends StatelessWidget {
     final defaultIcon = _getDefaultIcon();
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(context.nui.spacing.s4),
       decoration: BoxDecoration(
         color: resolved.background,
         borderRadius: context.nui.radius.radiusMd,
@@ -150,7 +150,7 @@ class NAlert extends StatelessWidget {
             const SizedBox(width: 12),
             GestureDetector(
               onTap: onClose,
-              child: Icon(Icons.close,
+              child: Icon(NIcons.x,
                   size: 18, color: resolved.foreground.withValues(alpha: 0.6)),
             ),
           ],
@@ -162,19 +162,19 @@ class NAlert extends StatelessWidget {
   IconData _getDefaultIcon() {
     switch (color) {
       case NColorRole.info:
-        return Icons.info_outline;
+        return NIcons.info;
       case NColorRole.success:
-        return Icons.check_circle_outline;
+        return NIcons.checkCircle;
       case NColorRole.warning:
-        return Icons.warning_amber_outlined;
+        return NIcons.alertTriangle;
       case NColorRole.error:
-        return Icons.error_outline;
+        return NIcons.xCircle;
       case NColorRole.primary:
-        return Icons.lightbulb_outline;
+        return NIcons.byName('lightbulb');
       case NColorRole.secondary:
-        return Icons.stars_outlined;
+        return NIcons.star;
       case NColorRole.neutral:
-        return Icons.info_outline;
+        return NIcons.info;
     }
   }
 }

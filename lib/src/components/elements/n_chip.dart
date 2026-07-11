@@ -88,7 +88,7 @@ class NChip extends StatelessWidget {
           padding: _getPadding(),
           decoration: BoxDecoration(
             color: resolved.background,
-            borderRadius: BorderRadius.circular(size == NChipSize.sm ? 16 : 20),
+            borderRadius: context.nui.radius.radiusFull,
             border: Border.all(
                 color: resolved.border ?? resolved.foreground, width: 1),
           ),
@@ -125,13 +125,14 @@ class NChip extends StatelessWidget {
   }
 
   EdgeInsetsGeometry _getPadding() {
+    const sp = NSpacing.standard;
     switch (size) {
       case NChipSize.sm:
-        return const EdgeInsets.symmetric(horizontal: 12, vertical: 6);
+        return EdgeInsets.symmetric(horizontal: sp.s3, vertical: sp.s1_5);
       case NChipSize.md:
-        return const EdgeInsets.symmetric(horizontal: 16, vertical: 8);
+        return EdgeInsets.symmetric(horizontal: sp.s4, vertical: sp.s2);
       case NChipSize.lg:
-        return const EdgeInsets.symmetric(horizontal: 20, vertical: 10);
+        return EdgeInsets.symmetric(horizontal: sp.s5, vertical: sp.s2_5);
     }
   }
 

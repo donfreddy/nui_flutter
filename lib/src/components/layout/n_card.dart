@@ -124,11 +124,14 @@ class NCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final defaultBorderRadius = borderRadius ?? BorderRadius.circular(8.0);
+    final cardTheme = Theme.of(context).extension<NCardTheme>();
+    final defaultBorderRadius = borderRadius ??
+        cardTheme?.borderRadius ??
+        context.nui.radius.radiusMd;
     final styles = _getStyles(context);
     final effectivePadding = naked
         ? EdgeInsets.zero
-        : (padding ?? const EdgeInsets.all(16.0));
+        : (padding ?? cardTheme?.padding ?? EdgeInsets.all(context.nui.spacing.s4));
 
     Widget cardContent = Column(
       mainAxisSize: MainAxisSize.min,

@@ -268,7 +268,7 @@ class _NTextareaState extends State<NTextarea> {
                 ),
             ],
           ),
-          NSpacing.vertical(NSpacing.s2 - 2),
+          NSpacing.vertical(NSpacing.standard.s2 - 2),
         ],
         Semantics(
           textField: true,
@@ -354,7 +354,7 @@ class _NTextareaState extends State<NTextarea> {
           ),
         ),
         if (widget.helperText != null || hasError) ...[
-          NSpacing.vertical(NSpacing.s2 - 2),
+          NSpacing.vertical(NSpacing.standard.s2 - 2),
           Text(
             hasError ? widget.errorText! : widget.helperText!,
             style: TextStyle(

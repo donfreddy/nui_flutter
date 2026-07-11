@@ -43,6 +43,7 @@ class NuiThemeData {
     required this.colors,
     required this.radius,
     required this.shadows,
+    required this.spacing,
   });
 
   /// The full semantic color palette for the current brightness.
@@ -53,6 +54,9 @@ class NuiThemeData {
 
   /// The active shadow set for the current brightness.
   final NShadows shadows;
+
+  /// The active spacing scale.
+  final NSpacing spacing;
 
   // ---------------------------------------------------------------------------
   // Look-up
@@ -75,11 +79,13 @@ class NuiThemeData {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final shadows = Theme.of(context).extension<NShadows>() ??
         (isDark ? NShadows.dark() : NShadows.light());
+    final spacing = Theme.of(context).extension<NSpacing>() ?? NSpacing.standard;
 
     return NuiThemeData._(
       colors: colors,
       radius: radius,
       shadows: shadows,
+      spacing: spacing,
     );
   }
 
@@ -91,10 +97,12 @@ class NuiThemeData {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final shadows = Theme.of(context).extension<NShadows>() ??
         (isDark ? NShadows.dark() : NShadows.light());
+    final spacing = Theme.of(context).extension<NSpacing>() ?? NSpacing.standard;
     return NuiThemeData._(
       colors: colors,
       radius: radius,
       shadows: shadows,
+      spacing: spacing,
     );
   }
 }

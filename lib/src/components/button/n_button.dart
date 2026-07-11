@@ -220,7 +220,7 @@ class _NButtonState extends State<NButton> with TickerProviderStateMixin {
           ),
         if ((widget.loading || widget.leading != null) &&
             (widget.label != null || widget.child != null))
-          SizedBox(width: NSpacing.s2),
+          SizedBox(width: context.nui.spacing.s2),
         if (widget.label != null)
           Text(
             widget.label!,
@@ -243,7 +243,7 @@ class _NButtonState extends State<NButton> with TickerProviderStateMixin {
             ),
           ),
         if (widget.trailing != null && !widget.loading) ...[
-          SizedBox(width: NSpacing.s2),
+          SizedBox(width: context.nui.spacing.s2),
           IconTheme(
             data: IconThemeData(color: resolved.foreground, size: iconSize),
             child: widget.trailing!,
@@ -293,17 +293,18 @@ class _NButtonState extends State<NButton> with TickerProviderStateMixin {
   }
 
   EdgeInsetsGeometry _getPadding() {
+    const sp = NSpacing.standard;
     switch (widget.size) {
       case NButtonSize.xs:
-        return const EdgeInsets.symmetric(horizontal: 12, vertical: 8);
+        return EdgeInsets.symmetric(horizontal: sp.s3, vertical: sp.s2);
       case NButtonSize.sm:
-        return const EdgeInsets.symmetric(horizontal: 16, vertical: 10);
+        return EdgeInsets.symmetric(horizontal: sp.s4, vertical: sp.s2_5);
       case NButtonSize.md:
-        return const EdgeInsets.symmetric(horizontal: 20, vertical: 12);
+        return EdgeInsets.symmetric(horizontal: sp.s5, vertical: sp.s3);
       case NButtonSize.lg:
-        return const EdgeInsets.symmetric(horizontal: 24, vertical: 14);
+        return EdgeInsets.symmetric(horizontal: sp.s6, vertical: sp.s3_5);
       case NButtonSize.xl:
-        return const EdgeInsets.symmetric(horizontal: 28, vertical: 16);
+        return EdgeInsets.symmetric(horizontal: sp.s7, vertical: sp.s4);
     }
   }
 

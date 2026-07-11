@@ -109,10 +109,11 @@ class NModal extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context) {
+    final sp = context.nui.spacing;
     return Container(
       decoration: BoxDecoration(
         color: context.nui.colors.bgElevated,
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: context.nui.radius.radiusLg,
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -123,10 +124,10 @@ class NModal extends StatelessWidget {
           if (body != null)
             Padding(
               padding: EdgeInsets.fromLTRB(
-                NSpacing.s4,
+                sp.s4,
                 0,
-                NSpacing.s4,
-                NSpacing.s4,
+                sp.s4,
+                sp.s4,
               ),
               child: DefaultTextStyle(
                 style: TextStyle(color: context.nui.colors.text),
@@ -135,7 +136,7 @@ class NModal extends StatelessWidget {
             ),
           if (footer != null)
             Container(
-              padding: EdgeInsets.all(NSpacing.s4),
+              padding: EdgeInsets.all(sp.s4),
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(color: context.nui.colors.border),
@@ -152,12 +153,13 @@ class NModal extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final sp = context.nui.spacing;
     return Padding(
       padding: EdgeInsets.fromLTRB(
-        NSpacing.s4,
-        NSpacing.s4,
-        NSpacing.s2,
-        NSpacing.s2,
+        sp.s4,
+        sp.s4,
+        sp.s2,
+        sp.s2,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,7 +193,7 @@ class NModal extends StatelessWidget {
           ),
           if (showClose)
             IconButton(
-              icon: Icon(Icons.close,
+              icon: Icon(NIcons.x,
                   size: 20, color: context.nui.colors.textMuted),
               onPressed: onClose ?? () => Navigator.of(context).pop(),
               splashRadius: 20,
@@ -293,10 +295,10 @@ class _NModalActionButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: context.nui.spacing.s5, vertical: context.nui.spacing.s2_5),
         decoration: BoxDecoration(
           color: bgColor,
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: context.nui.radius.radiusMd,
         ),
         child: Text(
           label,
