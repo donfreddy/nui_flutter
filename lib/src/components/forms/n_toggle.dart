@@ -1,4 +1,6 @@
 import 'package:nui_flutter/nui_flutter.dart';
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 /// The size of an [NToggle], controlling its width, height, and thumb diameter.
@@ -33,7 +35,7 @@ enum NToggleSize {
 ///   color: NToggleColor.primary,
 /// )
 /// ```
-class NToggle extends StatelessWidget {
+class NToggle extends StatefulWidget {
   /// The current state of the toggle. `true` means on.
   final bool value;
 
@@ -83,9 +85,47 @@ class NToggle extends StatelessWidget {
   });
 
   @override
+  State<NToggle> createState() => _NToggleState();
+}
+
+class _NToggleState extends State<NToggle> with TickerProviderStateMixin {
+  late final AnimationController _loadingCtrl;
+  late final Animation<double> _loadingRotation;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadingCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+    _loadingRotation =
+        Tween<double>(begin: 0.0, end: 2 * math.pi).animate(_loadingCtrl);
+    if (widget.loading) _loadingCtrl.repeat();
+  }
+
+  @override
+  void dispose() {
+    _loadingCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(NToggle oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.loading != oldWidget.loading) {
+      if (widget.loading) {
+        _loadingCtrl.repeat();
+      } else {
+        _loadingCtrl.stop();
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     Widget toggle = _buildToggle(context);
-    if (label != null) {
+    if (widget.label != null) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -96,15 +136,15 @@ class NToggle extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: GestureDetector(
-                  onTap: (disabled || loading)
+                  onTap: (widget.disabled || widget.loading)
                       ? null
-                      : () => onChanged?.call(!value),
+                      : () => widget.onChanged?.call(!widget.value),
                   child: Text(
-                    label!,
+                    widget.label!,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: disabled
+                      color: widget.disabled
                           ? context.nui.colors.textMuted
                           : context.nui.colors.text,
                     ),
@@ -113,12 +153,12 @@ class NToggle extends StatelessWidget {
               ),
             ],
           ),
-          if (helperText != null) ...[
+          if (widget.helperText != null) ...[
             const SizedBox(height: 6),
             Padding(
               padding: EdgeInsets.only(left: _getWidth() + 12),
               child: Text(
-                helperText!,
+                widget.helperText!,
                 style: TextStyle(
                     fontSize: 12, color: context.nui.colors.textMuted),
               ),
@@ -137,19 +177,21 @@ class NToggle extends StatelessWidget {
     final activeColor = _getActiveColor(context);
 
     Color backgroundColor;
-    if (disabled) {
+    if (widget.disabled) {
       backgroundColor = context.nui.colors.borderMuted;
-    } else if (value) {
+    } else if (widget.value) {
       backgroundColor = activeColor;
     } else {
       backgroundColor = context.nui.colors.border;
     }
 
     return Semantics(
-      toggled: value,
-      enabled: !disabled,
+      toggled: widget.value,
+      enabled: !widget.disabled,
       child: GestureDetector(
-        onTap: (disabled || loading) ? null : () => onChanged?.call(!value),
+        onTap: (widget.disabled || widget.loading)
+            ? null
+            : () => widget.onChanged?.call(!widget.value),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           width: width,
@@ -160,7 +202,7 @@ class NToggle extends StatelessWidget {
           ),
           child: AnimatedAlign(
             duration: const Duration(milliseconds: 200),
-            alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+            alignment: widget.value ? Alignment.centerRight : Alignment.centerLeft,
             child: Container(
               margin: const EdgeInsets.all(2),
               width: thumbSize,
@@ -176,17 +218,20 @@ class NToggle extends StatelessWidget {
                 ],
               ),
               child: Center(
-                child: loading
-                    ? SizedBox(
-                        width: thumbSize * 0.5,
-                        height: thumbSize * 0.5,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 1.5,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(activeColor),
+                child: widget.loading
+                    ? AnimatedBuilder(
+                        animation: _loadingCtrl,
+                        builder: (_, child) => Transform.rotate(
+                          angle: _loadingRotation.value,
+                          child: child,
+                        ),
+                        child: Icon(
+                          NIcons.loader,
+                          size: _getLoadingIconSize(),
+                          color: activeColor,
                         ),
                       )
-                    : (value ? checkedIcon : uncheckedIcon),
+                    : (widget.value ? widget.checkedIcon : widget.uncheckedIcon),
               ),
             ),
           ),
@@ -196,11 +241,26 @@ class NToggle extends StatelessWidget {
   }
 
   Color _getActiveColor(BuildContext context) {
-    return context.nui.colors.role(color);
+    return context.nui.colors.role(widget.color);
+  }
+
+  double _getLoadingIconSize() {
+    switch (widget.size) {
+      case NToggleSize.xs:
+        return 8;
+      case NToggleSize.sm:
+        return 10;
+      case NToggleSize.md:
+        return 12;
+      case NToggleSize.lg:
+        return 14;
+      case NToggleSize.xl:
+        return 16;
+    }
   }
 
   double _getWidth() {
-    switch (size) {
+    switch (widget.size) {
       case NToggleSize.xs:
         return 28;
       case NToggleSize.sm:
@@ -215,7 +275,7 @@ class NToggle extends StatelessWidget {
   }
 
   double _getHeight() {
-    switch (size) {
+    switch (widget.size) {
       case NToggleSize.xs:
         return 16;
       case NToggleSize.sm:
@@ -230,7 +290,7 @@ class NToggle extends StatelessWidget {
   }
 
   double _getThumbSize() {
-    switch (size) {
+    switch (widget.size) {
       case NToggleSize.xs:
         return 12;
       case NToggleSize.sm:
