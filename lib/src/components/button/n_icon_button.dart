@@ -158,11 +158,11 @@ class NIconButton extends StatelessWidget {
       child: button,
     );
 
-    if (tooltip != null) {
-      return Tooltip(message: tooltip!, child: pressButton);
-    }
+    final result = tooltip != null
+        ? Tooltip(message: tooltip!, child: pressButton)
+        : pressButton;
 
-    return pressButton;
+    return Align(child: result);
   }
 
   double _getIconSize() {

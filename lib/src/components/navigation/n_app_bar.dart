@@ -55,6 +55,19 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// Overrides the foreground (text and icon) color. Defaults to [NTokens.textDefault].
   final Color? foregroundColor;
 
+  /// The width allocated for the leading widget.
+  ///
+  /// The leading widget is centered within this area, so with a 40 dp
+  /// [NIconButton] (size [NIconButtonSize.md]) a [leadingWidth] of 56
+  /// yields 8 dp padding on each side.
+  ///
+  /// Set to `null` to use Flutter's default (56 dp).
+  final double? leadingWidth;
+
+  /// Spacing between the leading area and the title. Defaults to Flutter's
+  /// default (16 dp).
+  final double? titleSpacing;
+
   /// Creates an [NAppBar].
   const NAppBar({
     super.key,
@@ -67,6 +80,8 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.elevation = 0,
     this.backgroundColor,
     this.foregroundColor,
+    this.leadingWidth,
+    this.titleSpacing,
   });
 
   /// The preferred height of the app bar (56 dp).
@@ -99,6 +114,8 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
       scrolledUnderElevation: 0,
       centerTitle: false,
       surfaceTintColor: Colors.transparent,
+      leadingWidth: leadingWidth,
+      titleSpacing: titleSpacing,
     );
   }
 }
