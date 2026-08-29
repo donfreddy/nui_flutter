@@ -116,17 +116,14 @@ class NBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final resolved =
-        NVariantResolver.resolve(color, variant, context.nui.colors);
-    final borderRadius = square ? 0.0 : context.nui.radius.sm;
+    final resolved = NVariantResolver.resolve(color, variant, context.nui.colors);
+    final borderRadius = square ? 0.0 : context.nui.radius.full;
 
     return Container(
       padding: _getPadding(),
       decoration: BoxDecoration(
         color: resolved.background,
-        border: variant == NVariant.outline
-            ? Border.all(color: resolved.border!, width: 1)
-            : null,
+        border: variant == NVariant.outline ? Border.all(color: resolved.border!, width: 1) : null,
         borderRadius: BorderRadius.circular(borderRadius),
       ),
       child: Row(
@@ -139,8 +136,7 @@ class NBadge extends StatelessWidget {
           if (dot) _buildDot(context, resolved.foreground),
           if (dot) const SizedBox(width: 4),
           if (leading != null) ...[
-            SizedBox(
-                width: _getIconSize(), height: _getIconSize(), child: leading),
+            SizedBox(width: _getIconSize(), height: _getIconSize(), child: leading),
             const SizedBox(width: 4),
           ],
           Text(
@@ -157,14 +153,10 @@ class NBadge extends StatelessWidget {
             if (onRemove != null)
               GestureDetector(
                 onTap: onRemove,
-                child: Icon(NIcons.x,
-                    size: _getIconSize(), color: resolved.foreground),
+                child: Icon(NIcons.x, size: _getIconSize(), color: resolved.foreground),
               )
             else
-              SizedBox(
-                  width: _getIconSize(),
-                  height: _getIconSize(),
-                  child: trailing),
+              SizedBox(width: _getIconSize(), height: _getIconSize(), child: trailing),
           ],
         ],
       ),

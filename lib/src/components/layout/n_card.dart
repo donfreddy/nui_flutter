@@ -73,7 +73,8 @@ class NCard extends StatelessWidget {
     this.footer,
     this.color,
     this.borderRadius,
-  }) : variant = NVariant.solid, naked = false;
+  })  : variant = NVariant.solid,
+        naked = false;
 
   /// Creates a soft-variant card with an elevated background and no border.
   const NCard.soft({
@@ -85,7 +86,8 @@ class NCard extends StatelessWidget {
     this.footer,
     this.color,
     this.borderRadius,
-  }) : variant = NVariant.soft, naked = false;
+  })  : variant = NVariant.soft,
+        naked = false;
 
   /// Creates a subtle-variant card with an elevated background and a border.
   const NCard.subtle({
@@ -97,7 +99,8 @@ class NCard extends StatelessWidget {
     this.footer,
     this.color,
     this.borderRadius,
-  }) : variant = NVariant.subtle, naked = false;
+  })  : variant = NVariant.subtle,
+        naked = false;
 
   /// Creates a ghost-variant card with a transparent background and no border.
   const NCard.ghost({
@@ -109,7 +112,8 @@ class NCard extends StatelessWidget {
     this.footer,
     this.color,
     this.borderRadius,
-  }) : variant = NVariant.ghost, naked = false;
+  })  : variant = NVariant.ghost,
+        naked = false;
 
   /// Creates a card with no background, no padding, no border, and no dividers.
   const NCard.naked({
@@ -120,18 +124,23 @@ class NCard extends StatelessWidget {
     this.footer,
     this.color,
     this.borderRadius,
-  }) : variant = NVariant.ghost, naked = true, padding = EdgeInsets.zero;
+  })  : variant = NVariant.ghost,
+        naked = true,
+        padding = EdgeInsets.zero;
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.nui.colors;
     final cardTheme = Theme.of(context).extension<NCardTheme>();
-    final defaultBorderRadius = borderRadius ??
-        cardTheme?.borderRadius ??
-        context.nui.radius.radiusMd;
+    final defaultBorderRadius = borderRadius ?? cardTheme?.borderRadius ?? context.nui.radius.radiusLg;
     final styles = _getStyles(context);
-    final effectivePadding = naked
-        ? EdgeInsets.zero
-        : (padding ?? cardTheme?.padding ?? EdgeInsets.all(context.nui.spacing.s4));
+    final effectivePadding =
+        naked ? EdgeInsets.zero : (padding ?? cardTheme?.padding ?? EdgeInsets.all(context.nui.spacing.s4));
+
+    final shape = RoundedRectangleBorder(
+      borderRadius: defaultBorderRadius,
+      side: colors.border != Colors.transparent ? BorderSide(color: colors.border) : BorderSide.none,
+    );
 
     Widget cardContent = Column(
       mainAxisSize: MainAxisSize.min,
@@ -168,23 +177,37 @@ class NCard extends StatelessWidget {
       ],
     );
 
-    final container = Container(
-      decoration: BoxDecoration(
-        color: styles.backgroundColor,
-        borderRadius: defaultBorderRadius,
-        border: styles.border,
-      ),
-      child: cardContent,
-    );
+    // final container = Container(
+    //   decoration: BoxDecoration(
+    //     color: styles.backgroundColor,
+    //     borderRadius: defaultBorderRadius,
+    //     border: styles.border,
+    //   ),
+    //   child: cardContent,
+    // );
 
     if (onTap != null) {
       return Material(
-        color: Colors.transparent,
-        child: InkWell(onTap: onTap, borderRadius: defaultBorderRadius, child: container),
+        color: styles.backgroundColor,
+        clipBehavior: Clip.antiAlias,
+        shape: shape,
+        child: InkWell(
+          onTap: onTap,
+          customBorder: shape,
+          splashColor: colors.primary.withValues(alpha: 0.02),
+          highlightColor: colors.primary.withValues(alpha: 0.01),
+          //borderRadius: defaultBorderRadius,
+          child: cardContent,
+        ),
       );
     }
 
-    return container;
+    return Material(
+      color: styles.backgroundColor,
+      clipBehavior: Clip.antiAlias,
+      shape: shape,
+      child: cardContent,
+    );
   }
 
   Widget _buildDivider(BuildContext context) {
@@ -196,14 +219,9 @@ class NCard extends StatelessWidget {
         ? NVariantResolver.resolve(color!, variant, context.nui.colors)
         : _surfaceResolved(context.nui.colors, variant);
     return _NCardStyles(
-      backgroundColor:
-          naked ? Colors.transparent : (resolved.background ?? Colors.transparent),
+      backgroundColor: naked ? Colors.transparent : (resolved.background ?? Colors.transparent),
       textColor: resolved.foreground,
-      border: naked
-          ? null
-          : (resolved.border != null
-              ? Border.all(color: resolved.border!, width: 1)
-              : null),
+      border: naked ? null : (resolved.border != null ? BorderSide(color: resolved.border!, width: 1) : null),
       showDivider: !naked,
     );
   }
@@ -243,7 +261,7 @@ class NCard extends StatelessWidget {
 class _NCardStyles {
   final Color backgroundColor;
   final Color textColor;
-  final Border? border;
+  final BorderSide? border;
   final bool showDivider;
   _NCardStyles({
     required this.backgroundColor,

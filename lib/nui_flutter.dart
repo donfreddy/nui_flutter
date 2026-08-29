@@ -167,8 +167,8 @@ export 'src/components/data/n_error.dart';
 // Components: Overlay
 // ---------------------------------------------------------------------------
 export 'src/components/overlay/n_bottom_sheet.dart';
+export 'src/components/overlay/n_dialog.dart';
 export 'src/components/overlay/n_dropdown_menu.dart';
-export 'src/components/overlay/n_modal.dart';
 export 'src/components/overlay/n_toast.dart';
 
 // ---------------------------------------------------------------------------

@@ -42,8 +42,14 @@ class NBottomSheet extends StatelessWidget {
   /// The semantic color role for the sheet. Defaults to [NColorRole.neutral].
   final NColorRole color;
 
+  /// Whether the body content is scrollable
+  final bool scrollable;
+
   /// Custom padding for the body content
   final EdgeInsetsGeometry? contentPadding;
+
+  /// Maximum height ratio of the screen (default 0.92)
+  final double? maxHeightRatio;
 
   /// Creates an [NBottomSheet].
   ///
@@ -55,9 +61,11 @@ class NBottomSheet extends StatelessWidget {
     this.child,
     this.footer,
     this.showHandle = true,
-    this.showCloseButton = true,
+    this.showCloseButton = false,
+    this.scrollable = true,
     this.color = NColorRole.neutral,
     this.contentPadding,
+    this.maxHeightRatio,
   });
 
   /// Displays an [NBottomSheet] modally using [showModalBottomSheet].
@@ -75,8 +83,10 @@ class NBottomSheet extends StatelessWidget {
     Widget? footer,
     bool showHandle = true,
     bool showCloseButton = true,
+    bool scrollable = true,
     NColorRole color = NColorRole.neutral,
     EdgeInsetsGeometry? contentPadding,
+    double? maxHeightRatio,
   }) {
     return showModalBottomSheet<T>(
       context: context,
@@ -88,8 +98,10 @@ class NBottomSheet extends StatelessWidget {
         footer: footer,
         showHandle: showHandle,
         showCloseButton: showCloseButton,
+        scrollable: scrollable,
         color: color,
         contentPadding: contentPadding,
+        maxHeightRatio: maxHeightRatio,
         child: child,
       ),
     );
@@ -97,7 +109,21 @@ class NBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = context.nui.colors;
+    //final maxHeight = MediaQuery.of(context).size.height * (maxHeightRatio ?? 0.92);
+    final hasHeader = title != null || showCloseButton;
+    final bottomPad = MediaQuery.of(context).viewInsets.bottom;
+    final bodyPadding = contentPadding ??
+        EdgeInsets.fromLTRB(
+          context.nui.spacing.s4,
+          0,
+          context.nui.spacing.s4,
+          bottomPad > 0 ? bottomPad : context.nui.spacing.s4,
+        );
+
     return Container(
+      //constraints: BoxConstraints(maxHeight: maxHeight),
       decoration: BoxDecoration(
         color: context.nui.colors.bgElevated,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
@@ -112,15 +138,16 @@ class NBottomSheet extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: context.nui.colors.border,
+                  color: colors.brightness == Brightness.dark
+                      ? context.nui.colors.neutral.scale.s700
+                      : context.nui.colors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
-          if (title != null || showCloseButton)
+          if (hasHeader)
             Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: context.nui.spacing.s4, vertical: context.nui.spacing.s2),
+              padding: EdgeInsets.symmetric(horizontal: context.nui.spacing.s4, vertical: context.nui.spacing.s2),
               child: Row(
                 children: [
                   Expanded(
@@ -131,8 +158,7 @@ class NBottomSheet extends StatelessWidget {
                         if (title != null)
                           Text(
                             title!,
-                            style: TextStyle(
-                              fontSize: 18,
+                            style: theme.textTheme.titleLarge!.copyWith(
                               fontWeight: FontWeight.w600,
                               color: context.nui.colors.text,
                             ),
@@ -141,7 +167,7 @@ class NBottomSheet extends StatelessWidget {
                           const SizedBox(height: 4),
                           Text(
                             subtitle!,
-                            style: TextStyle(
+                            style: theme.textTheme.bodySmall!.copyWith(
                               fontSize: 13,
                               color: context.nui.colors.textMuted,
                             ),
@@ -160,19 +186,17 @@ class NBottomSheet extends StatelessWidget {
                 ],
               ),
             ),
-          Flexible(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: contentPadding ??
-                  EdgeInsets.fromLTRB(
-                    context.nui.spacing.s4,
-                    0,
-                    context.nui.spacing.s4,
-                    context.nui.spacing.s4,
-                  ),
-              child: child!,
-            ),
-          ),
+          if (child != null)
+            if (scrollable)
+              Flexible(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  padding: bodyPadding,
+                  child: child,
+                ),
+              )
+            else
+              Padding(padding: bodyPadding, child: child),
           if (footer != null)
             Padding(
               padding: EdgeInsets.fromLTRB(
@@ -183,9 +207,7 @@ class NBottomSheet extends StatelessWidget {
               ),
               child: footer,
             ),
-          if (footer == null)
-            SizedBox(
-                height: MediaQuery.of(context).padding.bottom + context.nui.spacing.s2),
+          if (footer == null) SizedBox(height: MediaQuery.of(context).padding.bottom + context.nui.spacing.s2),
         ],
       ),
     );
@@ -273,17 +295,13 @@ class NBottomSheetActionList extends StatelessWidget {
           leading: action.icon != null
               ? Icon(
                   action.icon,
-                  color: action.isDestructive
-                      ? context.nui.colors.error
-                      : context.nui.colors.text,
+                  color: action.isDestructive ? context.nui.colors.error : context.nui.colors.text,
                 )
               : null,
           title: Text(
             action.label,
             style: TextStyle(
-              color: action.isDestructive
-                  ? context.nui.colors.error
-                  : context.nui.colors.text,
+              color: action.isDestructive ? context.nui.colors.error : context.nui.colors.text,
               fontWeight: FontWeight.w500,
             ),
           ),

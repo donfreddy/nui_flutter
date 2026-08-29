@@ -141,6 +141,9 @@ class NInput extends StatefulWidget {
   /// The action button on the keyboard. Passed to [TextField.textInputAction].
   final TextInputAction? textInputAction;
 
+  /// Configures how the platform keyboard will select an uppercase or lowercase keyboard.
+  final TextCapitalization? textCapitalization;
+
   /// Maximum number of visible lines. Defaults to 1. Set to `null` for unlimited.
   final int? maxLines;
 
@@ -204,6 +207,7 @@ class NInput extends StatefulWidget {
     this.highlight = false,
     this.keyboardType,
     this.textInputAction,
+    this.textCapitalization,
     this.maxLines = 1,
     this.minLines,
     this.maxLength,
@@ -249,6 +253,7 @@ class NInput extends StatefulWidget {
     this.showCharacterCount = false,
     this.highlight = false,
     this.textInputAction,
+     this.textCapitalization,
     this.maxLines = 1,
     this.minLines,
     this.maxLength,
@@ -293,6 +298,8 @@ class NInput extends StatefulWidget {
     this.showCharacterCount = false,
     this.highlight = false,
     this.textInputAction,
+     this.textCapitalization,
+
     this.maxLines = 1,
     this.minLines,
     this.maxLength,
@@ -337,6 +344,7 @@ class NInput extends StatefulWidget {
     this.showCharacterCount = false,
     this.highlight = false,
     this.textInputAction = TextInputAction.done,
+    this.textCapitalization,
     this.maxLines = 1,
     this.minLines,
     this.maxLength,
@@ -554,10 +562,9 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
             children: [
               Text(
                 widget.label!,
-                style: TextStyle(
-                    fontSize: 14,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
                     fontWeight: FontWeight.w500,
-                    color: context.nui.colors.text),
+                    color: context.nui.colors.textMuted),
               ),
               if (widget.required)
                 Text(' *',
@@ -577,6 +584,7 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
             obscureText: _obscureText,
             keyboardType: widget.keyboardType,
             textInputAction: widget.textInputAction,
+            textCapitalization: widget.textCapitalization ?? TextCapitalization.none,
             maxLines: widget.obscureText ? 1 : widget.maxLines,
             minLines: widget.minLines,
             maxLength: widget.maxLength,
@@ -596,7 +604,7 @@ class _NInputState extends State<NInput> with SingleTickerProviderStateMixin {
             decoration: InputDecoration(
               hintText: widget.placeholder,
               hintStyle: TextStyle(
-                  fontSize: fontSize, color: context.nui.colors.textMuted),
+                  fontSize: fontSize, color: context.nui.colors.textDimmed),
               prefixIcon: leadingWidget != null
                   ? Padding(
                       padding: const EdgeInsets.only(left: 12, right: 8),
