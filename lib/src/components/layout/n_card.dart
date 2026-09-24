@@ -3,14 +3,17 @@ import 'package:flutter/material.dart';
 
 /// A flexible card container with optional header, body, and footer slots.
 ///
-/// Visual style is controlled by [variant] and the optional [color] role.
-/// When [color] is provided the card uses semantic tinted backgrounds and
-/// borders from [NTokens]; otherwise neutral surface colors are used.
-/// Set [naked] to `true` to remove padding, background, borders, and dividers.
+/// Mirrors Nuxt UI's `UCard`: pass [title] and/or [description] for the
+/// common case, or a fully custom [header] widget when you need a leading
+/// icon, avatar, or trailing action. Visual style is controlled by [variant]
+/// ([NVariant.outline] by default) and the optional [color] role; when
+/// [color] is `null`, neutral surface colors are used. Set [naked] to `true`
+/// to remove padding, background, borders, and dividers entirely.
 ///
 /// ```dart
 /// NCard(
-///   header: NCardHeader(title: 'Balance', subtitle: 'Available funds'),
+///   title: 'Balance',
+///   description: 'Available funds',
 ///   child: Text('5 000 FCFA'),
 ///   footer: NCardFooter(actions: [NButton(label: 'Send', onPressed: () {})]),
 /// )
@@ -27,15 +30,25 @@ class NCard extends StatelessWidget {
   /// Called when the card is tapped. Wraps the card in an [InkWell] when set.
   final VoidCallback? onTap;
 
-  /// An optional widget rendered at the top of the card, separated by a divider
-  /// (depending on [variant]).
+  /// Shorthand title rendered in the header when [header] is not provided.
+  final String? title;
+
+  /// Shorthand description rendered below [title] when [header] is not provided.
+  final String? description;
+
+  /// An optional widget rendered at the top of the card, separated by a divider.
+  ///
+  /// Takes precedence over [title] / [description] when provided.
   final Widget? header;
 
   /// An optional widget rendered at the bottom of the card, separated by a
-  /// divider (depending on [variant]).
+  /// divider.
   final Widget? footer;
 
   /// The visual style of the card. Defaults to [NVariant.outline].
+  ///
+  /// Supports [NVariant.outline], [NVariant.solid], [NVariant.soft], and
+  /// [NVariant.subtle] (see [NVariantSupport.card]).
   final NVariant variant;
 
   /// An optional semantic color role that applies tinted backgrounds and borders.
@@ -55,13 +68,18 @@ class NCard extends StatelessWidget {
     this.child,
     this.padding,
     this.onTap,
+    this.title,
+    this.description,
     this.header,
     this.footer,
     this.variant = NVariant.outline,
     this.color,
     this.borderRadius,
     this.naked = false,
-  });
+  }) : assert(
+          variant != NVariant.ghost && variant != NVariant.link,
+          'NCard supports outline, solid, soft, and subtle only.',
+        );
 
   /// Creates a solid-variant card with an inverted background.
   const NCard.solid({
@@ -69,6 +87,8 @@ class NCard extends StatelessWidget {
     this.child,
     this.padding,
     this.onTap,
+    this.title,
+    this.description,
     this.header,
     this.footer,
     this.color,
@@ -82,6 +102,8 @@ class NCard extends StatelessWidget {
     this.child,
     this.padding,
     this.onTap,
+    this.title,
+    this.description,
     this.header,
     this.footer,
     this.color,
@@ -95,6 +117,8 @@ class NCard extends StatelessWidget {
     this.child,
     this.padding,
     this.onTap,
+    this.title,
+    this.description,
     this.header,
     this.footer,
     this.color,
@@ -102,29 +126,18 @@ class NCard extends StatelessWidget {
   })  : variant = NVariant.subtle,
         naked = false;
 
-  /// Creates a ghost-variant card with a transparent background and no border.
-  const NCard.ghost({
-    super.key,
-    this.child,
-    this.padding,
-    this.onTap,
-    this.header,
-    this.footer,
-    this.color,
-    this.borderRadius,
-  })  : variant = NVariant.ghost,
-        naked = false;
-
   /// Creates a card with no background, no padding, no border, and no dividers.
   const NCard.naked({
     super.key,
     this.child,
     this.onTap,
+    this.title,
+    this.description,
     this.header,
     this.footer,
     this.color,
     this.borderRadius,
-  })  : variant = NVariant.ghost,
+  })  : variant = NVariant.outline,
         naked = true,
         padding = EdgeInsets.zero;
 
@@ -139,52 +152,28 @@ class NCard extends StatelessWidget {
 
     final shape = RoundedRectangleBorder(
       borderRadius: defaultBorderRadius,
-      side: colors.border != Colors.transparent ? BorderSide(color: colors.border) : BorderSide.none,
+      side: styles.border ?? BorderSide.none,
     );
+
+    final effectiveHeader = header ?? _buildTitleDescription(context);
+    final sections = [effectiveHeader, child, footer].whereType<Widget>().toList();
 
     Widget cardContent = Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (header != null) ...[
+        for (var i = 0; i < sections.length; i++) ...[
+          if (i > 0 && styles.showDivider) _buildDivider(context),
           Padding(
             padding: effectivePadding,
             child: DefaultTextStyle(
               style: TextStyle(color: styles.textColor),
-              child: IconTheme(data: IconThemeData(color: styles.textColor), child: header!),
-            ),
-          ),
-          if (styles.showDivider) _buildDivider(context),
-        ],
-        if (child != null)
-          Padding(
-            padding: effectivePadding,
-            child: DefaultTextStyle(
-              style: TextStyle(color: styles.textColor),
-              child: IconTheme(data: IconThemeData(color: styles.textColor), child: child!),
-            ),
-          ),
-        if (footer != null) ...[
-          if (styles.showDivider) _buildDivider(context),
-          Padding(
-            padding: effectivePadding,
-            child: DefaultTextStyle(
-              style: TextStyle(color: styles.textColor),
-              child: IconTheme(data: IconThemeData(color: styles.textColor), child: footer!),
+              child: IconTheme(data: IconThemeData(color: styles.textColor), child: sections[i]),
             ),
           ),
         ],
       ],
     );
-
-    // final container = Container(
-    //   decoration: BoxDecoration(
-    //     color: styles.backgroundColor,
-    //     borderRadius: defaultBorderRadius,
-    //     border: styles.border,
-    //   ),
-    //   child: cardContent,
-    // );
 
     if (onTap != null) {
       return Material(
@@ -196,7 +185,6 @@ class NCard extends StatelessWidget {
           customBorder: shape,
           splashColor: colors.primary.withValues(alpha: 0.02),
           highlightColor: colors.primary.withValues(alpha: 0.01),
-          //borderRadius: defaultBorderRadius,
           child: cardContent,
         ),
       );
@@ -210,19 +198,42 @@ class NCard extends StatelessWidget {
     );
   }
 
+  /// Builds a shorthand header from [title] / [description] when no custom
+  /// [header] widget was provided.
+  Widget? _buildTitleDescription(BuildContext context) {
+    if (title == null && description == null) return null;
+    final textTheme = Theme.of(context).textTheme;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (title != null) Text(title!, style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+        if (description != null) ...[
+          if (title != null) SizedBox(height: context.nui.spacing.s1),
+          Text(description!, style: textTheme.bodySmall?.copyWith(color: context.nui.colors.textMuted)),
+        ],
+      ],
+    );
+  }
+
   Widget _buildDivider(BuildContext context) {
     return Divider(height: 1, thickness: 1, color: context.nui.colors.border);
   }
 
   _NCardStyles _getStyles(BuildContext context) {
-    final resolved = color != null
-        ? NVariantResolver.resolve(color!, variant, context.nui.colors)
-        : _surfaceResolved(context.nui.colors, variant);
+    final colors = context.nui.colors;
+    final resolved = color != null ? NVariantResolver.resolve(color!, variant, colors) : _surfaceResolved(colors, variant);
+    // NVariantResolver leaves `outline` transparent (right for buttons/badges
+    // sitting on an existing surface), but a card is the surface itself, so
+    // it always needs an opaque fill, tinted or not.
+    final background = variant == NVariant.outline ? (resolved.background ?? colors.bg) : resolved.background;
     return _NCardStyles(
-      backgroundColor: naked ? Colors.transparent : (resolved.background ?? Colors.transparent),
+      backgroundColor: naked ? Colors.transparent : (background ?? Colors.transparent),
       textColor: resolved.foreground,
       border: naked ? null : (resolved.border != null ? BorderSide(color: resolved.border!, width: 1) : null),
-      showDivider: !naked,
+      // Nuxt UI's `solid` variant has no `divide-y` between sections; only
+      // outline/soft/subtle separate header/body/footer with a divider.
+      showDivider: !naked && variant != NVariant.solid,
     );
   }
 

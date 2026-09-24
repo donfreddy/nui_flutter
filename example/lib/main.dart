@@ -308,8 +308,8 @@ class _CardsDemo extends StatelessWidget {
     return Column(
       children: [
         NCard(
-          header:
-              NCardHeader(title: 'Default Card', subtitle: 'Outline variant'),
+          title: 'Default Card',
+          description: 'Outline variant',
           child: Text('This is the default card with header and body.'),
         ),
         SizedBox(height: 12),
@@ -326,12 +326,8 @@ class _CardsDemo extends StatelessWidget {
           child: Text('Everything looks good!'),
         ),
         SizedBox(height: 12),
-        NCard.ghost(
-          child: Text('Ghost card — no background, no border'),
-        ),
-        SizedBox(height: 12),
         NCard.naked(
-          child: Text('Naked card — no padding, no background'),
+          child: Text('Naked card, no padding, no background'),
         ),
       ],
     );
