@@ -41,6 +41,7 @@ class _NuiFlutterExampleAppState extends State<NuiFlutterExampleApp> {
       theme: NTheme.lightTheme(colors: palette),
       darkTheme: NTheme.darkTheme(colors: palette),
       themeMode: _dark ? ThemeMode.dark : ThemeMode.light,
+      builder: (context, child) => NToaster(child: child!),
       home: _HomePage(onToggleTheme: () => setState(() => _dark = !_dark)),
     );
   }
@@ -509,7 +510,20 @@ class _ToastsDemo extends StatelessWidget {
                 dragToClose: true,
                 pauseOnTouch: true,
               );
-            })
+            }),
+        NButton.outline(
+          label: 'Show 4 at once (stacking)',
+          onPressed: () {
+            for (final t in [
+              ('Order placed', NColorRole.success),
+              ('Syncing...', NColorRole.info),
+              ('Low battery', NColorRole.warning),
+              ('Upload failed', NColorRole.error),
+            ]) {
+              NToast.show(context, title: t.$1, color: t.$2);
+            }
+          },
+        ),
       ],
     );
   }

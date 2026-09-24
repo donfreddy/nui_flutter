@@ -106,13 +106,24 @@ class NToast extends StatelessWidget {
     this.onTap,
   });
 
-  /// Shows a toast overlay at the bottom of the screen.
+  /// Shows a toast.
+  ///
+  /// When an [NToaster] ancestor is found, the toast is added to its
+  /// managed stack (proper offsetting when several toasts are visible at
+  /// once, a [NToaster.max] cap, and optional expand-on-hover). Without one,
+  /// it falls back to a standalone screen-anchored overlay exactly as
+  /// before: simplest for a single toast at a time, but concurrent toasts
+  /// will visually overlap since nothing coordinates their position. Wrap
+  /// your app root in [NToaster] to get stacking.
   ///
   /// The toast automatically dismisses after [duration] (defaults to 5
   /// seconds, matching Nuxt UI). Pass [duration] as Duration.zero to make it
   /// persistent until manually dismissed. Set [pauseOnTouch] to true to pause
   /// auto-dismiss and progress while the user is touching the toast.
-  static void show(
+  ///
+  /// Returns an id that can be passed to [NToaster.dismiss] (managed case
+  /// only; a no-op id otherwise).
+  static Object show(
     BuildContext context, {
     String? title,
     String? description,
@@ -130,8 +141,30 @@ class NToast extends StatelessWidget {
     Duration duration = const Duration(seconds: 5),
     VoidCallback? onTap,
   }) {
+    final toaster = NToaster.maybeOf(context);
+    if (toaster != null) {
+      return toaster.show(
+        title: title,
+        description: description,
+        icon: icon,
+        avatar: avatar,
+        actions: actions,
+        color: color,
+        position: position,
+        orientation: orientation,
+        closable: closable,
+        showIcon: showIcon,
+        dragToClose: dragToClose,
+        pauseOnTouch: pauseOnTouch,
+        progress: progress,
+        duration: duration,
+        onTap: onTap,
+      );
+    }
+
     final overlay = Overlay.of(context);
     late OverlayEntry entry;
+    final id = UniqueKey();
 
     entry = OverlayEntry(
       builder: (ctx) => _NToastOverlay(
@@ -159,6 +192,7 @@ class NToast extends StatelessWidget {
     );
 
     overlay.insert(entry);
+    return id;
   }
 
   @override
@@ -348,6 +382,300 @@ class NToast extends StatelessWidget {
   }
 }
 
+/// Manages and stacks multiple [NToast]s shown via [NToast.show], mirroring
+/// Nuxt UI's toaster / shadcn_ui's `ShadSonner`.
+///
+/// Wrap your app root in [NToaster] so concurrent toasts are offset instead
+/// of drawing on top of each other (the failure mode of [NToast.show]
+/// without one). At most [max] toasts are shown at once; adding one beyond
+/// that gracefully dismisses the oldest.
+///
+/// ```dart
+/// MaterialApp(
+///   builder: (context, child) => NToaster(child: child!),
+///   home: const HomePage(),
+/// )
+/// ```
+///
+/// By default, extra toasts behind the front one only peek out slightly
+/// (scaled down, offset a few pixels) and are not interactive: dismissing
+/// the front toast reveals the next one. On desktop/web, hovering the stack
+/// expands it into a full list; set [expand] to `true` to always show it
+/// expanded (no peek/collapse at all, no hover needed).
+class NToaster extends StatefulWidget {
+  /// The widget below the toaster in the tree, over which toasts are shown.
+  final Widget child;
+
+  /// The default corner for toasts that don't specify their own [NToast.show]
+  /// `position`. Defaults to [NToastPosition.bottom].
+  final NToastPosition position;
+
+  /// The maximum number of toasts visible at once. Defaults to `3`.
+  ///
+  /// Showing one more evicts (gracefully dismisses) the oldest.
+  final int max;
+
+  /// When `true`, always lays the stack out as a full vertical list instead
+  /// of a collapsed peek. Defaults to `false`.
+  final bool expand;
+
+  /// The gap between toasts when [expand] (or hover-expanded).
+  final double gap;
+
+  const NToaster({
+    super.key,
+    required this.child,
+    this.position = NToastPosition.bottom,
+    this.max = 3,
+    this.expand = false,
+    this.gap = 8,
+  });
+
+  /// Retrieves the nearest [NToasterState], or throws if none is found.
+  static NToasterState of(BuildContext context) {
+    final state = maybeOf(context);
+    assert(state != null, 'No NToaster found in the widget tree above this context.');
+    return state!;
+  }
+
+  /// Retrieves the nearest [NToasterState], or `null` if none is found.
+  static NToasterState? maybeOf(BuildContext context) {
+    return context.findAncestorStateOfType<NToasterState>();
+  }
+
+  @override
+  State<NToaster> createState() => NToasterState();
+}
+
+class _ManagedToast {
+  _ManagedToast({
+    required this.id,
+    required this.position,
+    required this.key,
+    required this.builder,
+  });
+
+  final Object id;
+  final NToastPosition position;
+  final GlobalKey<_NToastOverlayState> key;
+  final Widget Function(VoidCallback onClose) builder;
+
+  /// Measured render height, updated by [_MeasureSize] once laid out.
+  /// Used for the expanded (non-collapsed) stack layout.
+  double height = 0;
+}
+
+class NToasterState extends State<NToaster> {
+  final List<_ManagedToast> _toasts = [];
+  bool _hoverExpanded = false;
+
+  /// Shows a managed toast. Mirrors [NToast.show]'s parameters exactly.
+  Object show({
+    String? title,
+    String? description,
+    IconData? icon,
+    Widget? avatar,
+    List<Widget>? actions,
+    NColorRole color = NColorRole.primary,
+    NToastPosition? position,
+    NToastOrientation orientation = NToastOrientation.vertical,
+    bool closable = true,
+    bool showIcon = true,
+    bool dragToClose = false,
+    bool pauseOnTouch = true,
+    bool progress = true,
+    Duration duration = const Duration(seconds: 5),
+    VoidCallback? onTap,
+  }) {
+    final id = UniqueKey();
+    final effectivePosition = position ?? widget.position;
+    final key = GlobalKey<_NToastOverlayState>();
+
+    final entry = _ManagedToast(
+      id: id,
+      position: effectivePosition,
+      key: key,
+      builder: (onClose) => _NToastOverlay(
+        key: key,
+        title: title,
+        description: description,
+        icon: icon,
+        avatar: avatar,
+        actions: actions,
+        color: color,
+        position: effectivePosition,
+        orientation: orientation,
+        closable: closable,
+        dragToClose: dragToClose,
+        pauseOnTouch: pauseOnTouch,
+        showIcon: showIcon,
+        progress: progress,
+        duration: duration,
+        onTap: onTap,
+        onClose: onClose,
+        managed: true,
+      ),
+    );
+
+    setState(() {
+      _toasts.add(entry);
+      // Evict oldest-first until back under the cap; each eviction plays
+      // its own exit animation rather than vanishing abruptly.
+      final overflow = _toasts.length - widget.max;
+      for (var i = 0; i < overflow; i++) {
+        _toasts[i].key.currentState?._dismiss();
+      }
+    });
+
+    return id;
+  }
+
+  /// Gracefully dismisses the managed toast with the given [id] (as
+  /// returned by [show] / [NToast.show]). No-op if not found.
+  void dismiss(Object id) {
+    for (final toast in _toasts) {
+      if (toast.id == id) {
+        toast.key.currentState?._dismiss();
+        return;
+      }
+    }
+  }
+
+  void _remove(Object id) {
+    if (!mounted) return;
+    setState(() => _toasts.removeWhere((t) => t.id == id));
+  }
+
+  /// Bottom/top position (distance from the container's leading edge, i.e.
+  /// the front/newest toast is index `n - 1`) for a collapsed peek stack.
+  List<double> _collapsedOffsets(int n) =>
+      [for (var i = 0; i < n; i++) (n - 1 - i) * 10.0];
+
+  /// Same, but for the expanded list: cumulative measured heights + [gap].
+  List<double> _expandedOffsets(List<_ManagedToast> toasts) {
+    final offsets = List<double>.filled(toasts.length, 0);
+    var cumulative = 0.0;
+    for (var i = toasts.length - 1; i >= 0; i--) {
+      offsets[i] = cumulative;
+      cumulative += (toasts[i].height > 0 ? toasts[i].height : 56) + widget.gap;
+    }
+    return offsets;
+  }
+
+  Widget _buildGroup(BuildContext context, List<_ManagedToast> toasts, bool isBottom) {
+    final expanded = widget.expand || _hoverExpanded;
+    final n = toasts.length;
+    final collapsed = _collapsedOffsets(n);
+    final expandedOffsets = _expandedOffsets(toasts);
+    // The expanded total is always >= the collapsed peek extent, so it's a
+    // safe (if occasionally over-generous) height for the hit-testable
+    // region regardless of which layout is currently active.
+    final totalHeight =
+        expandedOffsets.isEmpty ? 0.0 : expandedOffsets[0] + (toasts[0].height > 0 ? toasts[0].height : 56);
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hoverExpanded = true),
+      onExit: (_) => setState(() => _hoverExpanded = false),
+      child: SizedBox(
+        width: double.infinity,
+        height: totalHeight,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            for (var i = 0; i < n; i++)
+              AnimatedPositioned(
+                key: ValueKey(toasts[i].id),
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOut,
+                left: 16,
+                right: 16,
+                bottom: isBottom ? (expanded ? expandedOffsets[i] : collapsed[i]) : null,
+                top: isBottom ? null : (expanded ? expandedOffsets[i] : collapsed[i]),
+                child: IgnorePointer(
+                  ignoring: !expanded && n - 1 - i != 0,
+                  child: AnimatedScale(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeOut,
+                    scale: expanded ? 1.0 : (1.0 - (n - 1 - i) * 0.05).clamp(0.85, 1.0),
+                    alignment: isBottom ? Alignment.bottomCenter : Alignment.topCenter,
+                    child: _MeasureSize(
+                      onChange: (size) {
+                        if ((toasts[i].height - size.height).abs() > 0.5) {
+                          setState(() => toasts[i].height = size.height);
+                        }
+                      },
+                      child: toasts[i].builder(() => _remove(toasts[i].id)),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top;
+    final bottomToasts = _toasts.where((t) => t.position == NToastPosition.bottom).toList();
+    final topToasts = _toasts.where((t) => t.position == NToastPosition.top).toList();
+
+    return Stack(
+      children: [
+        widget.child,
+        if (bottomToasts.isNotEmpty)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 24,
+            child: _buildGroup(context, bottomToasts, true),
+          ),
+        if (topToasts.isNotEmpty)
+          Positioned(
+            left: 0,
+            right: 0,
+            top: topPadding + 24,
+            child: _buildGroup(context, topToasts, false),
+          ),
+      ],
+    );
+  }
+}
+
+/// Reports [child]'s rendered size to [onChange] after every layout in
+/// which it changed. Used by [NToasterState] to lay out the expanded stack
+/// from each toast's real (possibly multi-line) height.
+class _MeasureSize extends StatefulWidget {
+  const _MeasureSize({required this.child, required this.onChange});
+
+  final Widget child;
+  final ValueChanged<Size> onChange;
+
+  @override
+  State<_MeasureSize> createState() => _MeasureSizeState();
+}
+
+class _MeasureSizeState extends State<_MeasureSize> {
+  final _key = GlobalKey();
+  Size? _lastSize;
+
+  @override
+  Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => _report());
+    return Container(key: _key, child: widget.child);
+  }
+
+  void _report() {
+    if (!mounted) return;
+    final size = _key.currentContext?.size;
+    if (size != null && size != _lastSize) {
+      _lastSize = size;
+      widget.onChange(size);
+    }
+  }
+}
+
 class _NToastStyles {
   final Color background;
   final Color border;
@@ -439,7 +767,14 @@ class _NToastOverlay extends StatefulWidget {
   final VoidCallback? onClose;
   final VoidCallback? onTap;
 
+  /// When `true`, this instance is positioned externally by an [NToaster]
+  /// stack, so [_NToastOverlayState.build] skips its own [Positioned] and
+  /// entrance [SlideTransition] offset is relative rather than
+  /// screen-anchored. See [NToaster].
+  final bool managed;
+
   const _NToastOverlay({
+    super.key,
     this.title,
     this.description,
     this.icon,
@@ -456,6 +791,7 @@ class _NToastOverlay extends StatefulWidget {
     required this.duration,
     this.onClose,
     this.onTap,
+    this.managed = false,
   });
 
   @override
@@ -642,21 +978,27 @@ class _NToastOverlayState extends State<_NToastOverlay>
       );
     }
 
+    final animated = SlideTransition(
+      position: _slideAnimation,
+      child: FadeTransition(
+        opacity: _fadeAnimation,
+        child: Material(
+          type: MaterialType.transparency,
+          child: child,
+        ),
+      ),
+    );
+
+    // Managed toasts are positioned externally by NToaster's stack; only a
+    // standalone (no-NToaster) toast anchors itself to the screen edge.
+    if (widget.managed) return animated;
+
     return Positioned(
       bottom: widget.position == NToastPosition.bottom ? 24 : null,
       top: widget.position == NToastPosition.top ? topPadding + 24 : null,
       left: 16,
       right: 16,
-      child: SlideTransition(
-        position: _slideAnimation,
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: Material(
-            type: MaterialType.transparency,
-            child: child,
-          ),
-        ),
-      ),
+      child: animated,
     );
   }
 }
