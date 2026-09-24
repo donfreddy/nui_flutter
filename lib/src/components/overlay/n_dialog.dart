@@ -3,54 +3,56 @@ import 'package:flutter/material.dart';
 
 /// # NDialog
 ///
-/// A modal dialog component inspired by NuxtUI's Modal design system.
-/// Provides customizable dialogs with header, body, footer, and animations.
+/// A modal dialog component mirroring Nuxt UI's `UModal`.
 ///
 /// ## Features
 /// - Header with icon, title, and description
-/// - Scrollable content area
+/// - Scrollable content area, divided from header/footer by a hairline
 /// - Footer for action buttons
 /// - Fullscreen mode support
-/// - Customizable overlay/backdrop
-/// - Smooth fade and scale animations
-/// - Dismissible or non-dismissible
+/// - Themed overlay/backdrop
+/// - Symmetric fade + scale open/close animation, driven by the dialog's
+///   own [PopupRoute] so it plays correctly on every dismissal path
+///   (barrier tap, back gesture, or `Navigator.pop`)
+/// - Optional built-in close button, independent from [dismissible]
 ///
 /// Usually shown via [showNuiDialog].
-class NDialog extends StatefulWidget {
-  /// Optional title displayed in the header
+class NDialog extends StatelessWidget {
+  /// Optional title displayed in the header.
   final String? title;
 
-  /// Optional description displayed below title
+  /// Optional description displayed below title.
   final String? description;
 
   /// Optional icon in a tinted circle above the title.
+  ///
+  /// This icon-circle header is a NUI extension; Nuxt UI's `UModal` has no
+  /// equivalent slot.
   final IconData? icon;
 
   /// Icon-circle color role. Defaults to `primary`.
   final NColorRole color;
 
-  /// Main content of the modal
+  /// Main content of the modal.
   final Widget? child;
 
-  /// Action buttons displayed in the footer
+  /// Action buttons displayed in the footer.
   final List<Widget>? actions;
 
-  /// Custom padding for the body content
+  /// Custom padding for the body content.
   final EdgeInsetsGeometry? padding;
 
-  /// Whether the modal can be dismissed by tapping outside or pressing back
-  final bool dismissible;
+  /// When `true`, a close button is rendered in the top-end corner.
+  ///
+  /// Independent from [dismissible]: a modal can be non-dismissible by
+  /// outside tap or back gesture while still offering an explicit close
+  /// action. Defaults to `true`.
+  final bool closable;
 
-  /// Whether to show overlay/backdrop
-  final bool overlay;
-
-  /// Whether to enable fade/scale animations
-  final bool transition;
-
-  /// Whether to display in fullscreen mode
+  /// Whether to display in fullscreen mode.
   final bool fullscreen;
 
-  /// Maximum width constraint (ignored in fullscreen)
+  /// Maximum width constraint (ignored in fullscreen). Defaults to `512`.
   final double? maxWidth;
 
   const NDialog({
@@ -62,216 +64,219 @@ class NDialog extends StatefulWidget {
     this.child,
     this.actions,
     this.padding,
-    this.dismissible = true,
-    this.overlay = true,
-    this.transition = true,
+    this.closable = true,
     this.fullscreen = false,
     this.maxWidth,
   });
 
   @override
-  State<NDialog> createState() => _NDialogState();
-}
-
-class _NDialogState extends State<NDialog> with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOut,
-      ),
-    );
-
-    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOut,
-      ),
-    );
-
-    if (widget.transition) {
-      _animationController.forward();
-    } else {
-      _animationController.value = 1.0;
-    }
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    Widget modalContent = Container(
-      constraints: widget.fullscreen
-          ? null
-          : BoxConstraints(
-              maxWidth: widget.maxWidth ?? 500,
-            ),
-      decoration: widget.fullscreen
+    final colors = context.nui.colors;
+
+    Widget content = Container(
+      constraints: fullscreen ? null : BoxConstraints(maxWidth: maxWidth ?? 512),
+      decoration: fullscreen
           ? null
           : BoxDecoration(
-              color: context.nui.colors.bg,
+              color: colors.bg,
               borderRadius: context.nui.radius.radiusLg,
-              border: Border.all(
-                color: context.nui.colors.border,
-              ),
+              border: Border.all(color: colors.border),
               boxShadow: context.nui.shadows.lg,
             ),
-      child: widget.fullscreen ? _buildFullscreenContent() : _buildStandardContent(),
+      child: ClipRRect(
+        borderRadius: fullscreen ? BorderRadius.zero : context.nui.radius.radiusLg,
+        child: fullscreen ? _buildFullscreenContent(context) : _buildStandardContent(context),
+      ),
     );
 
-    // Apply animations if enabled
-    if (widget.transition) {
-      modalContent = FadeTransition(
-        opacity: _fadeAnimation,
-        child: ScaleTransition(
-          scale: _scaleAnimation,
-          child: modalContent,
-        ),
-      );
+    if (fullscreen) {
+      return Material(color: colors.bg, child: content);
     }
 
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: widget.fullscreen
-          ? EdgeInsets.zero
-          : EdgeInsets.symmetric(horizontal: context.nui.spacing.comfortable, vertical: context.nui.spacing.spacious),
-      child: modalContent,
-    );
+    return content;
   }
 
-  Widget _buildStandardContent() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+  Widget _buildStandardContent(BuildContext context) {
+    return Stack(
       children: [
-        // Header
-        if (widget.icon != null || widget.title != null) _buildHeader(),
-
-        // Body
-        if (widget.child != null)
-          Flexible(
-            child: SingleChildScrollView(
-              padding: widget.padding ??
-                  EdgeInsets.symmetric(
-                    horizontal: context.nui.spacing.spacious,
-                    vertical: context.nui.spacing.comfortable,
-                  ),
-              child: widget.child,
-            ),
-          ),
-
-        // Footer
-        if (widget.actions != null && widget.actions!.isNotEmpty) _buildFooter(),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: _sections(context),
+        ),
+        if (closable) _buildCloseButton(context),
       ],
     );
   }
 
-  Widget _buildFullscreenContent() {
-    return Material(
-      color: context.nui.colors.bg,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Header
-          _buildHeader(),
+  Widget _buildFullscreenContent(BuildContext context) {
+    return Stack(
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: _sections(context, expandBody: true),
+        ),
+        if (closable) _buildCloseButton(context),
+      ],
+    );
+  }
 
-          // Body (scrollable)
-          Expanded(
-            child: widget.child != null
-                ? SingleChildScrollView(
-                    padding: widget.padding ??
-                        EdgeInsets.symmetric(
-                          horizontal: context.nui.spacing.spacious,
-                          vertical: context.nui.spacing.comfortable,
-                        ),
-                    child: widget.child,
-                  )
-                : const SizedBox.shrink(),
-          ),
+  List<Widget> _sections(BuildContext context, {bool expandBody = false}) {
+    final hasHeader = icon != null || title != null || description != null;
+    final body = child == null
+        ? null
+        : SingleChildScrollView(
+            padding: padding ?? const EdgeInsets.all(16),
+            child: child,
+          );
 
-          // Footer
-          if (widget.actions != null && widget.actions!.isNotEmpty) ...[
-            _buildFooter(),
-          ],
-        ],
+    final sections = <Widget>[
+      if (hasHeader) _buildHeader(context),
+      if (body != null) (expandBody ? Expanded(child: body) : Flexible(child: body)),
+      if (actions != null && actions!.isNotEmpty) _buildFooter(context),
+    ];
+
+    return [
+      for (var i = 0; i < sections.length; i++) ...[
+        if (i > 0) Divider(height: 1, thickness: 1, color: context.nui.colors.border),
+        sections[i],
+      ],
+    ];
+  }
+
+  Widget _buildCloseButton(BuildContext context) {
+    return PositionedDirectional(
+      top: 16,
+      end: 16,
+      child: NIconButton.sm(
+        icon: Icons.close,
+        variant: NVariant.ghost,
+        color: NColorRole.neutral,
+        // `pop()`, not `maybePop()`: an explicit close tap must always work,
+        // even when `dismissible: false` blocks the back gesture via
+        // PopScope (which only intercepts system-initiated pop requests).
+        onPressed: () => Navigator.of(context).pop(),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     final c = context.nui.colors;
-    final accent = widget.color == NColorRole.neutral ? c.textHighlighted : c.role(widget.color);
+    final accent = color == NColorRole.neutral ? c.textHighlighted : c.role(color);
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 16, 16, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (widget.icon != null)
-            Container(
-              width: 52,
-              height: 52,
-              alignment: Alignment.center,
-              margin: const EdgeInsets.only(bottom: 14),
-              decoration: BoxDecoration(
-                color: accent.withValues(alpha: 0.14),
-                shape: BoxShape.circle,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 64),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null)
+              Container(
+                width: 52,
+                height: 52,
+                alignment: Alignment.center,
+                margin: const EdgeInsets.only(bottom: 14),
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.14),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon!, size: 26, color: accent),
               ),
-              child: Icon(widget.icon!, size: 26, color: accent),
-            ),
-          if (widget.title != null)
-            Text(
-              widget.title!,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: c.text,
+            if (title != null)
+              Text(
+                title!,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: c.textHighlighted,
+                ),
               ),
-            ),
-          if (widget.description != null) ...[
-            SizedBox(height: context.nui.spacing.base),
-            Text(
-              widget.description!,
-              style: TextStyle(
-                fontSize: 14,
-                color: c.textMuted,
+            if (description != null) ...[
+              SizedBox(height: context.nui.spacing.s1),
+              Text(
+                description!,
+                style: TextStyle(fontSize: 14, color: c.textMuted),
               ),
-            ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildFooter() {
+  Widget _buildFooter(BuildContext context) {
     return Padding(
-      padding: context.nui.spacing.pagePadding,
+      padding: const EdgeInsets.all(16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          for (var i = 0; i < widget.actions!.length; i++)
+          for (var i = 0; i < actions!.length; i++)
             Padding(
               padding: EdgeInsets.only(left: i == 0 ? 0 : 8),
-              child: widget.actions![i],
+              child: actions![i],
             ),
         ],
+      ),
+    );
+  }
+}
+
+// ============================================================
+// ANIMATED ROUTE
+// ============================================================
+
+/// A [PopupRoute] that drives [NDialog]'s open/close animation from the
+/// route's own [Animation], so both directions (push and pop, whatever
+/// triggers the pop) stay symmetric. Mirrors Nuxt UI's
+/// `scale-in`/`scale-out 200ms` pair.
+class _NDialogRoute<T> extends PopupRoute<T> {
+  _NDialogRoute({
+    required this.pageBuilder,
+    required this.barrierDismissible,
+    required this.barrierColor,
+    required this.dismissible,
+    required Duration transitionDuration,
+  }) : _transitionDuration = transitionDuration;
+
+  final WidgetBuilder pageBuilder;
+  final bool dismissible;
+  final Duration _transitionDuration;
+
+  @override
+  final bool barrierDismissible;
+
+  @override
+  final Color? barrierColor;
+
+  @override
+  String? get barrierLabel => 'Dismiss';
+
+  @override
+  Duration get transitionDuration => _transitionDuration;
+
+  @override
+  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+    return PopScope(
+      canPop: dismissible,
+      child: Builder(builder: pageBuilder),
+    );
+  }
+
+  @override
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final curved = CurvedAnimation(parent: animation, curve: Curves.easeOut, reverseCurve: Curves.easeIn);
+    return FadeTransition(
+      opacity: curved,
+      child: ScaleTransition(
+        scale: Tween<double>(begin: 0.95, end: 1.0).animate(curved),
+        child: child,
       ),
     );
   }
@@ -291,11 +296,12 @@ class _NDialogState extends State<NDialog> with SingleTickerProviderStateMixin {
 /// - [child]: Main content widget
 /// - [actions]: Optional action buttons for footer
 /// - [padding]: Custom padding for body content
-/// - [dismissible]: Allow dismiss by tapping outside (default: true)
+/// - [closable]: Show the built-in close button (default: true)
+/// - [dismissible]: Allow dismiss by tapping outside or the back gesture (default: true)
 /// - [overlay]: Show backdrop overlay (default: true)
 /// - [transition]: Enable fade/scale animations (default: true)
 /// - [fullscreen]: Display in fullscreen mode (default: false)
-/// - [maxWidth]: Maximum width constraint (default: 500)
+/// - [maxWidth]: Maximum width constraint (default: 512)
 ///
 /// **Example:**
 /// ```dart
@@ -317,28 +323,51 @@ Future<T?> showNuiDialog<T>({
   Widget? child,
   List<Widget>? actions,
   EdgeInsetsGeometry? padding,
+  bool closable = true,
   bool dismissible = true,
   bool overlay = true,
   bool transition = true,
   bool fullscreen = false,
   double? maxWidth,
 }) {
-  return showDialog<T>(
-    context: context,
-    barrierDismissible: dismissible,
-    barrierColor: overlay ? Colors.black.withValues(alpha: 0.5) : Colors.transparent,
-    builder: (context) => NDialog(
-      icon: icon,
-      title: title,
-      description: description,
-      actions: actions,
-      padding: padding,
+  final colors = context.nui.colors;
+  final spacing = context.nui.spacing;
+
+  return Navigator.of(context, rootNavigator: true).push<T>(
+    _NDialogRoute<T>(
+      barrierDismissible: dismissible,
       dismissible: dismissible,
-      overlay: overlay,
-      transition: transition,
-      fullscreen: fullscreen,
-      maxWidth: maxWidth,
-      child: child,
+      barrierColor: overlay ? colors.bgElevated.withValues(alpha: 0.75) : Colors.transparent,
+      transitionDuration: transition ? const Duration(milliseconds: 200) : Duration.zero,
+      pageBuilder: (context) {
+        final dialog = NDialog(
+          icon: icon,
+          title: title,
+          description: description,
+          actions: actions,
+          padding: padding,
+          closable: closable,
+          fullscreen: fullscreen,
+          maxWidth: maxWidth,
+          child: child,
+        );
+
+        if (fullscreen) {
+          return Material(type: MaterialType.transparency, child: dialog);
+        }
+
+        final viewInsets = MediaQuery.viewInsetsOf(context);
+        return Material(
+          type: MaterialType.transparency,
+          child: Align(
+            alignment: Alignment.center,
+            child: Padding(
+              padding: viewInsets + EdgeInsets.symmetric(horizontal: spacing.comfortable, vertical: spacing.spacious),
+              child: dialog,
+            ),
+          ),
+        );
+      },
     ),
   );
 }
@@ -355,7 +384,7 @@ Future<T?> showNuiDialog<T>({
 /// - [cancelText]: Text for cancel button (default: 'Cancel')
 /// - [confirmColor]: Color of confirm button (default: neutral)
 /// - [isDangerous]: Use error color for confirm button (default: false)
-/// - [dismissible]: Allow dismiss by tapping outside (default: true)
+/// - [dismissible]: Allow dismiss by tapping outside or the back gesture (default: true)
 ///
 /// **Example:**
 /// ```dart
@@ -410,7 +439,7 @@ Future<bool?> showNuiConfirmDialog({
 /// - [title]: Dialog title (required)
 /// - [description]: Optional description text
 /// - [okText]: Text for OK button (default: 'OK')
-/// - [dismissible]: Allow dismiss by tapping outside (default: true)
+/// - [dismissible]: Allow dismiss by tapping outside or the back gesture (default: true)
 ///
 /// **Example:**
 /// ```dart
