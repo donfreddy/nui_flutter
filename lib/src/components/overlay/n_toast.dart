@@ -26,6 +26,11 @@ enum NToastPosition {
 /// appears as an overlay at the bottom of the screen and auto-dismisses after
 /// a configurable duration.
 ///
+/// Mirrors Nuxt UI's `UToast`: the surface is always a neutral, opaque
+/// background with a neutral border, in both light and dark mode. Only the
+/// [icon] (and the default severity icon) is tinted by [color]; title and
+/// description stay neutral. There is no colored "fill" variant.
+///
 /// ```dart
 /// NToast.show(
 ///   context,
@@ -49,17 +54,16 @@ class NToast extends StatelessWidget {
   final bool showIcon;
 
   /// The semantic color role. Defaults to [NColorRole.primary].
+  ///
+  /// Only tints the icon; the toast surface stays neutral.
   final NColorRole color;
-
-  /// The visual variant. Defaults to [NVariant.subtle].
-  final NVariant variant;
 
   /// The position of the toast on the screen.
   /// Defaults to [NToastPosition.bottom].
   final NToastPosition position;
 
   /// The layout orientation of the actions relative to the content.
-  /// Defaults to [NToastOrientation.horizontal].
+  /// Defaults to [NToastOrientation.vertical].
   final NToastOrientation orientation;
 
   /// When true, a close button is rendered at the trailing edge.
@@ -93,9 +97,8 @@ class NToast extends StatelessWidget {
     this.actions,
     this.progressAnimation,
     this.color = NColorRole.primary,
-    this.variant = NVariant.subtle,
     this.position = NToastPosition.bottom,
-    this.orientation = NToastOrientation.horizontal,
+    this.orientation = NToastOrientation.vertical,
     this.closable = true,
     this.showIcon = true,
     this.dragToClose = false,
@@ -105,10 +108,10 @@ class NToast extends StatelessWidget {
 
   /// Shows a toast overlay at the bottom of the screen.
   ///
-  /// The toast automatically dismisses after [duration] (defaults to 4
-  /// seconds). Pass [duration] as Duration.zero to make it persistent until
-  /// manually dismissed. Set [pauseOnTouch] to true to pause auto-dismiss and
-  /// progress while the user is touching the toast.
+  /// The toast automatically dismisses after [duration] (defaults to 5
+  /// seconds, matching Nuxt UI). Pass [duration] as Duration.zero to make it
+  /// persistent until manually dismissed. Set [pauseOnTouch] to true to pause
+  /// auto-dismiss and progress while the user is touching the toast.
   static void show(
     BuildContext context, {
     String? title,
@@ -117,7 +120,6 @@ class NToast extends StatelessWidget {
     Widget? avatar,
     List<Widget>? actions,
     NColorRole color = NColorRole.primary,
-    NVariant variant = NVariant.subtle,
     NToastPosition position = NToastPosition.bottom,
     NToastOrientation orientation = NToastOrientation.vertical,
     bool closable = true,
@@ -125,7 +127,7 @@ class NToast extends StatelessWidget {
     bool dragToClose = false,
     bool pauseOnTouch = true,
     bool progress = true,
-    Duration duration = const Duration(seconds: 4),
+    Duration duration = const Duration(seconds: 5),
     VoidCallback? onTap,
   }) {
     final overlay = Overlay.of(context);
@@ -139,7 +141,6 @@ class NToast extends StatelessWidget {
         avatar: avatar,
         actions: actions,
         color: color,
-        variant: variant,
         position: position,
         orientation: orientation,
         closable: closable,
@@ -162,16 +163,16 @@ class NToast extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final resolved = _getColors(context);
+    final styles = _getStyles(context);
     final defaultIcon = _getDefaultIcon();
 
     final toast = GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: resolved.background,
-          borderRadius: context.nui.radius.radiusMd,
-          border: Border.all(color: resolved.border!),
+          color: styles.background,
+          borderRadius: context.nui.radius.radiusLg,
+          border: Border.all(color: styles.border),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.1),
@@ -181,13 +182,12 @@ class NToast extends StatelessWidget {
           ],
         ),
         child: ClipRRect(
-          borderRadius: context.nui.radius.radiusMd,
+          borderRadius: context.nui.radius.radiusLg,
           child: IntrinsicHeight(
             child: Stack(
               children: [
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.all(16),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -200,7 +200,7 @@ class NToast extends StatelessWidget {
                         Icon(
                           icon ?? defaultIcon,
                           size: 20,
-                          color: resolved.foreground,
+                          color: styles.icon,
                         ),
                         NSpacing.horizontal(NSpacing.standard.s2),
                       ],
@@ -215,7 +215,7 @@ class NToast extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: resolved.foreground,
+                                  color: styles.title,
                                 ),
                               ),
                             if (description != null) ...[
@@ -224,8 +224,7 @@ class NToast extends StatelessWidget {
                                 description!,
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: resolved.foreground
-                                      .withValues(alpha: 0.9),
+                                  color: styles.description,
                                 ),
                               ),
                             ],
@@ -266,7 +265,7 @@ class NToast extends StatelessWidget {
                             child: Icon(
                               Icons.close,
                               size: 18,
-                              color: resolved.foreground.withValues(alpha: 0.6),
+                              color: styles.description,
                             ),
                           ),
                         ),
@@ -286,7 +285,7 @@ class NToast extends StatelessWidget {
                           value: progressAnimation!.value,
                           minHeight: 3,
                           backgroundColor: Colors.transparent,
-                          color: resolved.foreground,
+                          color: styles.icon,
                         );
                       },
                     ),
@@ -308,15 +307,22 @@ class NToast extends StatelessWidget {
     );
   }
 
-  NResolvedColors _getColors(BuildContext context) {
-    if (color == NColorRole.neutral) {
-      return NResolvedColors(
-        background: context.nui.colors.bgElevated,
-        border: context.nui.colors.border,
-        foreground: context.nui.colors.text,
-      );
-    }
-    return NVariantResolver.resolve(color, variant, context.nui.colors);
+  /// Resolves the neutral surface plus the [color]-tinted icon, mirroring
+  /// Nuxt UI's toast theme: `bg-default ring ring-default`, `text-highlighted`
+  /// title, `text-muted` description, and only `text-{color}` on the icon.
+  _NToastStyles _getStyles(BuildContext context) {
+    final colors = context.nui.colors;
+    final isDark = colors.brightness == Brightness.dark;
+    final iconColor = color == NColorRole.neutral
+        ? colors.textHighlighted
+        : (isDark ? colors.scaleFor(color).textDark : colors.scaleFor(color).s500);
+    return _NToastStyles(
+      background: colors.bg,
+      border: colors.border,
+      title: colors.textHighlighted,
+      description: colors.textMuted,
+      icon: iconColor,
+    );
   }
 
   IconData? _getDefaultIcon() {
@@ -336,6 +342,22 @@ class NToast extends StatelessWidget {
         return null;
     }
   }
+}
+
+class _NToastStyles {
+  final Color background;
+  final Color border;
+  final Color title;
+  final Color description;
+  final Color icon;
+
+  const _NToastStyles({
+    required this.background,
+    required this.border,
+    required this.title,
+    required this.description,
+    required this.icon,
+  });
 }
 
 class _NToastDragToClose extends StatefulWidget {
@@ -402,7 +424,6 @@ class _NToastOverlay extends StatefulWidget {
   final Widget? avatar;
   final List<Widget>? actions;
   final NColorRole color;
-  final NVariant variant;
   final NToastPosition position;
   final NToastOrientation orientation;
   final bool closable;
@@ -421,7 +442,6 @@ class _NToastOverlay extends StatefulWidget {
     this.avatar,
     this.actions,
     required this.color,
-    required this.variant,
     required this.position,
     required this.orientation,
     required this.closable,
@@ -587,7 +607,6 @@ class _NToastOverlayState extends State<_NToastOverlay>
       avatar: widget.avatar,
       actions: widget.actions,
       color: widget.color,
-      variant: widget.variant,
       position: widget.position,
       orientation: widget.orientation,
       closable: widget.closable,
