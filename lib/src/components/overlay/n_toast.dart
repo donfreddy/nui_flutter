@@ -313,6 +313,10 @@ class NToast extends StatelessWidget {
   _NToastStyles _getStyles(BuildContext context) {
     final colors = context.nui.colors;
     final isDark = colors.brightness == Brightness.dark;
+    // Deliberately `textHighlighted` (not `colors.text`, unlike the ghost
+    // variant in NVariantResolver) for the neutral case: matches Nuxt UI's
+    // real toast theme, where both the title and a neutral icon use
+    // `text-highlighted`.
     final iconColor = color == NColorRole.neutral
         ? colors.textHighlighted
         : (isDark ? colors.scaleFor(color).textDark : colors.scaleFor(color).s500);
