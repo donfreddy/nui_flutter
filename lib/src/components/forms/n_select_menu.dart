@@ -264,10 +264,12 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>>
   final FocusNode _focusNode = FocusNode();
   late final AnimationController _loadingCtrl;
   late final Animation<double> _loadingRotation;
+  bool _isFocused = false;
 
   @override
   void initState() {
     super.initState();
+    _focusNode.addListener(() => setState(() => _isFocused = _focusNode.hasFocus));
     _loadingCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -335,48 +337,60 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>>
     final shadows = context.nui.shadows.lg;
 
     return OverlayEntry(
-      builder: (context) => GestureDetector(
-        onTap: _removeOverlay,
-        behavior: HitTestBehavior.translucent,
-        child: Stack(
-          children: [
-            Positioned(
-              width: size.width,
-              child: CompositedTransformFollower(
-                link: _layerLink,
-                showWhenUnlinked: false,
-                offset: Offset(0, size.height + 4),
-                child: Material(
-                  elevation: 0,
-                  color: Colors.transparent,
-                  child: _DropdownMenu<T>(
-                    items: widget.items,
-                    selectedValue: widget.value,
-                    selectedValues: widget.values ?? [],
-                    multiple: widget.multiple,
-                    borderRadius: borderRadius,
-                    shadows: shadows,
-                    onSelected: (value) {
-                      if (widget.multiple) {
-                        final currentValues = List<T>.from(widget.values ?? []);
-                        if (currentValues.contains(value)) {
-                          currentValues.remove(value);
+      // A CallbackShortcuts of its own: when `searchable` is true, the
+      // search NInput autofocuses, moving keyboard focus into this overlay
+      // and out of the trigger's CallbackShortcuts subtree. Flutter's
+      // shortcut resolution walks up the *focus* tree from whatever node is
+      // currently focused, so binding Escape here (an ancestor of the
+      // search field) keeps it working regardless of which descendant has
+      // focus.
+      builder: (context) => CallbackShortcuts(
+        bindings: {
+          const SingleActivator(LogicalKeyboardKey.escape): _removeOverlay,
+        },
+        child: GestureDetector(
+          onTap: _removeOverlay,
+          behavior: HitTestBehavior.translucent,
+          child: Stack(
+            children: [
+              Positioned(
+                width: size.width,
+                child: CompositedTransformFollower(
+                  link: _layerLink,
+                  showWhenUnlinked: false,
+                  offset: Offset(0, size.height + 4),
+                  child: Material(
+                    elevation: 0,
+                    color: Colors.transparent,
+                    child: _DropdownMenu<T>(
+                      items: widget.items,
+                      selectedValue: widget.value,
+                      selectedValues: widget.values ?? [],
+                      multiple: widget.multiple,
+                      borderRadius: borderRadius,
+                      shadows: shadows,
+                      onSelected: (value) {
+                        if (widget.multiple) {
+                          final currentValues = List<T>.from(widget.values ?? []);
+                          if (currentValues.contains(value)) {
+                            currentValues.remove(value);
+                          } else {
+                            currentValues.add(value);
+                          }
+                          widget.onChangedMultiple?.call(currentValues);
                         } else {
-                          currentValues.add(value);
+                          widget.onChanged?.call(value);
+                          _removeOverlay();
                         }
-                        widget.onChangedMultiple?.call(currentValues);
-                      } else {
-                        widget.onChanged?.call(value);
-                        _removeOverlay();
-                      }
-                    },
-                    searchable: widget.searchable,
-                    searchPlaceholder: widget.searchPlaceholder,
+                      },
+                      searchable: widget.searchable,
+                      searchPlaceholder: widget.searchPlaceholder,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -434,7 +448,7 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>>
   Color _getBorderColor() {
     final hasError = widget.errorText != null && widget.errorText!.isNotEmpty;
     if (hasError) return context.nui.colors.error;
-    if (_isOpen || widget.highlight) {
+    if (_isOpen || _isFocused || widget.highlight) {
       return context.nui.colors.role(widget.color);
     }
     if (!_showBorder()) return Colors.transparent;
@@ -506,7 +520,7 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>>
     final showClear =
         widget.clearable && hasValue && !widget.disabled && !widget.loading;
     final borderRadius = context.nui.radius.radiusMd;
-    final borderWidth = _isOpen || hasError || widget.highlight ? 2.0 : 1.0;
+    final borderWidth = _isOpen || _isFocused || hasError || widget.highlight ? 2.0 : 1.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -693,6 +707,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
                 placeholder: widget.searchPlaceholder,
                 size: NInputSize.sm,
                 autofocus: true,
+                borderRadius: widget.borderRadius,
                 leading: Icon(NIcons.search,
                     size: 16, color: context.nui.colors.textMuted),
               ),
