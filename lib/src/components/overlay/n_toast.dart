@@ -434,8 +434,14 @@ class NToaster extends StatefulWidget {
   /// Retrieves the nearest [NToasterState], or throws if none is found.
   static NToasterState of(BuildContext context) {
     final state = maybeOf(context);
-    assert(state != null, 'No NToaster found in the widget tree above this context.');
-    return state!;
+    if (state == null) {
+      throw FlutterError(
+        'Could not find an NToaster ancestor in the widget tree above this context.\n'
+        'Wrap your app root in NToaster (e.g. via MaterialApp.builder) before '
+        'calling NToaster.of(context).',
+      );
+    }
+    return state;
   }
 
   /// Retrieves the nearest [NToasterState], or `null` if none is found.
@@ -519,11 +525,27 @@ class NToasterState extends State<NToaster> {
 
     setState(() {
       _toasts.add(entry);
-      // Evict oldest-first until back under the cap; each eviction plays
-      // its own exit animation rather than vanishing abruptly.
-      final overflow = _toasts.length - widget.max;
-      for (var i = 0; i < overflow; i++) {
-        _toasts[i].key.currentState?._dismiss();
+      // max is a per-corner cap: a burst of `top` toasts shouldn't evict an
+      // unrelated `bottom` one.
+      final sameCorner = _toasts.where((t) => t.position == effectivePosition).toList();
+      final overflow = sameCorner.length - widget.max;
+      if (overflow > 0) {
+        final toEvict = sameCorner.sublist(0, overflow);
+        for (final t in toEvict) {
+          final state = t.key.currentState;
+          if (state != null) {
+            // Already built: play its exit animation, which calls onClose
+            // -> _remove once done.
+            state._dismiss();
+          }
+        }
+        // GlobalKey.currentState is only non-null once the widget has had a
+        // frame to build; a toast evicted in the same synchronous burst
+        // that created it (e.g. several show() calls in a row with no
+        // pump/frame in between) never got that chance and has nothing to
+        // animate out, so drop it immediately instead of leaking past max
+        // until its own timer eventually fires.
+        _toasts.removeWhere((t) => toEvict.contains(t) && t.key.currentState == null);
       }
     });
 
@@ -567,18 +589,24 @@ class NToasterState extends State<NToaster> {
     final n = toasts.length;
     final collapsed = _collapsedOffsets(n);
     final expandedOffsets = _expandedOffsets(toasts);
-    // The expanded total is always >= the collapsed peek extent, so it's a
-    // safe (if occasionally over-generous) height for the hit-testable
-    // region regardless of which layout is currently active.
-    final totalHeight =
-        expandedOffsets.isEmpty ? 0.0 : expandedOffsets[0] + (toasts[0].height > 0 ? toasts[0].height : 56);
+    final frontHeight = n == 0 ? 0.0 : (toasts[n - 1].height > 0 ? toasts[n - 1].height : 56);
+    final totalHeight = expandedOffsets.isEmpty ? 0.0 : expandedOffsets[0] + frontHeight;
+    // MouseRegion(opaque: true) + a SizedBox sized to the full expanded
+    // extent would hit-test as solid even in the visually empty gap above a
+    // collapsed peek stack, swallowing taps meant for widget.child beneath
+    // it. Size to whichever layout is actually on screen, and let hits fall
+    // through anywhere this region isn't.
+    final collapsedHeight = n == 0 ? 0.0 : frontHeight + collapsed[0];
+    final visibleHeight = expanded ? totalHeight : collapsedHeight;
 
     return MouseRegion(
+      opaque: false,
       onEnter: (_) => setState(() => _hoverExpanded = true),
       onExit: (_) => setState(() => _hoverExpanded = false),
       child: SizedBox(
+        key: ValueKey(isBottom ? 'n-toaster-bottom-stack' : 'n-toaster-top-stack'),
         width: double.infinity,
-        height: totalHeight,
+        height: visibleHeight,
         child: Stack(
           clipBehavior: Clip.none,
           children: [
@@ -662,6 +690,14 @@ class _MeasureSizeState extends State<_MeasureSize> {
 
   @override
   Widget build(BuildContext context) {
+    // Rescheduled every build (not just initState) so a later resize (e.g.
+    // the description growing to two lines) is still picked up. This only
+    // terminates because _report's setState only fires on an actual size
+    // change, and nothing here (AnimatedScale/AnimatedPositioned are paint-
+    // time transforms) feeds back into this child's own layout size. If a
+    // future change ever makes this child's layout size depend on the
+    // animation driving it, this would need a measure -> setState -> build
+    // guard beyond the size-equality check.
     WidgetsBinding.instance.addPostFrameCallback((_) => _report());
     return Container(key: _key, child: widget.child);
   }
