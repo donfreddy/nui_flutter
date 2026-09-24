@@ -155,7 +155,7 @@ class NDialog extends StatelessWidget {
         // `pop()`, not `maybePop()`: an explicit close tap must always work,
         // even when `dismissible: false` blocks the back gesture via
         // PopScope (which only intercepts system-initiated pop requests).
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
       ),
     );
   }
@@ -236,6 +236,7 @@ class _NDialogRoute<T> extends PopupRoute<T> {
     required this.pageBuilder,
     required this.barrierDismissible,
     required this.barrierColor,
+    required this.barrierLabel,
     required this.dismissible,
     required Duration transitionDuration,
   }) : _transitionDuration = transitionDuration;
@@ -251,7 +252,7 @@ class _NDialogRoute<T> extends PopupRoute<T> {
   final Color? barrierColor;
 
   @override
-  String? get barrierLabel => 'Dismiss';
+  final String? barrierLabel;
 
   @override
   Duration get transitionDuration => _transitionDuration;
@@ -330,12 +331,20 @@ Future<T?> showNuiDialog<T>({
   bool fullscreen = false,
   double? maxWidth,
 }) {
+  assert(
+    closable || dismissible || (actions != null && actions.isNotEmpty),
+    'NDialog would be impossible to close: closable and dismissible are '
+    'both false, and no actions were provided.',
+  );
+
   final colors = context.nui.colors;
   final spacing = context.nui.spacing;
+  final barrierLabel = MaterialLocalizations.of(context).modalBarrierDismissLabel;
 
   return Navigator.of(context, rootNavigator: true).push<T>(
     _NDialogRoute<T>(
       barrierDismissible: dismissible,
+      barrierLabel: barrierLabel,
       dismissible: dismissible,
       barrierColor: overlay ? colors.bgElevated.withValues(alpha: 0.75) : Colors.transparent,
       transitionDuration: transition ? const Duration(milliseconds: 200) : Duration.zero,
@@ -352,18 +361,32 @@ Future<T?> showNuiDialog<T>({
           child: child,
         );
 
+        // Mirrors Flutter's own Dialog: SafeArea keeps the header/close
+        // button clear of notches, AnimatedPadding + removeViewInsets keep
+        // the keyboard from double-shifting content that reads viewInsets
+        // itself (e.g. a TextField in the body).
         if (fullscreen) {
-          return Material(type: MaterialType.transparency, child: dialog);
+          return SafeArea(
+            child: Material(type: MaterialType.transparency, child: dialog),
+          );
         }
 
-        final viewInsets = MediaQuery.viewInsetsOf(context);
-        return Material(
-          type: MaterialType.transparency,
-          child: Align(
-            alignment: Alignment.center,
-            child: Padding(
-              padding: viewInsets + EdgeInsets.symmetric(horizontal: spacing.comfortable, vertical: spacing.spacious),
-              child: dialog,
+        return SafeArea(
+          child: AnimatedPadding(
+            padding: MediaQuery.viewInsetsOf(context) +
+                EdgeInsets.symmetric(horizontal: spacing.comfortable, vertical: spacing.spacious),
+            duration: const Duration(milliseconds: 100),
+            curve: Curves.decelerate,
+            child: MediaQuery.removeViewInsets(
+              removeLeft: true,
+              removeTop: true,
+              removeRight: true,
+              removeBottom: true,
+              context: context,
+              child: Material(
+                type: MaterialType.transparency,
+                child: Align(alignment: Alignment.center, child: dialog),
+              ),
             ),
           ),
         );
