@@ -1,8 +1,17 @@
 import 'package:nui_flutter/nui_flutter.dart';
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// The size of an [NSelectMenu], affecting padding and font size.
+///
+/// Mirrors [NInputSize] and Nuxt UI's `USelect` size scale so a select
+/// trigger lines up visually with a sibling [NInput] in the same form.
 enum NSelectMenuSize {
+  /// Extra small.
+  xs,
+
   /// Small.
   sm,
 
@@ -11,9 +20,16 @@ enum NSelectMenuSize {
 
   /// Large.
   lg,
+
+  /// Extra large.
+  xl,
 }
 
 /// The visual style of an [NSelectMenu].
+///
+/// Mirrors [NInputVariant]: form fields in this design system use this
+/// 5-value set (not the shared [NVariant]) because `none` has no equivalent
+/// there and a field never needs `link`.
 enum NSelectMenuVariant {
   /// White background with a full border.
   outline,
@@ -119,11 +135,15 @@ class NSelectMenuItem<T> {
   }
 }
 
-/// A styled select / dropdown form field.
+/// A styled select / dropdown form field, mirroring Nuxt UI's `USelect`
+/// (single/multiple selection) with `USelectMenu`'s search feature layered
+/// on top.
 ///
 /// Wraps a tap-triggered overlay menu that shows a list of [NSelectMenuItem]
 /// values. Supports single and multiple selection, optional search, clearable
-/// values, loading state, and validation error display.
+/// values, loading state, and validation error display. Sizing, variants, and
+/// the focus-border/error/disabled treatment mirror [NInput] so the two read
+/// as siblings in the same form.
 ///
 /// ```dart
 /// NSelectMenu<String>(
@@ -195,8 +215,12 @@ class NSelectMenu<T> extends StatefulWidget {
   /// The visual style of the trigger field. Defaults to [NSelectMenuVariant.outline].
   final NSelectMenuVariant variant;
 
-  /// The semantic color role applied to the focused border. Defaults to [NColorRole.neutral].
+  /// The semantic color role applied to the focused/open border. Defaults to
+  /// [NColorRole.primary].
   final NColorRole color;
+
+  /// When `true`, renders the open-state border even while closed.
+  final bool highlight;
 
   /// When `true`, multiple items can be selected simultaneously.
   /// Use [values] and [onChangedMultiple] in multi-select mode.
@@ -223,7 +247,8 @@ class NSelectMenu<T> extends StatefulWidget {
     this.clearable = true,
     this.size = NSelectMenuSize.md,
     this.variant = NSelectMenuVariant.outline,
-    this.color = NColorRole.neutral,
+    this.color = NColorRole.primary,
+    this.highlight = false,
     this.multiple = false,
   });
 
@@ -231,17 +256,44 @@ class NSelectMenu<T> extends StatefulWidget {
   State<NSelectMenu<T>> createState() => _NSelectMenuState<T>();
 }
 
-class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
+class _NSelectMenuState<T> extends State<NSelectMenu<T>>
+    with SingleTickerProviderStateMixin {
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
   bool _isOpen = false;
   final FocusNode _focusNode = FocusNode();
+  late final AnimationController _loadingCtrl;
+  late final Animation<double> _loadingRotation;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadingCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+    _loadingRotation = Tween<double>(begin: 0.0, end: 2 * math.pi).animate(_loadingCtrl);
+    if (widget.loading) _loadingCtrl.repeat();
+  }
+
+  @override
+  void didUpdateWidget(NSelectMenu<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.loading != oldWidget.loading) {
+      if (widget.loading) {
+        _loadingCtrl.repeat();
+      } else {
+        _loadingCtrl.stop();
+      }
+    }
+  }
 
   @override
   void dispose() {
     _overlayEntry?.remove();
     _overlayEntry = null;
     _focusNode.dispose();
+    _loadingCtrl.dispose();
     super.dispose();
   }
 
@@ -279,6 +331,8 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
   OverlayEntry _createOverlayEntry() {
     RenderBox renderBox = context.findRenderObject() as RenderBox;
     var size = renderBox.size;
+    final borderRadius = context.nui.radius.radiusMd;
+    final shadows = context.nui.shadows.lg;
 
     return OverlayEntry(
       builder: (context) => GestureDetector(
@@ -300,6 +354,8 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
                     selectedValue: widget.value,
                     selectedValues: widget.values ?? [],
                     multiple: widget.multiple,
+                    borderRadius: borderRadius,
+                    shadows: shadows,
                     onSelected: (value) {
                       if (widget.multiple) {
                         final currentValues = List<T>.from(widget.values ?? []);
@@ -326,36 +382,48 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
     );
   }
 
-  double _getVerticalPadding() {
-    switch (widget.size) {
-      case NSelectMenuSize.sm:
-        return 8;
-      case NSelectMenuSize.md:
-        return 10;
-      case NSelectMenuSize.lg:
-        return 12;
-    }
-  }
-
-  double _getHorizontalPadding() {
-    switch (widget.size) {
-      case NSelectMenuSize.sm:
-        return 12;
-      case NSelectMenuSize.md:
-        return 14;
-      case NSelectMenuSize.lg:
-        return 16;
-    }
-  }
-
   double _getFontSize() {
     switch (widget.size) {
+      case NSelectMenuSize.xs:
+        return 12;
       case NSelectMenuSize.sm:
         return 13;
       case NSelectMenuSize.md:
         return 14;
       case NSelectMenuSize.lg:
         return 15;
+      case NSelectMenuSize.xl:
+        return 16;
+    }
+  }
+
+  EdgeInsetsGeometry _getContentPadding() {
+    const sp = NSpacing.standard;
+    switch (widget.size) {
+      case NSelectMenuSize.xs:
+        return EdgeInsets.symmetric(horizontal: sp.s2_5, vertical: sp.s1_5);
+      case NSelectMenuSize.sm:
+        return EdgeInsets.symmetric(horizontal: sp.s3, vertical: sp.s2);
+      case NSelectMenuSize.md:
+        return EdgeInsets.symmetric(horizontal: sp.s3_5, vertical: sp.s2_5);
+      case NSelectMenuSize.lg:
+        return EdgeInsets.symmetric(horizontal: sp.s4, vertical: sp.s3);
+      case NSelectMenuSize.xl:
+        return EdgeInsets.symmetric(horizontal: sp.s4, vertical: sp.s3_5);
+    }
+  }
+
+  Color _getBackgroundColor() {
+    if (widget.disabled) return context.nui.colors.bgMuted;
+    switch (widget.variant) {
+      case NSelectMenuVariant.outline:
+      case NSelectMenuVariant.subtle:
+        return context.nui.colors.bg;
+      case NSelectMenuVariant.soft:
+        return context.nui.colors.bgElevated.withValues(alpha: 0.5);
+      case NSelectMenuVariant.ghost:
+      case NSelectMenuVariant.none:
+        return Colors.transparent;
     }
   }
 
@@ -364,12 +432,12 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
       widget.variant == NSelectMenuVariant.subtle;
 
   Color _getBorderColor() {
-    if (!_showBorder()) return Colors.transparent;
     final hasError = widget.errorText != null && widget.errorText!.isNotEmpty;
     if (hasError) return context.nui.colors.error;
-    if (_isOpen) {
+    if (_isOpen || widget.highlight) {
       return context.nui.colors.role(widget.color);
     }
+    if (!_showBorder()) return Colors.transparent;
     return context.nui.colors.border;
   }
 
@@ -395,13 +463,18 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
 
   Widget? _getLeadingWidget() {
     if (widget.loading) {
-      return SizedBox(
-        width: 16,
-        height: 16,
-        child: CircularProgressIndicator(
-            strokeWidth: 2,
-            valueColor:
-                AlwaysStoppedAnimation<Color>(context.nui.colors.textMuted)),
+      final theme = Theme.of(context).extension<NInputTheme>() ?? const NInputTheme();
+      return AnimatedBuilder(
+        animation: _loadingCtrl,
+        builder: (_, child) => Transform.rotate(
+          angle: _loadingRotation.value,
+          child: child,
+        ),
+        child: Icon(
+          theme.loadingIcon ?? NIcons.loader,
+          size: 16,
+          color: context.nui.colors.textMuted,
+        ),
       );
     }
     if (widget.leadingIcon != null) {
@@ -432,6 +505,8 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
     final leadingWidget = _getLeadingWidget();
     final showClear =
         widget.clearable && hasValue && !widget.disabled && !widget.loading;
+    final borderRadius = context.nui.radius.radiusMd;
+    final borderWidth = _isOpen || hasError || widget.highlight ? 2.0 : 1.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -455,53 +530,63 @@ class _NSelectMenuState<T> extends State<NSelectMenu<T>> {
         ],
         CompositedTransformTarget(
           link: _layerLink,
-          child: GestureDetector(
-            onTap: _toggleDropdown,
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                  horizontal: _getHorizontalPadding(),
-                  vertical: _getVerticalPadding()),
-              decoration: BoxDecoration(
-                color: widget.disabled
-                    ? context.nui.colors.bgMuted
-                    : context.nui.colors.bg,
-                borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(
-                    color: _getBorderColor(),
-                    width: _isOpen || hasError ? 2 : 1),
-              ),
-              child: Row(
-                children: [
-                  if (leadingWidget != null) ...[
-                    leadingWidget,
-                    const SizedBox(width: 8)
-                  ],
-                  Expanded(
-                    child: Text(
-                      _getDisplayText(),
-                      style: TextStyle(
-                          fontSize: _getFontSize(),
-                          color: hasValue
-                              ? context.nui.colors.text
-                              : context.nui.colors.textMuted),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+          child: CallbackShortcuts(
+            bindings: {
+              const SingleActivator(LogicalKeyboardKey.enter): _toggleDropdown,
+              const SingleActivator(LogicalKeyboardKey.space): _toggleDropdown,
+              const SingleActivator(LogicalKeyboardKey.escape): () {
+                if (_isOpen) _removeOverlay();
+              },
+            },
+            child: Focus(
+              focusNode: _focusNode,
+              canRequestFocus: !widget.disabled && !widget.loading,
+              child: GestureDetector(
+                onTap: () {
+                  _focusNode.requestFocus();
+                  _toggleDropdown();
+                },
+                child: Container(
+                  padding: _getContentPadding(),
+                  decoration: BoxDecoration(
+                    color: _getBackgroundColor(),
+                    borderRadius: borderRadius,
+                    border: Border.all(color: _getBorderColor(), width: borderWidth),
                   ),
-                  if (showClear) ...[
-                    const SizedBox(width: 8),
-                    GestureDetector(
-                        onTap: _handleClear,
-                        child: Icon(Icons.close,
-                            size: 16, color: context.nui.colors.textMuted)),
-                  ],
-                  const SizedBox(width: 8),
-                  Icon(
-                      _isOpen
-                          ? Icons.keyboard_arrow_up
-                          : Icons.keyboard_arrow_down,
-                      size: 20,
-                      color: context.nui.colors.textMuted),
-                ],
+                  child: Row(
+                    children: [
+                      if (leadingWidget != null) ...[
+                        leadingWidget,
+                        const SizedBox(width: 8)
+                      ],
+                      Expanded(
+                        child: Text(
+                          _getDisplayText(),
+                          style: TextStyle(
+                              fontSize: _getFontSize(),
+                              color: hasValue
+                                  ? context.nui.colors.text
+                                  : context.nui.colors.textMuted),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (showClear) ...[
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                            onTap: _handleClear,
+                            child: Icon(NIcons.x,
+                                size: 16, color: context.nui.colors.textMuted)),
+                      ],
+                      const SizedBox(width: 8),
+                      Icon(
+                          _isOpen
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          size: 20,
+                          color: context.nui.colors.textMuted),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -530,6 +615,8 @@ class _DropdownMenu<T> extends StatefulWidget {
   final ValueChanged<T> onSelected;
   final bool searchable;
   final String searchPlaceholder;
+  final BorderRadius borderRadius;
+  final List<BoxShadow> shadows;
 
   const _DropdownMenu({
     required this.items,
@@ -539,6 +626,8 @@ class _DropdownMenu<T> extends StatefulWidget {
     required this.onSelected,
     required this.searchable,
     required this.searchPlaceholder,
+    required this.borderRadius,
+    required this.shadows,
   });
 
   @override
@@ -589,14 +678,9 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
       constraints: const BoxConstraints(maxHeight: 300),
       decoration: BoxDecoration(
         color: context.nui.colors.bgElevated,
-        borderRadius: BorderRadius.circular(8.0),
+        borderRadius: widget.borderRadius,
         border: Border.all(color: context.nui.colors.border),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 20,
-              offset: const Offset(0, 8))
-        ],
+        boxShadow: widget.shadows,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -604,33 +688,13 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
           if (widget.searchable) ...[
             Padding(
               padding: const EdgeInsets.all(8),
-              child: TextField(
+              child: NInput(
                 controller: _searchController,
+                placeholder: widget.searchPlaceholder,
+                size: NInputSize.sm,
                 autofocus: true,
-                decoration: InputDecoration(
-                  hintText: widget.searchPlaceholder,
-                  hintStyle: TextStyle(
-                      color: context.nui.colors.textMuted, fontSize: 14),
-                  prefixIcon: Icon(Icons.search,
-                      size: 20, color: context.nui.colors.textMuted),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6.0),
-                    borderSide: BorderSide(color: context.nui.colors.border),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6.0),
-                    borderSide: BorderSide(color: context.nui.colors.border),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6.0),
-                    borderSide:
-                        BorderSide(color: context.nui.colors.primary, width: 2),
-                  ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  isDense: true,
-                ),
-                style: TextStyle(fontSize: 14, color: context.nui.colors.text),
+                leading: Icon(NIcons.search,
+                    size: 16, color: context.nui.colors.textMuted),
               ),
             ),
             Divider(
