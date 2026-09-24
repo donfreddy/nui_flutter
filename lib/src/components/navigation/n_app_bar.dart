@@ -38,8 +38,8 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// When `true`, renders an [NIcons.arrowLeft] back button as the
   /// leading widget. Has no effect when [leading] is provided.
   ///
-  /// Defaults to `false`.
-  final bool showBack;
+  /// Defaults to `true`.
+  final bool showBackButton;
 
   /// Called when the back button is tapped.
   ///
@@ -54,6 +54,9 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   /// Overrides the foreground (text and icon) color. Defaults to [NTokens.textDefault].
   final Color? foregroundColor;
+
+  /// Whether center title. Defaults to false.
+  final bool centerTitle;
 
   /// The width allocated for the leading widget.
   ///
@@ -75,7 +78,8 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.titleWidget,
     this.actions,
     this.leading,
-    this.showBack = false,
+    this.showBackButton = true,
+    this.centerTitle = false,
     this.onBack,
     this.elevation = 0,
     this.backgroundColor,
@@ -101,10 +105,13 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
         color: fg,
       ),
       leading: leading ??
-          (showBack
-              ? NIconButton(
-                  icon: NIcons.arrowLeft,
-                  onPressed: onBack ?? () => Navigator.of(context).pop(),
+          (showBackButton
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: NIconButton(
+                    icon: NIcons.arrowLeft,
+                    onPressed: onBack ?? () => Navigator.of(context).pop(),
+                  ),
                 )
               : null),
       actions: actions,
@@ -112,7 +119,8 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
       foregroundColor: fg,
       elevation: elevation,
       scrolledUnderElevation: 0,
-      centerTitle: false,
+      automaticallyImplyLeading: false,
+      centerTitle: centerTitle,
       surfaceTintColor: Colors.transparent,
       leadingWidth: leadingWidth,
       titleSpacing: titleSpacing,
