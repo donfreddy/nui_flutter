@@ -119,94 +119,107 @@ class NBottomSheet extends StatelessWidget {
           context.nui.spacing.s4,
           0,
           context.nui.spacing.s4,
-          bottomPad > 0 ? bottomPad : context.nui.spacing.s4,
+          context.nui.spacing.s4,
         );
 
-    return Material(
-      color: context.nui.colors.bgElevated,
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (showHandle)
-            Padding(
-              padding: const EdgeInsets.only(top: 12, bottom: 8),
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: colors.brightness == Brightness.dark
-                      ? context.nui.colors.neutral.scale.s700
-                      : context.nui.colors.border,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-          if (hasHeader)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: context.nui.spacing.s4, vertical: context.nui.spacing.s2),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (title != null)
-                          Text(
-                            title!,
-                            style: theme.textTheme.titleLarge!.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: context.nui.colors.text,
-                            ),
-                          ),
-                        if (subtitle != null) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            subtitle!,
-                            style: theme.textTheme.bodySmall!.copyWith(
-                              fontSize: 13,
-                              color: context.nui.colors.textMuted,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
+    // Lift the whole sheet above the keyboard: [bottomPad] is applied here,
+    // not inside [bodyPadding], so a custom [contentPadding] cannot disable it.
+    return AnimatedPadding(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOut,
+      padding: EdgeInsets.only(bottom: bottomPad),
+      child: Material(
+        color: context.nui.colors.bgElevated,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (showHandle)
+              Padding(
+                padding: const EdgeInsets.only(top: 12, bottom: 8),
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: colors.brightness == Brightness.dark
+                        ? context.nui.colors.neutral.scale.s700
+                        : context.nui.colors.border,
+                    borderRadius: BorderRadius.circular(2),
                   ),
-                  if (showCloseButton)
-                    NIconButton(
-                      icon: NIcons.x,
-                      variant: NVariant.ghost,
-                      size: NIconButtonSize.sm,
-                      onPressed: () => Navigator.of(context).pop(),
-                    )
-                ],
-              ),
-            ),
-          if (child != null)
-            if (scrollable)
-              Flexible(
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  padding: bodyPadding,
-                  child: child,
                 ),
-              )
-            else
-              Padding(padding: bodyPadding, child: child),
-          if (footer != null)
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                context.nui.spacing.s4,
-                context.nui.spacing.s2,
-                context.nui.spacing.s4,
-                MediaQuery.of(context).padding.bottom + context.nui.spacing.s4,
               ),
-              child: footer,
-            ),
-          if (footer == null) SizedBox(height: MediaQuery.of(context).padding.bottom + context.nui.spacing.s2),
-        ],
+            if (hasHeader)
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: context.nui.spacing.s4,
+                    vertical: context.nui.spacing.s2),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (title != null)
+                            Text(
+                              title!,
+                              style: theme.textTheme.titleLarge!.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: context.nui.colors.text,
+                              ),
+                            ),
+                          if (subtitle != null) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              subtitle!,
+                              style: theme.textTheme.bodySmall!.copyWith(
+                                fontSize: 13,
+                                color: context.nui.colors.textMuted,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    if (showCloseButton)
+                      NIconButton(
+                        icon: NIcons.x,
+                        variant: NVariant.ghost,
+                        size: NIconButtonSize.sm,
+                        onPressed: () => Navigator.of(context).pop(),
+                      )
+                  ],
+                ),
+              ),
+            if (child != null)
+              if (scrollable)
+                Flexible(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: bodyPadding,
+                    child: child,
+                  ),
+                )
+              else
+                Padding(padding: bodyPadding, child: child),
+            if (footer != null)
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  context.nui.spacing.s4,
+                  context.nui.spacing.s2,
+                  context.nui.spacing.s4,
+                  MediaQuery.of(context).padding.bottom +
+                      context.nui.spacing.s4,
+                ),
+                child: footer,
+              ),
+            if (footer == null)
+              SizedBox(
+                  height: MediaQuery.of(context).padding.bottom +
+                      context.nui.spacing.s2),
+          ],
+        ),
       ),
     );
   }
@@ -293,13 +306,17 @@ class NBottomSheetActionList extends StatelessWidget {
           leading: action.icon != null
               ? Icon(
                   action.icon,
-                  color: action.isDestructive ? context.nui.colors.error : context.nui.colors.text,
+                  color: action.isDestructive
+                      ? context.nui.colors.error
+                      : context.nui.colors.text,
                 )
               : null,
           title: Text(
             action.label,
             style: TextStyle(
-              color: action.isDestructive ? context.nui.colors.error : context.nui.colors.text,
+              color: action.isDestructive
+                  ? context.nui.colors.error
+                  : context.nui.colors.text,
               fontWeight: FontWeight.w500,
             ),
           ),
