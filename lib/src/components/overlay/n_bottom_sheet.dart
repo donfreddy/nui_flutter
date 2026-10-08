@@ -122,12 +122,10 @@ class NBottomSheet extends StatelessWidget {
           bottomPad > 0 ? bottomPad : context.nui.spacing.s4,
         );
 
-    return Container(
-      //constraints: BoxConstraints(maxHeight: maxHeight),
-      decoration: BoxDecoration(
-        color: context.nui.colors.bgElevated,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-      ),
+    return Material(
+      color: context.nui.colors.bgElevated,
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
