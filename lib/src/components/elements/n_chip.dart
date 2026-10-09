@@ -71,10 +71,12 @@ class NChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final resolved = selected
         ? NVariantResolver.resolve(color, variant, context.nui.colors)
-        : NResolvedColors(
+          : NResolvedColors(
             foreground: context.nui.colors.textMuted,
             background: Colors.transparent,
-            border: context.nui.colors.border,
+            // Not `border`: in dark mode it equals `bgElevated`, so an
+            // unselected chip on a sheet or a card would lose its outline.
+            border: context.nui.colors.borderAccented,
           );
 
     return Semantics(
