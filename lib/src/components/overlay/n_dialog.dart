@@ -79,12 +79,12 @@ class NDialog extends StatelessWidget {
           ? null
           : BoxDecoration(
               color: colors.bg,
-              borderRadius: context.nui.radius.radiusLg,
-              border: Border.all(color: colors.border),
+              borderRadius: context.nui.radius.radiusXl2,
+              border: Border.all(color: colors.border.withValues(alpha: 0.3)),
               boxShadow: context.nui.shadows.lg,
             ),
       child: ClipRRect(
-        borderRadius: fullscreen ? BorderRadius.zero : context.nui.radius.radiusLg,
+        borderRadius: fullscreen ? BorderRadius.zero : context.nui.radius.radiusXl2,
         child: fullscreen ? _buildFullscreenContent(context) : _buildStandardContent(context),
       ),
     );
@@ -104,7 +104,7 @@ class NDialog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: _sections(context),
         ),
-        if (closable) _buildCloseButton(context),
+        // if (closable) _buildCloseButton(context),
       ],
     );
   }
@@ -116,7 +116,7 @@ class NDialog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: _sections(context, expandBody: true),
         ),
-        if (closable) _buildCloseButton(context),
+        // if (closable) _buildCloseButton(context),
       ],
     );
   }
@@ -136,12 +136,13 @@ class NDialog extends StatelessWidget {
       if (actions != null && actions!.isNotEmpty) _buildFooter(context),
     ];
 
-    return [
-      for (var i = 0; i < sections.length; i++) ...[
-        if (i > 0) Divider(height: 1, thickness: 1, color: context.nui.colors.border),
-        sections[i],
-      ],
-    ];
+    // return [
+    //   for (var i = 0; i < sections.length; i++) ...[
+    //     if (i > 0) Divider(height: 1, thickness: 1, color: context.nui.colors.border),
+    //     sections[i],
+    //   ],
+    // ];
+    return sections;
   }
 
   Widget _buildCloseButton(BuildContext context) {
@@ -164,51 +165,48 @@ class NDialog extends StatelessWidget {
     final c = context.nui.colors;
     final accent = color == NColorRole.neutral ? c.textHighlighted : c.role(color);
 
-    return ConstrainedBox(
-      constraints: const BoxConstraints(minHeight: 64),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null)
-              Container(
-                width: 52,
-                height: 52,
-                alignment: Alignment.center,
-                margin: const EdgeInsets.only(bottom: 14),
-                decoration: BoxDecoration(
-                  color: accent.withValues(alpha: 0.14),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon!, size: 26, color: accent),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null)
+            Container(
+              width: 52,
+              height: 52,
+              alignment: Alignment.center,
+              margin: const EdgeInsets.only(bottom: 14),
+              decoration: BoxDecoration(
+                color: accent.withValues(alpha: 0.14),
+                shape: BoxShape.circle,
               ),
-            if (title != null)
-              Text(
-                title!,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: c.textHighlighted,
-                ),
+              child: Icon(icon!, size: 26, color: accent),
+            ),
+          if (title != null)
+            Text(
+              title!,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: c.textHighlighted,
               ),
-            if (description != null) ...[
-              SizedBox(height: context.nui.spacing.s1),
-              Text(
-                description!,
-                style: TextStyle(fontSize: 14, color: c.textMuted),
-              ),
-            ],
+            ),
+          if (description != null) ...[
+            SizedBox(height: context.nui.spacing.s1),
+            Text(
+              description!,
+              style: TextStyle(fontSize: 14, color: c.textMuted),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
 
   Widget _buildFooter(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [

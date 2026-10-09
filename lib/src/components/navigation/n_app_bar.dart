@@ -81,7 +81,7 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.showBackButton = true,
     this.centerTitle = false,
     this.onBack,
-    this.elevation = 0,
+    this.elevation = 5,
     this.backgroundColor,
     this.foregroundColor,
     this.leadingWidth,
@@ -110,6 +110,7 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
                   padding: const EdgeInsets.only(left: 10),
                   child: NIconButton(
                     icon: NIcons.arrowLeft,
+                    variant: NVariant.soft,
                     onPressed: onBack ?? () => Navigator.of(context).pop(),
                   ),
                 )
@@ -118,7 +119,7 @@ class NAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: bg,
       foregroundColor: fg,
       elevation: elevation,
-      scrolledUnderElevation: 0,
+      scrolledUnderElevation: 10,
       automaticallyImplyLeading: false,
       centerTitle: centerTitle,
       surfaceTintColor: Colors.transparent,
