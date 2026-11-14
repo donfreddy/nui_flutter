@@ -222,16 +222,23 @@ class _NButtonState extends State<NButton> with TickerProviderStateMixin {
             (widget.label != null || widget.child != null))
           SizedBox(width: context.nui.spacing.s2),
         if (widget.label != null)
-          Text(
-            widget.label!,
-            style: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.w600,
-              color: resolved.foreground,
+          // Shrinks and wraps on a narrow screen or with large text instead
+          // of overflowing the button.
+          Flexible(
+            child: Text(
+              widget.label!,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.w600,
+                color: resolved.foreground,
+              ),
             ),
           )
         else if (widget.child != null)
-          DefaultTextStyle(
+          DefaultTextStyle.merge(
             style: TextStyle(
               fontSize: fontSize,
               fontWeight: FontWeight.w600,

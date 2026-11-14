@@ -166,7 +166,7 @@ class NCard extends StatelessWidget {
           if (i > 0 && styles.showDivider) _buildDivider(context),
           Padding(
             padding: effectivePadding,
-            child: DefaultTextStyle(
+            child: DefaultTextStyle.merge(
               style: TextStyle(color: styles.textColor),
               child: IconTheme(data: IconThemeData(color: styles.textColor), child: sections[i]),
             ),
