@@ -132,7 +132,7 @@ class NAlert extends StatelessWidget {
                 if (child != null) ...[
                   if (title != null || description != null)
                     const SizedBox(height: 8),
-                  DefaultTextStyle(
+                  DefaultTextStyle.merge(
                     style: TextStyle(
                         fontSize: 13,
                         color: resolved.foreground.withValues(alpha: 0.9)),

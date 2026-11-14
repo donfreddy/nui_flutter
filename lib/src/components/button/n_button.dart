@@ -231,7 +231,7 @@ class _NButtonState extends State<NButton> with TickerProviderStateMixin {
             ),
           )
         else if (widget.child != null)
-          DefaultTextStyle(
+          DefaultTextStyle.merge(
             style: TextStyle(
               fontSize: fontSize,
               fontWeight: FontWeight.w600,
